@@ -7,14 +7,11 @@ fi
 
 # For easily navigating/specifying custom omz locations
 # Also good for easily navigating to my dotfiles directory
-CUSTOMPLUGINS=$ZSH_CUSTOM/plugins
-CUSTOMTHEMES=$ZSH_CUSTOM/themes
 DOTFILES=$HOME/.dotfiles
-export ZSH=$HOME/.oh-my-zsh
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
-# Because powerlevel10k doesn't already start at the bottom
+# Because powerlevel10k doesn't already magically start at the bottom :(
 printf '\n%.0s' {1..100}
 
 # ---------------------------
@@ -33,7 +30,7 @@ printf '\n%.0s' {1..100}
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
 # Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
+DISABLE_AUTO_TITLE="true"
 # Uncomment the following line to display red dots whilst waiting for completion.
 # COMPLETION_WAITING_DOTS="true"
 # Uncomment the following line if you want to disable marking untracked files
@@ -46,15 +43,15 @@ printf '\n%.0s' {1..100}
 # "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # see 'man strftime' for details.
 # HIST_STAMPS="mm/dd/yyyy"
-# For alternate ZSH custom folder path
-ZSH_CUSTOM=$DOTFILES/custom
-# ---------------------------
 
-# Enable command auto-correction?
+# ZSH custom folder path
+ZSH_CUSTOM=$DOTFILES/custom
+
+# Because I don't like to be corrected
+# and because I'm very insensitive
 ENABLE_CORRECTION="false"
-# Use case-sensitive completion?
 CASE_SENSITIVE="false"
-#------------------------
+
 # Standard plugins can be found in $ZSH/plugins/
 plugins=(
 alias-finder
@@ -98,10 +95,10 @@ vscode
 zsh-autosuggestions
 zsh-syntax-highlighting
 zsh_reload
-) # Others should be added to $ZSH_CUSTOM/plugins/
-source $ZSH/oh-my-zsh.sh
+)
 
-# additional source files
+# sourced files (well, obviously)
+source $ZSH/oh-my-zsh.sh
 source ~/.zsh_aliases
 source ~/.zsh_functions
 source ~/.conda_setup
