@@ -5,8 +5,6 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-export PATH=$HOME/bin:$DOTFILES/:/usr/local/bin:usr/share:/snap/bin:$PATH
-
 # For easily navigating/specifying custom omz locations
 # Also good for easily navigating to my dotfiles directory
 CUSTOMPLUGINS=$ZSH_CUSTOM/plugins
@@ -49,7 +47,7 @@ printf '\n%.0s' {1..100}
 # see 'man strftime' for details.
 # HIST_STAMPS="mm/dd/yyyy"
 # For alternate ZSH custom folder path
-# ZSH_CUSTOM=/path/to/new-custom-folder
+ZSH_CUSTOM=$DOTFILES/custom
 # ---------------------------
 
 # Enable command auto-correction?
@@ -106,31 +104,7 @@ source $ZSH/oh-my-zsh.sh
 # additional source files
 source ~/.zsh_aliases
 source ~/.zsh_functions
-
-# Preferred editor for local and remote sessions
- if [[ -n $SSH_CONNECTION ]]; then
-   export EDITOR='nano'
- else
-   export EDITOR='nano'
- fi
+source ~/.conda_setup
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/doc/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/doc/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/doc/miniconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/doc/miniconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-# To customize prompt, run `p10k configure` or edit ~/.dotfiles/.p10k.zsh.
-[[ ! -f ~/.dotfiles/.p10k.zsh ]] || source ~/.dotfiles/.p10k.zsh
