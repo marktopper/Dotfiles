@@ -102,7 +102,10 @@ zsh-syntax-highlighting
 zsh_reload
 ) # Others should be added to $ZSH_CUSTOM/plugins/
 source $ZSH/oh-my-zsh.sh
-#------------------------
+
+# additional source files
+source ~/.zsh_aliases
+source ~/.zsh_functions
 
 # Preferred editor for local and remote sessions
  if [[ -n $SSH_CONNECTION ]]; then
@@ -110,37 +113,6 @@ source $ZSH/oh-my-zsh.sh
  else
    export EDITOR='nano'
  fi
-
-# Aliases can be placed here, though oh-my-zsh users 
-# are encouraged to define aliases within the ZSH_CUSTOM folder.
-# 'alias' command will print a list of every alias
-
-# Shortcut aliases
-#-------------------
-alias ohmyzsh="~/.oh-my-zsh"
-alias codeinpython="~/Documents/PythonProjects"
-alias codeinjs="~/Documents/JavaScriptProjects"
-alias e='echo'
-alias ffs='sudo'
-# aliases for docker, apt commands, getting IP info etc.
-#-------------------
-alias d='docker'
-alias dps='docker ps'
-alias symlink='sudo ln -sfv'
-alias fix='sudo apt-get install -f'
-alias update='sudo parrot-upgrade -y'
-alias aget='sudo apt-get'
-alias apt='sudo apt'
-alias acache='sudo apt-cache'
-alias clean='sudo apt-get autoremove -y && sudo apt-get autoclean -y'
-alias extip='curl https://ipecho.net/plain; echo'
-alias intip='hostname -I; echo'
-alias shutdown='sudo shutdown now'
-alias restart='sudo reboot'
-alias help='run-help'
-alias sysctl='sudo systemctl'
-alias sysd='sudo systemd'
-#-------------------
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
