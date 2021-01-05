@@ -1,6 +1,8 @@
 # dotfiles
 For my linux dotfiles, you know how it is, you gotta have em up somewhere.
 
-Anyone wanting to use these should probably not unless you have oh-my-zsh installed, are familiar with PATH environment variables, have the required custom plugins and powerlevel0k theme installed in your oh-my-zsh directory, and want to go through my files changing some of the export and variable paths to fit your own home directory. I'm most certainly a noob when it comes to knowing github and git version control, so I have yet to figure out how I'd go about including oh-my-zsh and the additional custom plugins and theme that I have installed in my zsh setup (If I had to guess I'd say I'd probably need to include commands within the install script for cloning those repos or something, but as someone who typically codes in Python I've been a bit out of my depth trying to learn advanced bash scripting)
+Please ensure you have oh-my-zsh installed in your home directory before downloading and using any of my dotfiles.
 
-So yeah, clone at your own risk, thanks for reading, tell your cat hello for me (or something), and have a nice day!
+Overall, anyone wanting to use my dotfiles should probably not unless they are familiar with PATH environment variables and want to go through my files changing some of the export and variable paths to fit their own home directory. Make no mistake, I am a (well, 'almost' as I've been getting better since I began maintaining this repo for my dotfiles) complete noob when it comes to using git and typical shell scripting, so this is a fairly simple dotfiles repo setup. I hope to learn to put commands in the install.sh file to automate the entire setup of this repo (because why would I install oh-my-zsh and everything when I could just clone a repo and run the install file?)
+
+So yeah, clone at your own risk, thanks for reading, tell a cat hello for me (or something) and be well comrade.
