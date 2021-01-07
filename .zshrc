@@ -45,7 +45,7 @@ COMPLETION_WAITING_DOTS="true"
 # HIST_STAMPS="mm/dd/yyyy"
 
 # ZSH custom folder path
-ZSH_CUSTOM=$DOTFILES/custom
+# ZSH_CUSTOM=$DOTFILES/custom
 
 # Because I don't like to be corrected
 # and because I'm very insensitive
