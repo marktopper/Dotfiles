@@ -1,0 +1,2 @@
+/home/doc/miniconda3
+/home/doc/miniconda3/envs/snowflakes
