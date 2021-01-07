@@ -2,8 +2,17 @@
 # are encouraged to define aliases within the ZSH_CUSTOM folder.
 # 'alias' command will print a list of every alias
 
+prompt-elements() {
+  typeset -A reply
+  p10k display -a '*'
+  printf '%-32s = %q\n' ${(@kv)reply} | sort
+}
+
+
+
 # Shortcut aliases
 #-------------------
+alias p10k-prompt-elements=prompt-elements
 alias ohmyzsh="~/.oh-my-zsh"
 alias codeinpython="~/Documents/PythonProjects"
 alias codeinjs="~/Documents/JavaScriptProjects"
