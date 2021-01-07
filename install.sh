@@ -4,6 +4,7 @@ do
 done
 
 ln -srfv .bashrc $HOME/
+ln -srfv .conda $HOME/
 ln -srfv .dmrc $HOME/
 ln -srfv .p10k.zsh $HOME/
 ln -srfv .profile $HOME/
