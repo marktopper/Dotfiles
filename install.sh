@@ -85,6 +85,7 @@ wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/pa
 
 fc-cache -fv ~/.fonts
 
+
 # Start moving important files from $HOME/ to .dotfiles directory
 if [ -d ~/.zshrc ]; then
     mv ~/.zshrc ~/.dotfiles/
