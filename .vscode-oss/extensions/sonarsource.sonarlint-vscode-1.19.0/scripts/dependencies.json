@@ -1,0 +1,38 @@
+[
+  {
+    "groupId": "org.sonarsource.sonarlint.ls",
+    "artifactId": "sonarlint-language-server",
+    "version": "1.6.0.25503",
+    "output": "server/sonarlint-ls.jar"
+  },
+  {
+    "groupId": "org.sonarsource.javascript",
+    "artifactId": "sonar-javascript-plugin",
+    "version": "7.0.1.14561",
+    "output": "analyzers/sonarjs.jar"
+  },
+  {
+    "groupId": "org.sonarsource.java",
+    "artifactId": "sonar-java-plugin",
+    "version": "6.10.0.24201",
+    "output": "analyzers/sonarjava.jar"
+  },
+  {
+    "groupId": "org.sonarsource.php",
+    "artifactId": "sonar-php-plugin",
+    "version": "3.13.0.6849",
+    "output": "analyzers/sonarphp.jar"
+  },
+  {
+    "groupId": "org.sonarsource.python",
+    "artifactId": "sonar-python-plugin",
+    "version": "3.1.0.7619",
+    "output": "analyzers/sonarpython.jar"
+  },
+  {
+    "groupId": "org.sonarsource.html",
+    "artifactId": "sonar-html-plugin",
+    "version": "3.3.0.2534",
+    "output": "analyzers/sonarhtml.jar"
+  }
+]
