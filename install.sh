@@ -89,6 +89,7 @@ else
     git clone --depth=1 https://github.com/zsh-users/zsh-history-substring-search ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search
 fi
 
+cd $HOME
 
 # INSTALL FONTS
 echo -e "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono\n"
@@ -96,8 +97,6 @@ wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/pa
 wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/complete/Roboto%20Mono%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
 wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
 fc-cache -fv ~/.fonts
-
-cd $HOME
 
 # Start backing up files with same name as files in repo
 if [ -d ~/.conda ]; then
@@ -110,17 +109,23 @@ if [ -d ~/.themes ]; then
     echo -e ".themes already exists, making backup...\n"
     mv -drf ~/.themes ~/.themes_pre_dotfiles
     cp -rf $CLONED_REPO_DIR/.themes ~/.dotfiles
+else
+    cp -rf $CLONED_REPO_DIR/.themes ~/.dotfiles
 fi
 
 if [ -d ~/.bashrc ]; then
     echo -e ".bashrc already exists, making backup in current directory...\n"
     mv ~/.bashrc ~/.bashrc_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.bashrc ~/.dotfiles
+else
+    cp -rf $CLONED_REPO_DIR/.bashrc ~/.dotfiles
 fi
 
 if [ -d ~/.conda_setup ]; then
     echo -e ".conda_setup already exists, making backup in current directory...\n"
     mv ~/.conda_setup ~/.conda_setup_pre_dotfiles
+    cp -f $CLONED_REPO_DIR/.conda_setup ~/.dotfiles
+else
     cp -f $CLONED_REPO_DIR/.conda_setup ~/.dotfiles
 fi
 
@@ -128,30 +133,40 @@ if [ -d ~/.p10k.zsh ]; then
     echo -e ".p10k.zsh already exists, making backup in current directory...\n"
     mv ~/.p10k.zsh ~/.pre_dotfiles_p10k.zsh
     cp -f $CLONED_REPO_DIR/.p10k.zsh ~/.dotfiles
+else
+    cp -rf $CLONED_REPO_DIR/.p10k.zsh ~/.dotfiles
 fi
 
 if [ -d ~/.profile ]; then
     echo -e ".profile already exists, making backup in current directory...\n"
     mv ~/.profile ~/.profile_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.profile ~/.dotfiles
+else
+    cp -rf $CLONED_REPO_DIR/.profile ~/.dotfiles
 fi
 
 if [ -d ~/.zshrc ]; then
     echo -e ".zshrc already exists, making backup in directory...\n"
     mv ~/.zshrc ~/.zshrc_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.zshrc ~/.dotfiles
+else
+    cp -rf $CLONED_REPO_DIR/.zshrc ~/.dotfiles
 fi
 
 if [ -d ~/.zshenv ]; then
     echo -e ".zshenv already exists, making backup in current directory...\n"
     mv ~/.zshenv ~/.zshenv_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.zshenv ~/.dotfiles
+else
+    cp -rf $CLONED_REPO_DIR/.zshenv ~/.dotfiles
 fi
 
 if [ -d ~/.zsh_aliases ]; then
     echo -e ".zsh_aliases already exists, making backup in current directory...\n"
     mv ~/.zsh_aliases ~/.zsh_aliases_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.zsh_aliases ~/.dotfiles
+else
+    cp -rf $CLONED_REPO_DIR/.zsh_aliases ~/.dotfiles
 fi
 
 echo -e "Finished making any necessary backups and transferring repo files into ~/.dotfiles!\n"
@@ -164,9 +179,20 @@ echo -e "Now creating symlinks...\n"
 for i in ./.*
 do
     ln -srfv $i $HOME/
-    rm -drf $HOME/.git
     # if [ $i ~/.git ]; then
     #    echo -e "Skipping symlink for $i\n"
     # else
     #fi
 done
+rm -drf $HOME/.git
+
+# source ~/.zshrc
+echo -e "\nSudo access is needed to change default shell\n"
+
+if chsh -s $(which zsh) && /bin/zsh -i -c upgrade_oh_my_zsh; then
+    echo -e "Installation Successful, exit terminal and enter a new session"
+else
+    echo -e "Something is wrong"
+fi
+
+exit
