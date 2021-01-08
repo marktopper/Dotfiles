@@ -184,6 +184,10 @@ do
     # else
     #fi
 done
+
+# to remove .git/ symlink, it doesn't need to be in the $HOME directory
+# plan to figure out how to code something to keep the for loop from symlinking certain files and directories like .git/
+echo -e "And removing .git/ symlink because it's not needed..."
 rm -drf $HOME/.git
 
 # source ~/.zshrc
