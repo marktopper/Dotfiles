@@ -52,8 +52,9 @@ else
     git clone --depth=1 git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
 fi
 
-cp -f .zshrc ~/
-
+if [ -f ~/.zshrc ]; then
+    cp -f .zshrc ~/
+fi
 
 # Create .dotfiles directory
 if [ -d ~/.dotfiles ]; then
@@ -96,6 +97,7 @@ wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/pa
 wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
 fc-cache -fv ~/.fonts
 
+cd $HOME
 
 # Start backing up files with same name as files in repo
 if [ -d ~/.conda ]; then
@@ -161,9 +163,10 @@ echo -e "Now creating symlinks...\n"
 # SYMLINK CREATION
 for i in ./.*
 do
-    if $i=~/.git; then
-        echo -e "Skipping symlink for $i\n"
-    else
-        ln -srfv $i $HOME/
-    fi
+    ln -srfv $i $HOME/
+    rm -drf $HOME/.git
+    # if [ $i ~/.git ]; then
+    #    echo -e "Skipping symlink for $i\n"
+    # else
+    #fi
 done
