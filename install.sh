@@ -20,7 +20,7 @@ if [ -d $CLONED_REPO_DIR ]; then
     echo -e "We are in $PWD"
     
     # check if Dotfiles is located in $HOME directory
-    if $(pwd)=$HOME; then
+    if [ -d $HOME ]; then
         echo -e "Repo appears to be located in users home directory, continuing...\n"
     else
         echo -e "REPO IS NOT IN YOUR HOME DIRECTORY\nPLEASE MOVE REPO TO $HOME BEFORE RUNNING THE INSTALL SCRIPT!\n"
