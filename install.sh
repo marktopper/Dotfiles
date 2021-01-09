@@ -35,12 +35,18 @@ fi
 
 # MINICONDA INSTALL
 if [ -d ~/miniconda3 ]; then
-    echo -e "Miniconda3 already installed.\n"
+    echo -e "Miniconda3 is already installed.\n"
 else
-    echo -e "Miniconda3 is not installed, downloading...\n"
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-    echo -e "Starting Miniconda3 setup"
-    bash ~/Miniconda3-latest-Linux-x86_64.sh
+    if [[ -e Miniconda3-latest-Linux-x86_64.sh ]]; then
+        echo -e "Miniconda3 is not installed but already downloaded.\n"
+        echo -e "Starting Miniconda3 setup...\n"
+        bash ~/Miniconda3-latest-Linux-x86_64.sh
+    else
+        echo -e "Miniconda3 is not installed, downloading...\n"
+        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+        echo -e "Starting Miniconda3 setup...\n"
+        bash ~/Miniconda3-latest-Linux-x86_64.sh
+    fi
 fi
 
 
@@ -98,16 +104,9 @@ wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/pa
 wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
 fc-cache -fv ~/.fonts
 
-# Start backing up files with same name as files in repo
-if [ -d ~/.conda ]; then
-    echo -e "Moving .conda from $PWD to .dotfiles directory...\n"
-    mv -drf ~/.conda ~/.dotfiles
-    echo -e "If you'd like to use the .conda files from this repo just manually move them from the cloned repo directory into ~/.dotfiles"
-fi
-
 if [ -d ~/.themes ]; then
     echo -e ".themes already exists, making backup...\n"
-    mv -drf ~/.themes ~/.themes_pre_dotfiles
+    mv ~/.themes ~/.themes_pre_dotfiles
     cp -rf $CLONED_REPO_DIR/.themes ~/.dotfiles
 else
     cp -rf $CLONED_REPO_DIR/.themes ~/.dotfiles
@@ -118,7 +117,7 @@ if [ -d ~/.bashrc ]; then
     mv ~/.bashrc ~/.bashrc_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.bashrc ~/.dotfiles
 else
-    cp -rf $CLONED_REPO_DIR/.bashrc ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.bashrc ~/.dotfiles
 fi
 
 if [ -d ~/.conda_setup ]; then
@@ -134,7 +133,7 @@ if [ -d ~/.p10k.zsh ]; then
     mv ~/.p10k.zsh ~/.pre_dotfiles_p10k.zsh
     cp -f $CLONED_REPO_DIR/.p10k.zsh ~/.dotfiles
 else
-    cp -rf $CLONED_REPO_DIR/.p10k.zsh ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.p10k.zsh ~/.dotfiles
 fi
 
 if [ -d ~/.profile ]; then
@@ -142,7 +141,7 @@ if [ -d ~/.profile ]; then
     mv ~/.profile ~/.profile_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.profile ~/.dotfiles
 else
-    cp -rf $CLONED_REPO_DIR/.profile ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.profile ~/.dotfiles
 fi
 
 if [ -d ~/.zshrc ]; then
@@ -150,7 +149,7 @@ if [ -d ~/.zshrc ]; then
     mv ~/.zshrc ~/.zshrc_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.zshrc ~/.dotfiles
 else
-    cp -rf $CLONED_REPO_DIR/.zshrc ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.zshrc ~/.dotfiles
 fi
 
 if [ -d ~/.zshenv ]; then
@@ -158,7 +157,7 @@ if [ -d ~/.zshenv ]; then
     mv ~/.zshenv ~/.zshenv_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.zshenv ~/.dotfiles
 else
-    cp -rf $CLONED_REPO_DIR/.zshenv ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.zshenv ~/.dotfiles
 fi
 
 if [ -d ~/.zsh_aliases ]; then
@@ -166,30 +165,22 @@ if [ -d ~/.zsh_aliases ]; then
     mv ~/.zsh_aliases ~/.zsh_aliases_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.zsh_aliases ~/.dotfiles
 else
-    cp -rf $CLONED_REPO_DIR/.zsh_aliases ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.zsh_aliases ~/.dotfiles
 fi
 
 echo -e "Finished making any necessary backups and transferring repo files into ~/.dotfiles!\n"
-echo -e "Changing to .dotfiles directory...\n"
+
+echo -e "Moving to the new $HOME/.dotfiles directory...\n"
 cd $HOME/.dotfiles
 
-echo -e "Now creating symlinks...\n"
-
 # SYMLINK CREATION
-for ITEM in ./.*
-do
-    if [["$ITEM" == "." || "$ITEM" == ".."]]; then
-        echo -e "Skipping over $ITEM\n"
-        continue
+echo -e "Now creating necessary symlinks...\n"
+for ITEM in ./.*; do
+    if [[ -f $ITEM || -d $ITEM ]]; then
+        echo -e "Creating symlink for $ITEM in $HOME..."
+        ln -srf $ITEM $HOME
     fi
-    
-    ln -srfv $ITEM $HOME/
 done
-
-# to remove .git/ symlink, it doesn't need to be in the $HOME directory
-# plan to figure out how to code something to keep the for loop from symlinking certain files and directories like .git/
-echo -e "And removing .git/ symlink because it's not needed..."
-rm -drf $HOME/.git
 
 # source ~/.zshrc
 echo -e "\nSudo access is needed to change default shell\n"
