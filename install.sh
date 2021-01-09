@@ -176,9 +176,14 @@ cd $HOME/.dotfiles
 # SYMLINK CREATION
 echo -e "Now creating necessary symlinks...\n"
 for ITEM in ./.*; do
-    if [[ -f $ITEM || -d $ITEM ]]; then
+    if [[ -f $ITEM ]]; then
         echo -e "Creating symlink for $ITEM in $HOME..."
-        ln -srf $ITEM $HOME
+        ln -sf $ITEM $HOME
+    else
+        if [[ $ITEM == ./.themes ]]; then
+            echo -e "Creating symlink for $ITEM in $HOME..."
+            ln -srf $ITEM $HOME
+        fi
     fi
 done
 
