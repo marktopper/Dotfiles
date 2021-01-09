@@ -176,13 +176,14 @@ cd $HOME/.dotfiles
 echo -e "Now creating symlinks...\n"
 
 # SYMLINK CREATION
-for i in ./.*
+for ITEM in ./.*
 do
-    ln -srfv $i $HOME/
-    # if [ $i ~/.git ]; then
-    #    echo -e "Skipping symlink for $i\n"
-    # else
-    #fi
+    if [["$ITEM" == "." || "$ITEM" == ".."]]; then
+        echo -e "Skipping over $ITEM\n"
+        continue
+    fi
+    
+    ln -srfv $ITEM $HOME/
 done
 
 # to remove .git/ symlink, it doesn't need to be in the $HOME directory
