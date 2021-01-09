@@ -18,7 +18,6 @@ if [ -d $CLONED_REPO_DIR ]; then
     echo -e "Moving to parent directory...\n"
     cd ..
     echo -e "We are in $PWD"
-    
     # check if Dotfiles is located in $HOME directory
     if [ -d $HOME ]; then
         echo -e "Repo appears to be located in users home directory, continuing...\n"
@@ -26,6 +25,9 @@ if [ -d $CLONED_REPO_DIR ]; then
         echo -e "REPO IS NOT IN YOUR HOME DIRECTORY\nPLEASE MOVE REPO TO $HOME BEFORE RUNNING THE INSTALL SCRIPT!\n"
         echo -e "Use:\nmv -drf $CLONED_REPO_DIR $HOME\nTo move the git repo directory to your home directory, then try running this again." && exit
     fi
+else
+    echo -e "Something went wrong, stopping...\n"
+    exit
 fi
 
 if mv -n ~/.zshrc ~/.zshrc-backup-$(date +"%Y-%m-%d"); then # backup .zshrc
@@ -97,12 +99,41 @@ fi
 
 cd $HOME
 
+
 # INSTALL FONTS
 echo -e "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono\n"
-wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
-wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/complete/Roboto%20Mono%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
-wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
+
+if [ -f ~/.fonts/DejaVu\ Sans\ Mono\ Nerd\ Font\ Complete.ttf ]; then
+    echo -e "DejaVu Sans Mono Nerd Font already installed.\n"
+else
+    echo -e "Installing Nerd Fonts version of DejaVu Sans Mono\n"
+    wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
+fi
+
+if [ -f ~/.fonts/Roboto\ Mono\ Nerd\ Font\ Complete.ttf ]; then
+    echo -e "Roboto Mono Nerd Font already installed.\n"
+else
+    echo -e "Installing Nerd Fonts version of Roboto Mono\n"
+    wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/complete/Roboto%20Mono%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
+fi
+
+if [ -f ~/.fonts/Hack\ Regular\ Nerd\ Font\ Complete.ttf ]; then
+    echo -e "Hack Nerd Font already installed.\n"
+else
+    echo -e "Installing Nerd Fonts version of Hack\n"
+    wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
+fi
+
 fc-cache -fv ~/.fonts
+
+
+if [ -d ~/.oh-my-zsh/custom/themes/powerlevel10k ]; then
+    cd ~/.oh-my-zsh/custom/themes/powerlevel10k && git pull
+else
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
+fi
+
+cd $HOME
 
 if [ -d ~/.themes ]; then
     echo -e ".themes already exists, making backup...\n"
@@ -168,21 +199,18 @@ else
     cp -f $CLONED_REPO_DIR/.zsh_aliases ~/.dotfiles
 fi
 
-echo -e "Finished making any necessary backups and transferring repo files into ~/.dotfiles!\n"
-
-echo -e "Moving to the new $HOME/.dotfiles directory...\n"
-cd $HOME/.dotfiles
+echo -e "Finished making backups and transferring repo files into new .dotfiles directory.\n"
 
 # SYMLINK CREATION
 echo -e "Now creating necessary symlinks...\n"
-for ITEM in ./.*; do
+for ITEM in ~/.dotfiles/.*; do
     if [[ -f $ITEM ]]; then
-        echo -e "Creating symlink for $ITEM in $HOME..."
-        ln -sf $ITEM $HOME
+        echo -e "Creating symlink for $ITEM in home directory..."
+        ln -srf $ITEM ~/
     else
         if [[ $ITEM == ./.themes ]]; then
-            echo -e "Creating symlink for $ITEM in $HOME..."
-            ln -srf $ITEM $HOME
+            echo -e "Creating symlink for $ITEM in home directory..."
+            ln -srf $ITEM ~/
         fi
     fi
 done
