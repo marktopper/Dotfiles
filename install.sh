@@ -1,5 +1,5 @@
 #!/bin/bash
-# DO NOT EXECUTE THIS FILE OUTSIDE OF THE CLONED REPO AND MAKE SURE THE CLONED REPO IS IN YOUR $HOME DIRECTORY
+# DO NOT EXECUTE THIS FILE OUTSIDE OF THE CLONED REPO AND BE SURE THE CLONED REPO IS IN YOUR $HOME DIRECTORY
 
 if command -v zsh &> /dev/null && command -v git &> /dev/null && command -v wget &> /dev/null; then
     echo -e "ZSH and Git are already installed\n"
@@ -11,14 +11,13 @@ else
     fi
 fi
 
-# set variable for Dotfiles cloned repo directory for later use
 CLONED_REPO_DIR=$(pwd)
 
 if [ -d $CLONED_REPO_DIR ]; then
     echo -e "Moving to parent directory...\n"
     cd ..
     echo -e "We are in $PWD"
-    # check if Dotfiles is located in $HOME directory
+    # check if cloned repo is located in $HOME directory
     if [ -d $HOME ]; then
         echo -e "Repo appears to be located in users home directory, continuing...\n"
     else
@@ -34,6 +33,12 @@ if mv -n ~/.zshrc ~/.zshrc-backup-$(date +"%Y-%m-%d"); then # backup .zshrc
     echo -e "Backed up the current .zshrc to .zshrc-backup-date\n"
 fi
 
+# Create user's ~/.dotfiles directory
+if [ -d ~/.dotfiles ]; then
+    echo -e ".dotfiles directory already exists.\n"
+else
+    mkdir -p ~/.dotfiles
+fi
 
 # MINICONDA INSTALL
 if [ -d ~/miniconda3 ]; then
@@ -51,7 +56,7 @@ else
     fi
 fi
 
-if [ -f ~/Miniconda3-latest-Linux-x86_64.sh ]; then
+if [[ -f ~/Miniconda3-latest-Linux-x86_64.sh && -d ~/miniconda3 ]]; then
     echo -e "Removing Miniconda3 install file...\n"
     rm ~/Miniconda3-latest-Linux-x86_64.sh
 fi
@@ -69,12 +74,32 @@ if [ -f ~/.zshrc ]; then
     cp -f .zshrc ~/
 fi
 
-# Create .dotfiles directory
-if [ -d ~/.dotfiles ]; then
-    echo -e ".dotfiles directory already exists.\n"
+
+# INSTALL FONTS
+echo -e "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono\n"
+
+if [ -f ~/.fonts/DejaVu\ Sans\ Mono\ Nerd\ Font\ Complete.ttf ]; then
+    echo -e "DejaVu Sans Mono Nerd Font already installed.\n"
 else
-    mkdir -p ~/.dotfiles
+    echo -e "Installing Nerd Fonts version of DejaVu Sans Mono\n"
+    wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
 fi
+
+if [ -f ~/.fonts/Roboto\ Mono\ Nerd\ Font\ Complete.ttf ]; then
+    echo -e "Roboto Mono Nerd Font already installed.\n"
+else
+    echo -e "Installing Nerd Fonts version of Roboto Mono\n"
+    wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/complete/Roboto%20Mono%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
+fi
+
+if [ -f ~/.fonts/Hack\ Regular\ Nerd\ Font\ Complete.ttf ]; then
+    echo -e "Hack Nerd Font already installed.\n"
+else
+    echo -e "Installing Nerd Fonts version of Hack\n"
+    wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
+fi
+
+fc-cache -fv ~/.fonts
 
 
 # OMZ PLUGINS INSTALL
@@ -108,35 +133,7 @@ else
     git clone --depth=1 https://github.com/zsh-users/zsh-history-substring-search ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search
 fi
 
-cd $HOME
-
-# INSTALL FONTS
-echo -e "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono\n"
-
-if [ -f ~/.fonts/DejaVu\ Sans\ Mono\ Nerd\ Font\ Complete.ttf ]; then
-    echo -e "DejaVu Sans Mono Nerd Font already installed.\n"
-else
-    echo -e "Installing Nerd Fonts version of DejaVu Sans Mono\n"
-    wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
-fi
-
-if [ -f ~/.fonts/Roboto\ Mono\ Nerd\ Font\ Complete.ttf ]; then
-    echo -e "Roboto Mono Nerd Font already installed.\n"
-else
-    echo -e "Installing Nerd Fonts version of Roboto Mono\n"
-    wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/complete/Roboto%20Mono%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
-fi
-
-if [ -f ~/.fonts/Hack\ Regular\ Nerd\ Font\ Complete.ttf ]; then
-    echo -e "Hack Nerd Font already installed.\n"
-else
-    echo -e "Installing Nerd Fonts version of Hack\n"
-    wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
-fi
-
-fc-cache -fv ~/.fonts
-
-
+# INSTALL POWERLEVEL10K THEME
 if [ -d ~/.oh-my-zsh/custom/themes/powerlevel10k ]; then
     cd ~/.oh-my-zsh/custom/themes/powerlevel10k && git pull
 else
@@ -145,14 +142,7 @@ fi
 
 cd $HOME
 
-if [ -d ~/.themes ]; then
-    echo -e ".themes already exists, making backup...\n"
-    mv ~/.themes ~/.themes_pre_dotfiles
-    cp -rf $CLONED_REPO_DIR/.themes ~/.dotfiles
-else
-    cp -rf $CLONED_REPO_DIR/.themes ~/.dotfiles
-fi
-
+# copying files from repo to user's ~/.dotfiles directory
 if [ -d ~/.bashrc ]; then
     echo -e ".bashrc already exists, making backup in current directory...\n"
     mv ~/.bashrc ~/.bashrc_pre_dotfiles
@@ -171,7 +161,7 @@ fi
 
 if [ -d ~/.p10k.zsh ]; then
     echo -e ".p10k.zsh already exists, making backup in current directory...\n"
-    mv ~/.p10k.zsh ~/.pre_dotfiles_p10k.zsh
+    mv ~/.p10k.zsh ~/.p10k.zsh_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.p10k.zsh ~/.dotfiles
 else
     cp -f $CLONED_REPO_DIR/.p10k.zsh ~/.dotfiles
@@ -213,15 +203,10 @@ echo -e "Finished making backups and transferring repo files into new .dotfiles 
 
 # SYMLINK CREATION
 echo -e "Now creating necessary symlinks...\n"
-for ITEM in ~/.dotfiles/.*; do
-    if [[ -f $ITEM ]]; then
-        echo -e "Creating symlink for $ITEM in home directory..."
-        ln -srf $ITEM ~/
-    else
-        if [[ $ITEM == ./.themes ]]; then
-            echo -e "Creating symlink for $ITEM in home directory..."
-            ln -srf $ITEM ~/
-        fi
+for FILE in ~/.dotfiles/.*; do
+    if [[ -f $FILE ]]; then
+        echo -e "Creating symlink for $FILE in home directory..."
+        ln -srf $FILE ~/
     fi
 done
 
