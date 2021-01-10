@@ -152,8 +152,6 @@ else
 fi
 
 if [ -d ~/.conda_setup ]; then
-    echo -e ".conda_setup already exists, making backup in current directory...\n"
-    mv ~/.conda_setup ~/.conda_setup_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.conda_setup ~/.dotfiles
 else
     cp -f $CLONED_REPO_DIR/.conda_setup ~/.dotfiles
