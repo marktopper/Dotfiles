@@ -51,6 +51,11 @@ else
     fi
 fi
 
+if [ -f ~/Miniconda3-latest-Linux-x86_64.sh ]; then
+    echo -e "Removing Miniconda3 install file...\n"
+    rm ~/Miniconda3-latest-Linux-x86_64.sh
+fi
+
 
 # OMZ INSTALL
 echo -e "Installing oh-my-zsh\n"
@@ -73,10 +78,16 @@ fi
 
 
 # OMZ PLUGINS INSTALL
-if [ -d ~/.oh-my-zsh/plugins/zsh-autosuggestions ]; then
-    cd ~/.oh-my-zsh/plugins/zsh-autosuggestions && git pull
+if [ -d ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]; then
+    cd ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions && git pull
 else
-    git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/plugins/zsh-autosuggestions
+    git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+fi
+
+if [ -d ~/.oh-my-zsh/custom/plugins/conda-zsh-completion ]; then
+    cd ~/.oh-my-zsh/custom/plugins/conda-zsh-completion && git pull
+else
+    git clone --depth=1 https://github.com/esc/conda-zsh-completion ~/.oh-my-zsh/custom/plugins/conda-zsh-completion
 fi
 
 if [ -d ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]; then
@@ -98,7 +109,6 @@ else
 fi
 
 cd $HOME
-
 
 # INSTALL FONTS
 echo -e "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono\n"
