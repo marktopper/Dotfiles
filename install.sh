@@ -78,7 +78,13 @@ if [ -d ~/.oh-my-zsh ]; then
     mv ~/.oh-my-zsh $Z_DOT_DIR
     cd $Z_DOT_DIR/.oh-my-zsh && git pull
 else
-    git clone --depth=1 git://github.com/robbyrussell/oh-my-zsh.git $Z_DOT_DIR/.oh-my-zsh
+    if [ -d $Z_DOT_DIR/.oh-my-zsh ]; then
+        echo -e "oh-my-zsh is already installed in $Z_DOT_DIR.\n"
+        cd $Z_DOT_DIR/.oh-my-zsh && git pull
+    else
+        echo -e "oh-my-zsh is not installed in $Z_DOT_DIR. Installing...\n"
+        git clone --depth=1 git://github.com/robbyrussell/oh-my-zsh.git $Z_DOT_DIR/.oh-my-zsh
+    fi
 fi
 
 if [ -f ~/.zshrc ]; then
@@ -112,39 +118,39 @@ fi
 fc-cache -fv ~/.fonts
 
 # OMZ PLUGINS INSTALL
-if [ -d ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]; then
-    cd ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions && git pull
+if [ -d $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]; then
+    cd $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-autosuggestions && git pull
 else
     git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 fi
 
-if [ -d ~/.oh-my-zsh/custom/plugins/conda-zsh-completion ]; then
-    cd ~/.oh-my-zsh/custom/plugins/conda-zsh-completion && git pull
+if [ -d $Z_DOT_DIR/.oh-my-zsh/custom/plugins/conda-zsh-completion ]; then
+    cd $Z_DOT_DIR/.oh-my-zsh/custom/plugins/conda-zsh-completion && git pull
 else
     git clone --depth=1 https://github.com/esc/conda-zsh-completion $Z_DOT_DIR/.oh-my-zsh/custom/plugins/conda-zsh-completion
 fi
 
-if [ -d ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]; then
-    cd ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting && git pull
+if [ -d $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]; then
+    cd $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting && git pull
 else
     git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 fi
 
-if [ -d ~/.oh-my-zsh/custom/plugins/zsh-completions ]; then
-    cd ~/.oh-my-zsh/custom/plugins/zsh-completions && git pull
+if [ -d $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-completions ]; then
+    cd $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-completions && git pull
 else
     git clone --depth=1 https://github.com/zsh-users/zsh-completions $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-completions
 fi
 
-if [ -d ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search ]; then
-    cd ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search && git pull
+if [ -d $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-history-substring-search ]; then
+    cd $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-history-substring-search && git pull
 else
     git clone --depth=1 https://github.com/zsh-users/zsh-history-substring-search $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-history-substring-search
 fi
 
 # INSTALL POWERLEVEL10K THEME
-if [ -d ~/.oh-my-zsh/custom/themes/powerlevel10k ]; then
-    cd ~/.oh-my-zsh/custom/themes/powerlevel10k && git pull
+if [ -d $Z_DOT_DIR/.oh-my-zsh/custom/themes/powerlevel10k ]; then
+    cd $Z_DOT_DIR/.oh-my-zsh/custom/themes/powerlevel10k && git pull
 else
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $Z_DOT_DIR/.oh-my-zsh/custom/themes/powerlevel10k
 fi
