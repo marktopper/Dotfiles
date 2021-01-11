@@ -1,13 +1,13 @@
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 # For easily navigating/specifying custom omz locations
 # Also good for easily navigating to my dotfiles directory
-DOTFILES=$HOME/.dotfiles
+DOTFILES=~/.config/zsh
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
@@ -99,11 +99,17 @@ zsh-syntax-highlighting
 zsh_reload
 )
 
-# sourced files (well, obviously)
-source $ZSH/oh-my-zsh.sh
-source ~/.zsh_aliases
-# source ~/.zsh_functions
-source ~/.conda_setup
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
 
-# To customize prompt, run `p10k configure` or edit ~/.dotfiles/.p10k.zsh.
-[[ ! -f ~/.dotfiles/.p10k.zsh ]] || source ~/.dotfiles/.p10k.zsh
+  autoload -Uz compinit
+  compinit
+fi
+
+# sourced files
+source $ZSH/oh-my-zsh.sh
+source $DOTFILES/.zsh_aliases
+source $DOTFILES/.conda_setup
+
+# To customize prompt, run `p10k configure` or edit $DOTFILES/.p10k.zsh.
+[[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
