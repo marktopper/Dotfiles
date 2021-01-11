@@ -186,7 +186,7 @@ fi
 
 cp -f $CLONED_REPO_DIR/.conda_setup $Z_DOT_DIR
 
-if [ -d ~/.zprofile]; then
+if [ -d ~/.zprofile ]; then
     echo -e ".zprofile already exists, making backup in current directory...\n"
     mv ~/.zprofile ~/.zprofile_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.zprofile $Z_DOT_DIR
