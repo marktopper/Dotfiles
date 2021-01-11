@@ -33,11 +33,21 @@ if mv -n ~/.zshrc ~/.zshrc-backup-$(date +"%Y-%m-%d"); then # backup .zshrc
     echo -e "Backed up the current .zshrc to .zshrc-backup-date\n"
 fi
 
-# Create user's ~/.dotfiles directory
-if [ -d ~/.dotfiles ]; then
-    echo -e ".dotfiles directory already exists.\n"
+# Create user's ~/.config/zsh directory
+if [ -d ~/.config/zsh ]; then
+    echo -e "~/.config/zsh directory already exists.\n"
 else
-    mkdir -p ~/.dotfiles
+    mkdir -p ~/.config/zsh
+fi
+
+Z_DOT_DIR=~/.config/zsh
+
+# HOMEBREW/LINUXBREW INSTALL
+if [ -d /home/linuxbrew ]; then
+    echo -e "Homebrew is already installed.\n"
+else
+    echo -e "Homebrew not installed. Installing Homebrew...\n"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
 # MINICONDA INSTALL
@@ -61,19 +71,19 @@ if [[ -f ~/Miniconda3-latest-Linux-x86_64.sh && -d ~/miniconda3 ]]; then
     rm ~/Miniconda3-latest-Linux-x86_64.sh
 fi
 
-
 # OMZ INSTALL
 echo -e "Installing oh-my-zsh\n"
 if [ -d ~/.oh-my-zsh ]; then
-    echo -e "oh-my-zsh is already installed\n"
+    echo -e "oh-my-zsh is already installed in home directory, moving to new ~/.config/zsh directory...\n"
+    mv ~/.oh-my-zsh $Z_DOT_DIR
+    cd $Z_DOT_DIR/.oh-my-zsh && git pull
 else
-    git clone --depth=1 git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
+    git clone --depth=1 git://github.com/robbyrussell/oh-my-zsh.git $Z_DOT_DIR/.oh-my-zsh
 fi
 
 if [ -f ~/.zshrc ]; then
     cp -f .zshrc ~/
 fi
-
 
 # INSTALL FONTS
 echo -e "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono\n"
@@ -101,112 +111,111 @@ fi
 
 fc-cache -fv ~/.fonts
 
-
 # OMZ PLUGINS INSTALL
 if [ -d ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]; then
     cd ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions && git pull
 else
-    git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+    git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 fi
 
 if [ -d ~/.oh-my-zsh/custom/plugins/conda-zsh-completion ]; then
     cd ~/.oh-my-zsh/custom/plugins/conda-zsh-completion && git pull
 else
-    git clone --depth=1 https://github.com/esc/conda-zsh-completion ~/.oh-my-zsh/custom/plugins/conda-zsh-completion
+    git clone --depth=1 https://github.com/esc/conda-zsh-completion $Z_DOT_DIR/.oh-my-zsh/custom/plugins/conda-zsh-completion
 fi
 
 if [ -d ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]; then
     cd ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting && git pull
 else
-    git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+    git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 fi
 
 if [ -d ~/.oh-my-zsh/custom/plugins/zsh-completions ]; then
     cd ~/.oh-my-zsh/custom/plugins/zsh-completions && git pull
 else
-    git clone --depth=1 https://github.com/zsh-users/zsh-completions ~/.oh-my-zsh/custom/plugins/zsh-completions
+    git clone --depth=1 https://github.com/zsh-users/zsh-completions $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-completions
 fi
 
 if [ -d ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search ]; then
     cd ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search && git pull
 else
-    git clone --depth=1 https://github.com/zsh-users/zsh-history-substring-search ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search
+    git clone --depth=1 https://github.com/zsh-users/zsh-history-substring-search $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-history-substring-search
 fi
 
 # INSTALL POWERLEVEL10K THEME
 if [ -d ~/.oh-my-zsh/custom/themes/powerlevel10k ]; then
     cd ~/.oh-my-zsh/custom/themes/powerlevel10k && git pull
 else
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $Z_DOT_DIR/.oh-my-zsh/custom/themes/powerlevel10k
 fi
 
 cd $HOME
 
-# copying files from repo to user's ~/.dotfiles directory
+# copying files from repo to user's home and ~/.config/zsh directories
+# files going into $HOME
 if [ -d ~/.bashrc ]; then
     echo -e ".bashrc already exists, making backup in current directory...\n"
     mv ~/.bashrc ~/.bashrc_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.bashrc ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.bashrc .
 else
-    cp -f $CLONED_REPO_DIR/.bashrc ~/.dotfiles
-fi
-
-if [ -d ~/.conda_setup ]; then
-    cp -f $CLONED_REPO_DIR/.conda_setup ~/.dotfiles
-else
-    cp -f $CLONED_REPO_DIR/.conda_setup ~/.dotfiles
-fi
-
-if [ -d ~/.p10k.zsh ]; then
-    echo -e ".p10k.zsh already exists, making backup in current directory...\n"
-    mv ~/.p10k.zsh ~/.p10k.zsh_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.p10k.zsh ~/.dotfiles
-else
-    cp -f $CLONED_REPO_DIR/.p10k.zsh ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.bashrc .
 fi
 
 if [ -d ~/.profile ]; then
     echo -e ".profile already exists, making backup in current directory...\n"
     mv ~/.profile ~/.profile_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.profile ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.profile .
 else
-    cp -f $CLONED_REPO_DIR/.profile ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.profile .
+fi
+
+# files going into $HOME/.config/zsh
+if [ -d ~/.p10k.zsh ]; then
+    echo -e ".p10k.zsh already exists, making backup in current directory...\n"
+    mv ~/.p10k.zsh ~/.p10k.zsh_pre_dotfiles
+    cp -f $CLONED_REPO_DIR/.p10k.zsh $Z_DOT_DIR
+else
+    cp -f $CLONED_REPO_DIR/.p10k.zsh $Z_DOT_DIR
+fi
+
+cp -f $CLONED_REPO_DIR/.conda_setup $Z_DOT_DIR
+
+if [ -d ~/.zprofile]; then
+    echo -e ".zprofile already exists, making backup in current directory...\n"
+    mv ~/.zprofile ~/.zprofile_pre_dotfiles
+    cp -f $CLONED_REPO_DIR/.zprofile $Z_DOT_DIR
+else
+    cp -f $CLONED_REPO_DIR/.zprofile $Z_DOT_DIR
 fi
 
 if [ -d ~/.zshrc ]; then
-    echo -e ".zshrc already exists, making backup in directory...\n"
+    echo -e ".zshrc already exists, making backup in current directory...\n"
     mv ~/.zshrc ~/.zshrc_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.zshrc ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.zshrc $Z_DOT_DIR
 else
-    cp -f $CLONED_REPO_DIR/.zshrc ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.zshrc $Z_DOT_DIR
 fi
 
 if [ -d ~/.zshenv ]; then
     echo -e ".zshenv already exists, making backup in current directory...\n"
     mv ~/.zshenv ~/.zshenv_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.zshenv ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.zshenv $Z_DOT_DIR
 else
-    cp -f $CLONED_REPO_DIR/.zshenv ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.zshenv $Z_DOT_DIR
 fi
 
 if [ -d ~/.zsh_aliases ]; then
     echo -e ".zsh_aliases already exists, making backup in current directory...\n"
     mv ~/.zsh_aliases ~/.zsh_aliases_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.zsh_aliases ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.zsh_aliases $Z_DOT_DIR
 else
-    cp -f $CLONED_REPO_DIR/.zsh_aliases ~/.dotfiles
+    cp -f $CLONED_REPO_DIR/.zsh_aliases $Z_DOT_DIR
 fi
 
-echo -e "Finished making backups and transferring repo files into new .dotfiles directory.\n"
+echo -e "Finished transferring repo files into new .config/zsh directory.\n"
 
-# SYMLINK CREATION
-echo -e "Now creating necessary symlinks...\n"
-for FILE in ~/.dotfiles/.*; do
-    if [[ -f $FILE ]]; then
-        echo -e "Creating symlink for $FILE in home directory..."
-        ln -srf $FILE ~/
-    fi
-done
+echo -e "Creating symlink for .zshenv in home directory so ZDOTDIR variable will be set on shell startup.\n"
+ln -srf $Z_DOT_DIR/.zshenv ~/.
 
 # source ~/.zshrc
 echo -e "\nSudo access is needed to change default shell\n"
