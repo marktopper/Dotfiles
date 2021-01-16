@@ -35,6 +35,8 @@ alias intip='hostname -I; echo'
 alias shutdown='sudo shutdown now'
 alias restart='sudo reboot'
 alias help='run-help'
+alias systemctl='sudo systemctl'
+alias systemd='sudo systemd'
 alias sysctl='sudo systemctl'
 alias sysd='sudo systemd'
 #-------------------
