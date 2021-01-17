@@ -166,21 +166,21 @@ cd $HOME
 
 # copying files from repo to user's home and ~/.config/zsh directories
 # files going into $HOME
-if [ -d ~/.bashrc ]; then
-    echo -e ".bashrc already exists, making backup in current directory...\n"
-    mv ~/.bashrc ~/.bashrc_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.bashrc .
-else
-    cp -f $CLONED_REPO_DIR/.bashrc .
-fi
+#if [ -d ~/.bashrc ]; then
+#    echo -e ".bashrc already exists, making backup in current directory...\n"
+#    mv ~/.bashrc ~/.bashrc_pre_dotfiles
+#    cp -f $CLONED_REPO_DIR/.bashrc .
+#else
+#    cp -f $CLONED_REPO_DIR/.bashrc .
+#fi
 
-if [ -d ~/.profile ]; then
-    echo -e ".profile already exists, making backup in current directory...\n"
-    mv ~/.profile ~/.profile_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.profile .
-else
-    cp -f $CLONED_REPO_DIR/.profile .
-fi
+#if [ -d ~/.profile ]; then
+#    echo -e ".profile already exists, making backup in current directory...\n"
+#    mv ~/.profile ~/.profile_pre_dotfiles
+#    cp -f $CLONED_REPO_DIR/.profile .
+#else
+#    cp -f $CLONED_REPO_DIR/.profile .
+#fi
 
 # files going into $HOME/.config/zsh
 if [ -d ~/.p10k.zsh ]; then
