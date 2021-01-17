@@ -87,12 +87,12 @@ else
     fi
 fi
 
-if [ -f ~/.zshrc ]; then
-    cp -f .zshrc ~/
-fi
+#if [ -f ~/.zshrc ]; then
+#    cp -f .zshrc ~/
+#fi
 
 # INSTALL FONTS
-echo -e "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono\n"
+echo -e "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono, Source Code Pro\n"
 
 if [ -f ~/.fonts/DejaVu\ Sans\ Mono\ Nerd\ Font\ Complete.ttf ]; then
     echo -e "DejaVu Sans Mono Nerd Font already installed.\n"
@@ -113,6 +113,13 @@ if [ -f ~/.fonts/Hack\ Regular\ Nerd\ Font\ Complete.ttf ]; then
 else
     echo -e "Installing Nerd Fonts version of Hack\n"
     wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
+fi
+
+if [ -f ~/.fonts/Sauce\ Code\ Pro\ Nerd\ Font\ Complete.ttf ]; then
+    echo -e "Sauce Code Pro Nerd Font already installed.\n"
+else
+    echo -e "Installing Nerd Fonts version of Source Code Pro\n"
+    wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
 fi
 
 fc-cache -fv ~/.fonts
