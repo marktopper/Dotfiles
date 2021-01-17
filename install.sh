@@ -87,12 +87,12 @@ else
     fi
 fi
 
-if [ -f ~/.zshrc ]; then
-    cp -f .zshrc ~/
-fi
+#if [ -f ~/.zshrc ]; then
+#    cp -f .zshrc ~/
+#fi
 
 # INSTALL FONTS
-echo -e "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono\n"
+echo -e "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono, Source Code Pro\n"
 
 if [ -f ~/.fonts/DejaVu\ Sans\ Mono\ Nerd\ Font\ Complete.ttf ]; then
     echo -e "DejaVu Sans Mono Nerd Font already installed.\n"
@@ -113,6 +113,13 @@ if [ -f ~/.fonts/Hack\ Regular\ Nerd\ Font\ Complete.ttf ]; then
 else
     echo -e "Installing Nerd Fonts version of Hack\n"
     wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
+fi
+
+if [ -f ~/.fonts/Sauce\ Code\ Pro\ Nerd\ Font\ Complete.ttf ]; then
+    echo -e "Sauce Code Pro Nerd Font already installed.\n"
+else
+    echo -e "Installing Nerd Fonts version of Source Code Pro\n"
+    wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
 fi
 
 fc-cache -fv ~/.fonts
@@ -159,21 +166,21 @@ cd $HOME
 
 # copying files from repo to user's home and ~/.config/zsh directories
 # files going into $HOME
-if [ -d ~/.bashrc ]; then
-    echo -e ".bashrc already exists, making backup in current directory...\n"
-    mv ~/.bashrc ~/.bashrc_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.bashrc .
-else
-    cp -f $CLONED_REPO_DIR/.bashrc .
-fi
+#if [ -d ~/.bashrc ]; then
+#    echo -e ".bashrc already exists, making backup in current directory...\n"
+#    mv ~/.bashrc ~/.bashrc_pre_dotfiles
+#    cp -f $CLONED_REPO_DIR/.bashrc .
+#else
+#    cp -f $CLONED_REPO_DIR/.bashrc .
+#fi
 
-if [ -d ~/.profile ]; then
-    echo -e ".profile already exists, making backup in current directory...\n"
-    mv ~/.profile ~/.profile_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.profile .
-else
-    cp -f $CLONED_REPO_DIR/.profile .
-fi
+#if [ -d ~/.profile ]; then
+#    echo -e ".profile already exists, making backup in current directory...\n"
+#    mv ~/.profile ~/.profile_pre_dotfiles
+#    cp -f $CLONED_REPO_DIR/.profile .
+#else
+#    cp -f $CLONED_REPO_DIR/.profile .
+#fi
 
 # files going into $HOME/.config/zsh
 if [ -d ~/.p10k.zsh ]; then
