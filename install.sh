@@ -1,5 +1,4 @@
 #!/bin/bash
-# DO NOT EXECUTE THIS FILE OUTSIDE OF THE CLONED REPO AND BE SURE THE CLONED REPO IS IN YOUR $HOME DIRECTORY
 
 if command -v zsh &> /dev/null && command -v git &> /dev/null && command -v wget &> /dev/null; then
     echo -e "ZSH and Git are already installed\n"
@@ -47,24 +46,52 @@ Z_DOT_DIR=~/.config/zsh
 if [ -d /home/linuxbrew ]; then
     echo -e "Homebrew is already installed.\n"
 else
-    echo -e "Homebrew not installed. Installing Homebrew...\n"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    echo -e "Homebrew not installed.\n" 
+    while true; do
+        read -p "Do you want to install Homebrew? [Y/n]:" yn
+        case $yn in
+            [Yy]* )
+                echo -e "Answer: Yes.\nInstalling Homebrew...";
+                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)";
+                break;;
+            [Nn]* )
+                echo -e "Answer: No.\nContinuing...";
+                break;;
+            * )
+                echo -e "Please provide a valid answer.";;
+        esac
+    done
 fi
 
 # MINICONDA INSTALL
 if [ -d ~/miniconda3 ]; then
     echo -e "Miniconda3 is already installed.\n"
+    cp -f $CLONED_REPO_DIR/.conda_setup $Z_DOT_DIR;
 else
-    if [[ -e Miniconda3-latest-Linux-x86_64.sh ]]; then
-        echo -e "Miniconda3 is not installed but already downloaded.\n"
-        echo -e "Starting Miniconda3 setup...\n"
-        bash ~/Miniconda3-latest-Linux-x86_64.sh
-    else
-        echo -e "Miniconda3 is not installed, downloading...\n"
-        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-        echo -e "Starting Miniconda3 setup...\n"
-        bash ~/Miniconda3-latest-Linux-x86_64.sh
-    fi
+    echo -e "Miniconda3 is not installed.\n"
+    while true; do
+        read -p "Do you want to install Miniconda? [Y/n]:" yn
+        case $yn in
+            [Yy]* )
+                echo -e "Answer: Yes.";
+                cp -f $CLONED_REPO_DIR/.conda_setup $Z_DOT_DIR; # copy .conda_setup file to Zsh dotfiles directory
+                if [ -f ~/Miniconda3-latest-Linux-x86_64.sh ]; then # to prevent downloading Miniconda3 setup file multiple times
+                    echo -e "Miniconda3 is already downloaded\nStarting Miniconda3 setup..."
+                    bash ~/Miniconda3-latest-Linux-x86_64.sh
+                else
+                    echo -e "Downloading Miniconda3..."
+                    wget -q --show-progress https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -P ~/
+                    echo -e "Download finished.\nStarting Miniconda3 setup..."
+                    bash ~/Miniconda3-latest-Linux-x86_64.sh
+                fi;
+                break;;
+            [Nn]* )
+                echo -e "Answer: No.\nContinuing...";
+                break;;
+            * )
+                echo -e "Please provide a valid answer.";;
+        esac
+    done
 fi
 
 [[ -f ~/Miniconda3-latest-Linux-x86_64.sh && -d ~/miniconda3 ]] && echo -e "\nRemoving Miniconda3 install file..." && rm -f ~/Miniconda3-latest-Linux-x86_64.sh
@@ -166,8 +193,6 @@ if [ -f ~/.p10k.zsh ]; then
 else
     cp -f $CLONED_REPO_DIR/.p10k.zsh $Z_DOT_DIR
 fi
-
-cp -f $CLONED_REPO_DIR/.conda_setup $Z_DOT_DIR
 
 if [ -f ~/.zprofile ]; then
     echo -e ".zprofile already exists, making backup in current directory...\n"
