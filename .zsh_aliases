@@ -17,26 +17,26 @@ alias ohmyzsh="~/.oh-my-zsh"
 alias codeinpython="~/Documents/PythonProjects"
 alias codeinjs="~/Documents/JavaScriptProjects"
 alias e='echo'
-alias ffs='sudo'
+alias f='sudo'
 # aliases for docker, apt commands, getting IP info etc.
 #-------------------
 alias d='docker'
 alias dps='docker ps'
-alias pleaselink='sudo ln -srfv'
-alias mkslink='ln -srfv'
+alias mkslink='ln -srv'
+alias mkslinkffs='sudo mkslink'
 alias fix='sudo apt-get install -f'
-alias update='sudo parrot-upgrade -y'
+alias update='sudo parrot-upgrade'
 alias apt-get='sudo apt-get'
 alias apt='sudo apt'
 alias acache='sudo apt-cache'
-alias cleanup='sudo apt-get autoremove -y && sudo apt-get autoclean -y'
+alias cleanup='sudo apt-get --purge autoremove -y && sudo apt-get autoclean -y'
 alias extip='curl https://ipecho.net/plain; echo'
 alias intip='hostname -I; echo'
 alias shutdown='sudo shutdown now'
 alias restart='sudo reboot'
 alias help='run-help'
-alias systemctl='sudo systemctl'
-alias systemd='sudo systemd'
+# alias systemctl='sudo systemctl'
+# alias systemd='sudo systemd'
 alias sysctl='sudo systemctl'
 alias sysd='sudo systemd'
 #-------------------

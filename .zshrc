@@ -5,16 +5,18 @@ if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; th
   source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# For easily navigating/specifying custom omz locations
-# Also good for easily navigating to my dotfiles directory
-DOTFILES=~/.config/zsh
+
+# Snap completion doesn't work without this
+fpath=($fpath:/usr/share/zsh/vendor-completions)
+# For easily navigating to zsh file directory
+ZDIR=~/.config/zsh
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
-
-# Because powerlevel10k doesn't already magically start at the bottom :(
+# Because powerlevel10k doesn't magically start at the bottom :(
 printf '\n%.0s' {1..100}
 
-# ---------------------------
+
+# -------------------------
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 # Uncomment the following line to use hyphen-insensitive completion.
 # Case-sensitive completion must be off. _ and - will be interchangeable.
@@ -27,12 +29,6 @@ printf '\n%.0s' {1..100}
 # export UPDATE_ZSH_DAYS=13
 # Uncomment the following line if pasting URLs and other text is messed up.
 # DISABLE_MAGIC_FUNCTIONS="true"
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-# Uncomment the following line to disable auto-setting terminal title.
-DISABLE_AUTO_TITLE="true"
-# Uncomment the following line to display red dots whilst waiting for completion.
-COMPLETION_WAITING_DOTS="true"
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
@@ -43,73 +39,47 @@ COMPLETION_WAITING_DOTS="true"
 # "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # see 'man strftime' for details.
 # HIST_STAMPS="mm/dd/yyyy"
-
-# ZSH custom folder path
-# ZSH_CUSTOM=$DOTFILES/custom
-
-# Because I don't like to be corrected
-# and because I'm very insensitive
+# disable auto-setting terminal title.
+DISABLE_AUTO_TITLE="true"
+# display red dots whilst waiting for completion.
+COMPLETION_WAITING_DOTS="true"
 ENABLE_CORRECTION="false"
 CASE_SENSITIVE="false"
+#--------------------------
 
-# Standard plugins can be found in $ZSH/plugins/
+
+# Oh-my-zsh enabled plugins
 plugins=(
-alias-finder
-autojump
-colored-man-pages
-colorize
-common-aliases
-conda-zsh-completion
-cp
-docker
-docker-compose
-docker-machine
-dotenv
-extract
-fzf
-git
-git-auto-fetch
-git-escape-magic
-git-extras
-gitfast
-git-flow
-github
-git-hubflow
-gitignore
-git-lfs
-git-prompt
-jump
-man
-node
-npm
-perms
-pip
-pipenv
-postgres
-pyenv
-pylint
-python
-sudo
-systemd
-thefuck
-themes
-vscode
-zsh-autosuggestions
-zsh-syntax-highlighting
-zsh_reload
-)
+alias-finder autojump colored-man-pages colorize
+common-aliases conda-zsh-completion cp
+docker docker-compose docker-machine
+dotenv extract fzf
+git git-auto-fetch git-escape-magic git-extras gitfast
+git-flow github git-hubflow gitignore git-lfs git-prompt
+jump man node npm perms
+pip pipenv postgres pyenv pylint python
+sudo systemd thefuck themes vscode
+zsh-autosuggestions zsh-syntax-highlighting zsh_reload)
 
+
+# Homebrew completions
 if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
-
   autoload -Uz compinit
   compinit
 fi
 
+# GitHub CLI completions
+if [[ ! -d "$ZSH/completions" || ! -f "$ZSH/completions/_gh" ]]; then
+    mkdir -pv $ZSH/completions
+    gh completion --shell zsh > $ZSH/completions/_gh
+    echo "gh added completions: gh completion --shell zsh > $ZSH/completions/_gh"
+fi
+
 # sourced files
 source $ZSH/oh-my-zsh.sh
-source $DOTFILES/.zsh_aliases
-source $DOTFILES/.conda_setup
+source $ZDOTDIR/.zsh_aliases
+source $ZDOTDIR/.conda_setup
 
 # To customize prompt, run `p10k configure` or edit $DOTFILES/.p10k.zsh.
 [[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
