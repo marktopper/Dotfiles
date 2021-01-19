@@ -29,8 +29,9 @@ else
     exit
 fi
 
-if mv -n ~/.zshrc ~/.zshrc-backup-$(date +"%Y-%m-%d"); then # backup .zshrc
-    echo -e "Backed up the current .zshrc to .zshrc-backup-date\n"
+if [ -f ~/.zshrc ]; then # backup .zshrc
+    mv ~/.zshrc ~/.zshrc-backup-$(date +"%Y-%m-%d")
+    echo -e "Backed up current .zshrc to .zshrc-backup-$(date +"%Y-%m-%d")\n"
 fi
 
 # Create user's ~/.config/zsh directory
@@ -66,10 +67,7 @@ else
     fi
 fi
 
-if [[ -f ~/Miniconda3-latest-Linux-x86_64.sh && -d ~/miniconda3 ]]; then
-    echo -e "Removing Miniconda3 install file...\n"
-    rm ~/Miniconda3-latest-Linux-x86_64.sh
-fi
+[[ -f ~/Miniconda3-latest-Linux-x86_64.sh && -d ~/miniconda3 ]] && echo -e "\nRemoving Miniconda3 install file..." && rm -f ~/Miniconda3-latest-Linux-x86_64.sh
 
 # OMZ INSTALL
 echo -e "Installing oh-my-zsh\n"
@@ -86,10 +84,6 @@ else
         git clone --depth=1 git://github.com/robbyrussell/oh-my-zsh.git $Z_DOT_DIR/.oh-my-zsh
     fi
 fi
-
-#if [ -f ~/.zshrc ]; then
-#    cp -f .zshrc ~/
-#fi
 
 # INSTALL FONTS
 echo -e "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono, Source Code Pro\n"
@@ -164,26 +158,8 @@ fi
 
 cd $HOME
 
-# copying files from repo to user's home and ~/.config/zsh directories
-# files going into $HOME
-#if [ -d ~/.bashrc ]; then
-#    echo -e ".bashrc already exists, making backup in current directory...\n"
-#    mv ~/.bashrc ~/.bashrc_pre_dotfiles
-#    cp -f $CLONED_REPO_DIR/.bashrc .
-#else
-#    cp -f $CLONED_REPO_DIR/.bashrc .
-#fi
-
-#if [ -d ~/.profile ]; then
-#    echo -e ".profile already exists, making backup in current directory...\n"
-#    mv ~/.profile ~/.profile_pre_dotfiles
-#    cp -f $CLONED_REPO_DIR/.profile .
-#else
-#    cp -f $CLONED_REPO_DIR/.profile .
-#fi
-
-# files going into $HOME/.config/zsh
-if [ -d ~/.p10k.zsh ]; then
+# files going into ZSH directory
+if [ -f ~/.p10k.zsh ]; then
     echo -e ".p10k.zsh already exists, making backup in current directory...\n"
     mv ~/.p10k.zsh ~/.p10k.zsh_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.p10k.zsh $Z_DOT_DIR
@@ -193,7 +169,15 @@ fi
 
 cp -f $CLONED_REPO_DIR/.conda_setup $Z_DOT_DIR
 
-if [ -d ~/.zshrc ]; then
+if [ -f ~/.zprofile ]; then
+    echo -e ".zprofile already exists, making backup in current directory...\n"
+    mv ~/.zprofile ~/.zprofile_pre_dotfiles
+    cp -f $CLONED_REPO_DIR/.zprofile $Z_DOT_DIR
+else
+    cp -f $CLONED_REPO_DIR/.zprofile $Z_DOT_DIR
+fi
+
+if [ -f ~/.zshrc ]; then
     echo -e ".zshrc already exists, making backup in current directory...\n"
     mv ~/.zshrc ~/.zshrc_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.zshrc $Z_DOT_DIR
@@ -201,7 +185,7 @@ else
     cp -f $CLONED_REPO_DIR/.zshrc $Z_DOT_DIR
 fi
 
-if [ -d ~/.zshenv ]; then
+if [ -f ~/.zshenv ]; then
     echo -e ".zshenv already exists, making backup in current directory...\n"
     mv ~/.zshenv ~/.zshenv_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.zshenv $Z_DOT_DIR
@@ -209,7 +193,7 @@ else
     cp -f $CLONED_REPO_DIR/.zshenv $Z_DOT_DIR
 fi
 
-if [ -d ~/.zsh_aliases ]; then
+if [ -f ~/.zsh_aliases ]; then
     echo -e ".zsh_aliases already exists, making backup in current directory...\n"
     mv ~/.zsh_aliases ~/.zsh_aliases_pre_dotfiles
     cp -f $CLONED_REPO_DIR/.zsh_aliases $Z_DOT_DIR
@@ -219,8 +203,13 @@ fi
 
 echo -e "Finished transferring repo files into new .config/zsh directory.\n"
 
-echo -e "Creating symlink for .zshenv in home directory so ZDOTDIR variable will be set on shell startup.\n"
-ln -srf $Z_DOT_DIR/.zshenv ~/.
+# set $ZDOTDIR environment variable inside /etc/zsh/zshenv system-wide zshenv file
+echo -e "\nSudo access is needed to set ZDOTDIR in /etc/zsh/zshenv\n"
+if [ -n $ZDOTDIR ]; then
+    echo -e "ZDOTDIR variable is already set."
+else
+    [[ -f /etc/zsh/zshenv ]] && echo 'export ZDOTDIR=~/.config/zsh' | sudo tee -a /etc/zsh/zshenv > /dev/null
+fi
 
 # source ~/.zshrc
 echo -e "\nSudo access is needed to change default shell\n"
