@@ -6,4 +6,4 @@ Running install.sh will set the $ZDOTDIR environment variable, meaning Zsh will 
 Install.sh also downloads and installs(if not already installed):
 LinuxBrew(aka Homebrew), Miniconda3, Oh-My-Zsh, certain OMZ plugins, Powerlevel10k theme, and some Patched Nerd Fonts.
 
-You will need to have wget and Zsh installed before you try to run the install.sh script.
+You will need to have wget, git and Zsh installed before you try to run the install.sh script.
