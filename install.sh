@@ -1,73 +1,125 @@
 #!/bin/bash
-# DO NOT EXECUTE THIS FILE OUTSIDE OF THE CLONED REPO AND BE SURE THE CLONED REPO IS IN YOUR $HOME DIRECTORY
 
+# make sure install.sh is being run with bash
+if [ "$BASH_VERSION" = '' ]; then
+    echo "You are trying to run this script using sh. Please run this script again using bash.\n" && exit
+fi
+
+# check if necessary packages are installed
 if command -v zsh &> /dev/null && command -v git &> /dev/null && command -v wget &> /dev/null; then
-    echo -e "ZSH and Git are already installed\n"
+    echo -e "Zsh, Git and wget are already installed\n"
 else
     if sudo apt install -y zsh git wget || sudo pacman -S zsh git wget || sudo dnf install -y zsh git wget || sudo yum install -y zsh git wget || sudo brew install git zsh wget || pkg install git zsh wget ; then
-        echo -e "zsh wget and git Installed\n"
+        echo -e "Zsh, Git and wget Installed\n"
     else
         echo -e "Please install the following packages first, then try again: zsh git wget \n" && exit
     fi
 fi
 
-CLONED_REPO_DIR=$(pwd)
-
-if [ -d $CLONED_REPO_DIR ]; then
-    echo -e "Moving to parent directory...\n"
-    cd ..
-    echo -e "We are in $PWD"
-    # check if cloned repo is located in $HOME directory
-    if [ -d $HOME ]; then
-        echo -e "Repo appears to be located in users home directory, continuing...\n"
-    else
-        echo -e "REPO IS NOT IN YOUR HOME DIRECTORY\nPLEASE MOVE REPO TO $HOME BEFORE RUNNING THE INSTALL SCRIPT!\n"
-        echo -e "Use:\nmv -drf $CLONED_REPO_DIR $HOME\nTo move the git repo directory to your home directory, then try running this again." && exit
-    fi
+# check if cloned repo is in home directory, if not ask to move it to home directory
+if [[ -d $CLONED_REPO = ~/* ]]; then
+    CLONED_REPO=$(pwd)
+    echo -e "Dotfiles repo is located within users home directory.\nContinuing...\n"
 else
-    echo -e "Something went wrong, stopping...\n"
-    exit
+    CLONED_REPO=$(pwd)
+    echo -e "Dotfiles repo is NOT located with users home directory.\n"
+    while true; do
+        read -p "Would you like to move the repo to your home directory? [Y/n]" yn
+        case  $yn in
+            [Yy]* )
+                echo -e "Moving repo to home directory...";
+                mv $CLONED_REPO ~/Dotfiles;
+                cd ~/Dotfiles && CLONED_REPO=$(pwd);
+                break;;
+            [Nn]* )
+                echo -e "Please move the repo to your home directory before running this script again." && exit;
+                break;;
+            * )
+                echo -e "Please provide a valid answer.";;
+        esac
+    done
 fi
 
-if [ -f ~/.zshrc ]; then # backup .zshrc
-    mv ~/.zshrc ~/.zshrc-backup-$(date +"%Y-%m-%d")
-    echo -e "Backed up current .zshrc to .zshrc-backup-$(date +"%Y-%m-%d")\n"
-fi
-
-# Create user's ~/.config/zsh directory
-if [ -d ~/.config/zsh ]; then
-    echo -e "~/.config/zsh directory already exists.\n"
-else
-    mkdir -p ~/.config/zsh
-fi
-
-Z_DOT_DIR=~/.config/zsh
 
 # HOMEBREW/LINUXBREW INSTALL
 if [ -d /home/linuxbrew ]; then
     echo -e "Homebrew is already installed.\n"
 else
-    echo -e "Homebrew not installed. Installing Homebrew...\n"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    echo -e "Homebrew not installed.\n" 
+    while true; do
+        read -p "Do you want to install Homebrew? [Y/n]:" yn
+        case $yn in
+            [Yy]* )
+                echo -e "Installing Homebrew...";
+                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)";
+                break;;
+            [Nn]* )
+                echo -e "Homebrew will not be installed.\nContinuing...";
+                break;;
+            * )
+                echo -e "Please provide a valid answer.";;
+        esac
+    done
 fi
+
 
 # MINICONDA INSTALL
 if [ -d ~/miniconda3 ]; then
     echo -e "Miniconda3 is already installed.\n"
 else
-    if [[ -e Miniconda3-latest-Linux-x86_64.sh ]]; then
-        echo -e "Miniconda3 is not installed but already downloaded.\n"
-        echo -e "Starting Miniconda3 setup...\n"
-        bash ~/Miniconda3-latest-Linux-x86_64.sh
-    else
-        echo -e "Miniconda3 is not installed, downloading...\n"
-        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-        echo -e "Starting Miniconda3 setup...\n"
-        bash ~/Miniconda3-latest-Linux-x86_64.sh
-    fi
+    echo -e "Miniconda3 is not installed.\n"
+    while true; do
+        read -p "Do you want to install Miniconda? [Y/n]:" yn
+        case $yn in
+            [Yy]* )
+                echo -e "Please be sure to install Miniconda3 to your users home directory.";
+                if [ -f ~/Miniconda3-latest-Linux-x86_64.sh ]; then # to prevent downloading Miniconda3 setup file multiple times
+                    echo -e "Miniconda3 is already downloaded\nStarting Miniconda3 setup..."
+                    bash ~/Miniconda3-latest-Linux-x86_64.sh
+                else
+                    echo -e "Downloading Miniconda3..."
+                    wget -q --show-progress https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -P ~/
+                    echo -e "Download finished.\nStarting Miniconda3 setup..."
+                    bash ~/Miniconda3-latest-Linux-x86_64.sh
+                fi;
+                break;;
+            [Nn]* )
+                echo -e "Answer: No.\nContinuing...";
+                break;;
+            * )
+                echo -e "Please provide a valid answer.";;
+        esac
+    done
 fi
 
-[[ -f ~/Miniconda3-latest-Linux-x86_64.sh && -d ~/miniconda3 ]] && echo -e "\nRemoving Miniconda3 install file..." && rm -f ~/Miniconda3-latest-Linux-x86_64.sh
+[[ -f ~/Miniconda3-latest-Linux-x86_64.sh && -d ~/miniconda3 ]] && echo -e "\nRemoving Miniconda3 install file..." && rm -f ~/Miniconda3-latest-Linux*
+
+# Ask if user is ready to continue to Zsh configuration
+while true; do
+    read -p "About to start Zsh configuration.\nOh-My-Zsh, nerd fonts, OMZ plugins and Powerlevel10K theme will be installed.\nContinue? [Y/n]:" yn
+    case  in
+        [Yy]* )
+            echo -e "\nContinuing install...\n";
+            if [ -f ~/.zshrc ]; then # backup .zshrc
+                mv ~/.zshrc ~/.zshrc-backup-$(date +"%Y-%m-%d")
+                echo -e "Backed up current .zshrc to .zshrc-backup-$(date +"%Y-%m-%d")\n"
+            fi;
+            # Create user's ~/.config/zsh directory
+            if [ -d ~/.config/zsh ]; then
+                echo -e "~/.config/zsh directory already exists.\n"
+            else
+                mkdir -p ~/.config/zsh
+            fi;
+            Z_DOT_DIR=~/.config/zsh;
+            break;;
+        [Nn]* )
+            echo -e "\nStopping install...\n" && exit;
+            break;;
+        * )
+            echo -e "Please provide a valid answer.";;
+    esac
+done
+
 
 # OMZ INSTALL
 echo -e "Installing oh-my-zsh\n"
@@ -87,36 +139,32 @@ fi
 
 # INSTALL FONTS
 echo -e "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono, Source Code Pro\n"
-
 if [ -f ~/.fonts/DejaVu\ Sans\ Mono\ Nerd\ Font\ Complete.ttf ]; then
     echo -e "DejaVu Sans Mono Nerd Font already installed.\n"
 else
     echo -e "Installing Nerd Fonts version of DejaVu Sans Mono\n"
     wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
 fi
-
 if [ -f ~/.fonts/Roboto\ Mono\ Nerd\ Font\ Complete.ttf ]; then
     echo -e "Roboto Mono Nerd Font already installed.\n"
 else
     echo -e "Installing Nerd Fonts version of Roboto Mono\n"
     wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/complete/Roboto%20Mono%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
 fi
-
 if [ -f ~/.fonts/Hack\ Regular\ Nerd\ Font\ Complete.ttf ]; then
     echo -e "Hack Nerd Font already installed.\n"
 else
     echo -e "Installing Nerd Fonts version of Hack\n"
     wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
 fi
-
 if [ -f ~/.fonts/Sauce\ Code\ Pro\ Nerd\ Font\ Complete.ttf ]; then
     echo -e "Sauce Code Pro Nerd Font already installed.\n"
 else
     echo -e "Installing Nerd Fonts version of Source Code Pro\n"
     wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete.ttf -P ~/.fonts/
 fi
-
 fc-cache -fv ~/.fonts
+
 
 # OMZ PLUGINS INSTALL
 if [ -d $Z_DOT_DIR/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]; then
@@ -156,52 +204,59 @@ else
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $Z_DOT_DIR/.oh-my-zsh/custom/themes/powerlevel10k
 fi
 
-cd $HOME
+cp -f $CLONED_REPO/conda_setup.zsh $Z_DOT_DIR/.oh-my-zsh/custom
+cp -f $CLONED_REPO/zsh_aliases.zsh $Z_DOT_DIR/.oh-my-zsh/custom
 
-# files going into ZSH directory
-if [ -f ~/.p10k.zsh ]; then
-    echo -e ".p10k.zsh already exists, making backup in current directory...\n"
-    mv ~/.p10k.zsh ~/.p10k.zsh_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.p10k.zsh $Z_DOT_DIR
+cd ~
+
+# backup files directory
+mkdir -p ~/Backup_Dotfiles
+
+# backup original files and copy files from repo going into ZSH directory
+
+# .vimrc needs to go in home directory
+if [ -f ~/.vimrc ]; then
+    echo -e ".vimrc already exists, making backup in ~/Backup_Dotfiles...\n"
+    mv ~/.vimrc ~/Backup_Dotfiles
+    cp -f ~/.vimrc ~
 else
-    cp -f $CLONED_REPO_DIR/.p10k.zsh $Z_DOT_DIR
+    cp -f ~/.vimrc ~
 fi
 
-cp -f $CLONED_REPO_DIR/.conda_setup $Z_DOT_DIR
+if [ -f ~/.p10k.zsh ]; then
+    echo -e ".p10k.zsh already exists, making backup in ~/Backup_Dotfiles...\n"
+    mv ~/.p10k.zsh ~/Backup_Dotfiles
+    cp -f $CLONED_REPO/.p10k.zsh $Z_DOT_DIR
+else
+    cp -f $CLONED_REPO/.p10k.zsh $Z_DOT_DIR
+fi
 
 if [ -f ~/.zprofile ]; then
-    echo -e ".zprofile already exists, making backup in current directory...\n"
-    mv ~/.zprofile ~/.zprofile_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.zprofile $Z_DOT_DIR
+    echo -e ".zprofile already exists, making backup in ~/Backup_Dotfiles...\n"
+    mv ~/.zprofile ~/Backup_Dotfiles
+    cp -f $CLONED_REPO/.zprofile $Z_DOT_DIR
 else
-    cp -f $CLONED_REPO_DIR/.zprofile $Z_DOT_DIR
+    cp -f $CLONED_REPO/.zprofile $Z_DOT_DIR
 fi
 
 if [ -f ~/.zshrc ]; then
-    echo -e ".zshrc already exists, making backup in current directory...\n"
-    mv ~/.zshrc ~/.zshrc_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.zshrc $Z_DOT_DIR
+    echo -e ".zshrc already exists, making backup in ~/Backup_Dotfiles...\n"
+    mv ~/.zshrc ~/Backup_Dotfiles
+    cp -f $CLONED_REPO/.zshrc $Z_DOT_DIR
 else
-    cp -f $CLONED_REPO_DIR/.zshrc $Z_DOT_DIR
+    cp -f $CLONED_REPO/.zshrc $Z_DOT_DIR
 fi
 
 if [ -f ~/.zshenv ]; then
-    echo -e ".zshenv already exists, making backup in current directory...\n"
-    mv ~/.zshenv ~/.zshenv_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.zshenv $Z_DOT_DIR
+    echo -e ".zshenv already exists, making backup in ~/Backup_Dotfiles...\n"
+    mv ~/.zshenv ~/Backup_Dotfiles
+    cp -f $CLONED_REPO/.zshenv $Z_DOT_DIR
 else
-    cp -f $CLONED_REPO_DIR/.zshenv $Z_DOT_DIR
+    cp -f $CLONED_REPO/.zshenv $Z_DOT_DIR
 fi
 
-if [ -f ~/.zsh_aliases ]; then
-    echo -e ".zsh_aliases already exists, making backup in current directory...\n"
-    mv ~/.zsh_aliases ~/.zsh_aliases_pre_dotfiles
-    cp -f $CLONED_REPO_DIR/.zsh_aliases $Z_DOT_DIR
-else
-    cp -f $CLONED_REPO_DIR/.zsh_aliases $Z_DOT_DIR
-fi
+echo -e "Finished transferring repo files into new ~/.config/zsh directory.\n"
 
-echo -e "Finished transferring repo files into new .config/zsh directory.\n"
 
 # set $ZDOTDIR environment variable inside /etc/zsh/zshenv system-wide zshenv file
 echo -e "\nSudo access is needed to set ZDOTDIR in /etc/zsh/zshenv\n"
@@ -217,7 +272,7 @@ echo -e "\nSudo access is needed to change default shell\n"
 if chsh -s $(which zsh) && /bin/zsh -i -c upgrade_oh_my_zsh; then
     echo -e "Installation Successful, exit terminal and enter a new session"
 else
-    echo -e "Something is wrong"
+    echo -e "Something went wrong"
 fi
 
 exit

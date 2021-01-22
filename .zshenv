@@ -15,7 +15,7 @@ export PKG_CONFIG_PATH="/home/linuxbrew/.linuxbrew/opt/isl@0.18/lib/pkgconfig"
 
 # Preferred editor for local and remote sessions
  if [[ -n $SSH_CONNECTION ]]; then
-   export EDITOR='nvim'
+   export EDITOR='vim'
  else
-   export EDITOR='code'
+   export EDITOR='nvim'
  fi
