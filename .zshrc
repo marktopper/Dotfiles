@@ -1,13 +1,12 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
+# P10K instant prompt. Keep close to top of .zshrc. Code that may require console input 
+# password prompts, etc. must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 
 # Snap completion doesn't work without this
-fpath=($fpath:/usr/share/zsh/vendor-completions)
+# fpath=($fpath:/usr/share/zsh/vendor-completions)
 # For easily navigating to zsh file directory
 ZDIR=~/.config/zsh
 
@@ -52,11 +51,10 @@ CASE_SENSITIVE="false"
 plugins=(
 alias-finder autojump colored-man-pages colorize
 common-aliases conda-zsh-completion cp
-docker docker-compose docker-machine
-dotenv extract fzf
+docker docker-compose docker-machine dotenv extract fzf
 git git-auto-fetch git-escape-magic git-extras gitfast
 git-flow github git-hubflow gitignore git-lfs git-prompt
-jump man node npm perms
+jump last-working-dir man node npm perms
 pip pipenv postgres pyenv pylint python
 sudo systemd thefuck themes vscode
 zsh-autosuggestions zsh-syntax-highlighting zsh_reload)
@@ -78,8 +76,6 @@ fi
 
 # sourced files
 source $ZSH/oh-my-zsh.sh
-source $ZDOTDIR/.zsh_aliases
-source $ZDOTDIR/.conda_setup
 
 # To customize prompt, run `p10k configure` or edit $DOTFILES/.p10k.zsh.
 [[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
