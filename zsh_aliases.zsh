@@ -12,20 +12,18 @@ prompt-elements() {
 # Shortcut aliases
 #-------------------
 alias p10k-prompt=prompt-elements
-alias update-db="sudo updatedb --prunepaths='/timeshift/snapshots /run/timeshift /run/user'"
+alias update-db="sudo updatedb --prunepaths='/timeshift/snapshots /media /run/timeshift /run/user'"
 alias omz-dir="$ZDOTDIR/.oh-my-zsh"
-alias python-projects="~/Projects/Python"
-alias JS-projects="~/Projects/JavaScript"
-alias bashscript-projects="~/Projects/BashScripts"
 alias e='echo'
 alias s='sudo'
+alias cpd='cp -r'
 alias fk='fuck'
+alias mksymlink='ln -srv'
+alias mksymlinkffs='sudo mkslink'
 # aliases for docker, apt commands, getting IP info etc.
 #-------------------
 alias d='docker'
 alias dps='docker ps'
-alias mksymlink='ln -srv'
-alias mksymlinkffs='sudo mkslink'
 alias fix='sudo apt-get install -f'
 alias update-apt='sudo apt update'
 alias upgrade-parrot='sudo parrot-upgrade'

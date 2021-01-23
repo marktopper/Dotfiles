@@ -54,7 +54,7 @@ common-aliases conda-zsh-completion cp
 docker docker-compose docker-machine dotenv extract fzf
 git git-auto-fetch git-escape-magic git-extras gitfast
 git-flow github git-hubflow gitignore git-lfs git-prompt
-jump last-working-dir man node npm perms
+jump man node npm perms
 pip pipenv postgres pyenv pylint python
 sudo systemd thefuck themes vscode
 zsh-autosuggestions zsh-syntax-highlighting zsh_reload)
@@ -75,6 +75,7 @@ if [[ ! -d "$ZSH/completions" || ! -f "$ZSH/completions/_gh" ]]; then
 fi
 
 # sourced files
+# source /usr/share/zsh-autocomplete/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 source $ZSH/oh-my-zsh.sh
 
 # To customize prompt, run `p10k configure` or edit $DOTFILES/.p10k.zsh.

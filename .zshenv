@@ -2,7 +2,6 @@
 # variables that should be available to other programs.
 
 export PATH=~/bin:/usr/local/bin:usr/share:/snap/bin:$PATH
-export ZDOTDIR=~/.config/zsh
 export ZSH=$ZDOTDIR/.oh-my-zsh
 
 # Linuxbrew stuff

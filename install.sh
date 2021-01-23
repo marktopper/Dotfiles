@@ -16,12 +16,12 @@ else
     fi
 fi
 
+CLONED_REPO=$(pwd)
+
 # check if cloned repo is in home directory, if not ask to move it to home directory
 if [[ -d $CLONED_REPO = ~/* ]]; then
-    CLONED_REPO=$(pwd)
     echo -e "Dotfiles repo is located within users home directory.\nContinuing...\n"
 else
-    CLONED_REPO=$(pwd)
     echo -e "Dotfiles repo is NOT located with users home directory.\n"
     while true; do
         read -p "Would you like to move the repo to your home directory? [Y/n]" yn
@@ -204,16 +204,21 @@ else
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $Z_DOT_DIR/.oh-my-zsh/custom/themes/powerlevel10k
 fi
 
-cp -f $CLONED_REPO/conda_setup.zsh $Z_DOT_DIR/.oh-my-zsh/custom
-cp -f $CLONED_REPO/zsh_aliases.zsh $Z_DOT_DIR/.oh-my-zsh/custom
+if [ -f $CLONED_REPO/conda_setup.zsh ]; then
+    cp $CLONED_REPO/conda_setup.zsh $Z_DOT_DIR/.oh-my-zsh/custom
+fi
+
+if [ -f $CLONED_REPO/zsh_aliases.zsh ]; then
+    cp $CLONED_REPO/zsh_aliases.zsh $Z_DOT_DIR/.oh-my-zsh/custom
+fi
 
 cd ~
+
 
 # backup files directory
 mkdir -p ~/Backup_Dotfiles
 
 # backup original files and copy files from repo going into ZSH directory
-
 # .vimrc needs to go in home directory
 if [ -f ~/.vimrc ]; then
     echo -e ".vimrc already exists, making backup in ~/Backup_Dotfiles...\n"
