@@ -6,6 +6,3 @@
 #
 # Global Order: zshenv, zprofile, zshrc, zlogin
 
-[[ -e ~/.profile ]] && emulate sh -c 'source ~/.profile'
-
-# [[ -e /etc/profile.d/apps-bin.path.sh ]] && emulate sh -c 'source /etc/profile.d/apps-bin-path.sh'
