@@ -97,7 +97,7 @@ fi
 # Ask if user is ready to continue to Zsh configuration
 while true; do
     read -p "About to start Zsh configuration.\nOh-My-Zsh, nerd fonts, OMZ plugins and Powerlevel10K theme will be installed.\nContinue? [Y/n]:" yn
-    case  in
+    case $yn in
         [Yy]* )
             echo -e "\nContinuing install...\n";
             if [ -f ~/.zshrc ]; then # backup .zshrc
