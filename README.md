@@ -1,4 +1,4 @@
-# Dotfiles
+# Dotfiles (personalized for Parrot OS)
 My linux Zsh dotfiles (plus an install script for automatically setting them up)
 
 # install.sh notes:
