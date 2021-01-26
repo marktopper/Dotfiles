@@ -268,7 +268,7 @@ echo -e "\nSudo access is needed to set ZDOTDIR in /etc/zsh/zshenv\n"
 if [ -n $ZDOTDIR ]; then
     echo -e "ZDOTDIR variable is already set."
 else
-    [[ -f /etc/zsh/zshenv ]] && echo 'export ZDOTDIR=~/.config/zsh' | sudo tee -a /etc/zsh/zshenv > /dev/null
+    [[ -f /etc/zsh/zshenv ]] && echo 'export ZDOTDIR=$HOME/.config/zsh' | sudo tee -a /etc/zsh/zshenv > /dev/null
 fi
 
 # source ~/.zshrc
