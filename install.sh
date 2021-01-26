@@ -262,12 +262,14 @@ fi
 
 echo -e "Finished transferring repo files into new ~/.config/zsh directory.\n"
 
-
-# set $ZDOTDIR environment variable inside /etc/zsh/zshenv system-wide zshenv file
-echo -e "\nSudo access is needed to set ZDOTDIR in /etc/zsh/zshenv\n"
-if [ -n $ZDOTDIR ]; then
-    echo -e "ZDOTDIR variable is already set."
+# check if /etc/zsh/zshenv contains line exporting ZDOTDIR
+FILE="/etc/zsh/zshenv"
+STRING="export ZDOTDIR=\"\$HOME/.config/zsh\""
+if grep "$STRING" "$FILE"; then
+    echo -e "ZDOTDIR is already set in /etc/zsh/zshenv"
 else
+    # set $ZDOTDIR environment variable inside /etc/zsh/zshenv system-wide zshenv file
+    echo -e "\nSudo access is needed to set ZDOTDIR in /etc/zsh/zshenv\n"
     [[ -f /etc/zsh/zshenv ]] && echo 'export ZDOTDIR=$HOME/.config/zsh' | sudo tee -a /etc/zsh/zshenv > /dev/null
 fi
 
