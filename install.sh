@@ -19,7 +19,7 @@ fi
 CLONED_REPO=$(pwd)
 
 # check if cloned repo is in home directory, if not ask to move it to home directory
-if [[ -d $CLONED_REPO = ~/* ]]; then
+if [ -d "$HOME/Dotfiles" ]; then
     echo -e "Dotfiles repo is located within users home directory.\nContinuing...\n"
 else
     echo -e "Dotfiles repo is NOT located with users home directory.\n"
@@ -96,7 +96,8 @@ fi
 
 # Ask if user is ready to continue to Zsh configuration
 while true; do
-    read -p "About to start Zsh configuration.\nOh-My-Zsh, nerd fonts, OMZ plugins and Powerlevel10K theme will be installed.\nContinue? [Y/n]:" yn
+    echo -e "About to start Zsh configuration.\nOh-My-Zsh, nerd fonts, OMZ plugins and Powerlevel10K theme will be installed.\n"
+    read -p "Continue? [Y/n]:" yn
     case $yn in
         [Yy]* )
             echo -e "\nContinuing install...\n";
