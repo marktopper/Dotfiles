@@ -205,11 +205,11 @@ else
 fi
 
 if [ -f $CLONED_REPO/conda_setup.zsh ]; then
-    cp $CLONED_REPO/conda_setup.zsh $Z_DOT_DIR/.oh-my-zsh/custom
+    cp -f $CLONED_REPO/conda_setup.zsh $Z_DOT_DIR/.oh-my-zsh/custom
 fi
 
 if [ -f $CLONED_REPO/zsh_aliases.zsh ]; then
-    cp $CLONED_REPO/zsh_aliases.zsh $Z_DOT_DIR/.oh-my-zsh/custom
+    cp -f $CLONED_REPO/zsh_aliases.zsh $Z_DOT_DIR/.oh-my-zsh/custom
 fi
 
 cd ~
