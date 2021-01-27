@@ -1,0 +1,8 @@
+# Ignore oh-my-zsh folder
+.oh-my-zsh
+
+# Ignore .zcompdump files
+.zcompdump*
+
+# Ignore zshrc.zwc file
+.zshrc.zwc
