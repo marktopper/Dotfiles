@@ -205,61 +205,70 @@ else
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $Z_DOT_DIR/.oh-my-zsh/custom/themes/powerlevel10k
 fi
 
-if [ -f $CLONED_REPO/conda_setup.zsh ]; then
-    cp -f $CLONED_REPO/conda_setup.zsh $Z_DOT_DIR/.oh-my-zsh/custom
-fi
-
-if [ -f $CLONED_REPO/zsh_aliases.zsh ]; then
-    cp -f $CLONED_REPO/zsh_aliases.zsh $Z_DOT_DIR/.oh-my-zsh/custom
-fi
-
 cd ~
 
-
-# backup files directory
+# CREATE BACKUP FILES DIRECTORY
 mkdir -p ~/Backup_Dotfiles
 
-# backup original files and copy files from repo going into ZSH directory
-# .vimrc needs to go in home directory
-if [ -f ~/.vimrc ]; then
-    echo -e ".vimrc already exists, making backup in ~/Backup_Dotfiles...\n"
-    mv ~/.vimrc ~/Backup_Dotfiles
-    cp -f ~/.vimrc ~
-else
-    cp -f ~/.vimrc ~
-fi
-
+# BACKUP USER'S FILES
 if [ -f ~/.p10k.zsh ]; then
     echo -e ".p10k.zsh already exists, making backup in ~/Backup_Dotfiles...\n"
     mv ~/.p10k.zsh ~/Backup_Dotfiles
-    cp -f $CLONED_REPO/.p10k.zsh $Z_DOT_DIR
-else
-    cp -f $CLONED_REPO/.p10k.zsh $Z_DOT_DIR
+fi
+
+if [ -f ~/.vimrc ]; then
+    echo -e ".vimrc already exists, making backup in ~/Backup_Dotfiles...\n"
+    mv ~/.vimrc ~/Backup_Dotfiles
 fi
 
 if [ -f ~/.zprofile ]; then
     echo -e ".zprofile already exists, making backup in ~/Backup_Dotfiles...\n"
     mv ~/.zprofile ~/Backup_Dotfiles
-    cp -f $CLONED_REPO/.zprofile $Z_DOT_DIR
-else
-    cp -f $CLONED_REPO/.zprofile $Z_DOT_DIR
-fi
-
-if [ -f ~/.zshrc ]; then
-    echo -e ".zshrc already exists, making backup in ~/Backup_Dotfiles...\n"
-    mv ~/.zshrc ~/Backup_Dotfiles
-    cp -f $CLONED_REPO/.zshrc $Z_DOT_DIR
-else
-    cp -f $CLONED_REPO/.zshrc $Z_DOT_DIR
 fi
 
 if [ -f ~/.zshenv ]; then
     echo -e ".zshenv already exists, making backup in ~/Backup_Dotfiles...\n"
     mv ~/.zshenv ~/Backup_Dotfiles
-    cp -f $CLONED_REPO/.zshenv $Z_DOT_DIR
-else
+fi
+
+if [ -f ~/.zshrc ]; then
+    echo -e ".zshrc already exists, making backup in ~/Backup_Dotfiles...\n"
+    mv ~/.zshrc ~/Backup_Dotfiles
+fi
+
+echo -e "Finished backing up any existing files to ~/Backup_Dotfiles."
+
+# COPY FILES FROM REPO
+# files going into home directory
+# .vimrc needs to go in home directory
+if [ -f $CLONED_REPO/other_files/.vimrc ]; then
+    cp -f $CLONED_REPO/other_files/.vimrc ~
+fi
+# next two .zsh files need to go in .oh-my-zsh/custom
+if [ -f $CLONED_REPO/other_files/conda_setup.zsh ]; then
+    cp -f $CLONED_REPO/other_files/conda_setup.zsh $Z_DOT_DIR/.oh-my-zsh/custom
+fi
+if [ -f $CLONED_REPO/other_files/zsh_aliases.zsh ]; then
+    cp -f $CLONED_REPO/other_files/zsh_aliases.zsh $Z_DOT_DIR/.oh-my-zsh/custom
+fi
+
+# files going into ZDOTDIR directory
+if [ -f $CLONED_REPO/.p10k.zsh ]; then
+    cp -f $CLONED_REPO/.p10k.zsh $Z_DOT_DIR
+fi
+
+if [ -f $CLONED_REPO/.zprofile ]; then
+    cp -f $CLONED_REPO/.zprofile $Z_DOT_DIR
+fi
+
+if [ -f $CLONED_REPO/.zshenv ]; then
     cp -f $CLONED_REPO/.zshenv $Z_DOT_DIR
 fi
+
+if [ -f $CLONED_REPO/.zshrc ]; then
+    cp -f $CLONED_REPO/.zshrc $Z_DOT_DIR
+fi
+
 
 echo -e "Finished transferring repo files into new ~/.config/zsh directory.\n"
 
