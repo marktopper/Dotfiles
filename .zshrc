@@ -64,12 +64,15 @@ if [[ ! -d "$ZSH/completions" || ! -f "$ZSH/completions/_gh" ]]; then
     echo "gh added completions: gh completion --shell zsh > $ZSH/completions/_gh"
 fi
 
-# if [ $ZSH_AUTOCOMPLETE = true ]; then
-#   [ -f /usr/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh ] && source /usr/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-# fi
-
 # sourced files
 source $ZSH/oh-my-zsh.sh
 
-# To customize prompt, run `p10k configure` or edit $DOTFILES/.p10k.zsh.
-[[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
+# To customize prompt, run `p10k configure`, edit $ZDOTDIR/.p10k.zsh,
+# Or set P10K_THEME below to a file name in P10K-themes directory
+P10K_THEME="docstheme"
+
+if [[ -v P10K_THEME ]]; then
+  [[ -f $ZDOTDIR/P10K-themes/p10k-theme-config.sh ]] && source $ZDOTDIR/P10K-themes/p10k-theme-config.sh
+else
+  [[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
+fi
