@@ -4,9 +4,9 @@ if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; th
   source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-
 # Snap completion doesn't work without this
 # fpath=($fpath:/usr/share/zsh/vendor-completions)
+
 # For easily navigating to zsh file directory
 ZDIR=~/.config/zsh
 
@@ -15,7 +15,6 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 printf '\n%.0s' {1..100}
 
 
-# -------------------------
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 # Uncomment the following line to use hyphen-insensitive completion.
 # Case-sensitive completion must be off. _ and - will be interchangeable.
@@ -44,21 +43,18 @@ DISABLE_AUTO_TITLE="true"
 COMPLETION_WAITING_DOTS="true"
 ENABLE_CORRECTION="false"
 CASE_SENSITIVE="false"
-#--------------------------
-
+ZSH_AUTOCOMPLETE="false"
 
 # Oh-my-zsh enabled plugins
 plugins=(
 alias-finder autojump colored-man-pages colorize
 common-aliases conda-zsh-completion cp
 docker docker-compose docker-machine dotenv extract fzf
-git git-auto-fetch git-escape-magic git-extras gitfast
-git-flow github git-hubflow gitignore git-lfs git-prompt
+git git-escape-magic gitfast github gitignore
 jump man node npm perms
 pip pipenv postgres pyenv pylint python
 sudo systemd thefuck themes vscode
 zsh-autosuggestions zsh-syntax-highlighting zsh_reload)
-
 
 # Homebrew completions
 if type brew &>/dev/null; then
@@ -74,8 +70,11 @@ if [[ ! -d "$ZSH/completions" || ! -f "$ZSH/completions/_gh" ]]; then
     echo "gh added completions: gh completion --shell zsh > $ZSH/completions/_gh"
 fi
 
+if [ $ZSH_AUTOCOMPLETE = true ]; then
+  [ -f /usr/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh ] && source /usr/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+fi
+
 # sourced files
-# source /usr/share/zsh-autocomplete/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 source $ZSH/oh-my-zsh.sh
 
 # To customize prompt, run `p10k configure` or edit $DOTFILES/.p10k.zsh.

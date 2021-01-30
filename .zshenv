@@ -1,7 +1,7 @@
 # .zshenv is always sourced, and so should contain exported 
 # variables that should be available to other programs.
 
-export PATH=~/bin:/usr/local/bin:usr/share:/snap/bin:$PATH
+export PATH=~/bin:/usr/sbin:/usr/local/bin:usr/share:/snap/bin:$PATH
 export ZSH=$ZDOTDIR/.oh-my-zsh
 
 # Linuxbrew stuff
