@@ -239,38 +239,34 @@ fi
 echo -e "Finished backing up any existing files to ~/Backup_Dotfiles."
 
 # COPY FILES FROM REPO
-# files going into home directory
+
+cd $CLONED_REPO/other_files
+
 # .vimrc needs to go in home directory
-if [ -f $CLONED_REPO/other_files/.vimrc ]; then
-    cp -f $CLONED_REPO/other_files/.vimrc ~
-fi
-# next two .zsh files need to go in .oh-my-zsh/custom
-if [ -f $CLONED_REPO/other_files/conda_setup.zsh ]; then
-    cp -f $CLONED_REPO/other_files/conda_setup.zsh $Z_DOT_DIR/.oh-my-zsh/custom
-fi
-if [ -f $CLONED_REPO/other_files/zsh_aliases.zsh ]; then
-    cp -f $CLONED_REPO/other_files/zsh_aliases.zsh $Z_DOT_DIR/.oh-my-zsh/custom
+if [ -f ./.vimrc ]; then
+    cp -f ./.vimrc ~
 fi
 
-# files going into ZDOTDIR directory
-if [ -f $CLONED_REPO/.p10k.zsh ]; then
-    cp -f $CLONED_REPO/.p10k.zsh $Z_DOT_DIR
-fi
+# the two .zsh files in other_files need to go in .oh-my-zsh/custom/
+for i in *; do
+    if [ -f $i ]; then
+        cp -f $i $Z_DOT_DIR/.oh-my-zsh/custom
+    fi
+done
 
-if [ -f $CLONED_REPO/.zprofile ]; then
-    cp -f $CLONED_REPO/.zprofile $Z_DOT_DIR
-fi
-
-if [ -f $CLONED_REPO/.zshenv ]; then
-    cp -f $CLONED_REPO/.zshenv $Z_DOT_DIR
-fi
-
-if [ -f $CLONED_REPO/.zshrc ]; then
-    cp -f $CLONED_REPO/.zshrc $Z_DOT_DIR
-fi
-
+# recursively copy all dotfiles in the cloned repo directory (except .gitignore)
+cd $CLONED_REPO
+for i in .* ; do
+    if [ -f $i ]; then
+        if [[ "$i" != ".gitignore" ]]; then
+            echo -e "Copying $i to $Z_DOT_DIR\n"
+            cp -f $i $Z_DOT_DIR
+        fi
+    fi
+done
 
 echo -e "Finished transferring repo files into new ~/.config/zsh directory.\n"
+cd ~
 
 # check if /etc/zsh/zshenv contains line exporting ZDOTDIR
 FILE="/etc/zsh/zshenv"

@@ -46,6 +46,10 @@ alias scache='sudo apt-cache'
 alias cleanup='sudo apt-get --purge autoremove -y && sudo apt-get autoclean -y'
 alias upgrade-parrot='sudo parrot-upgrade'
 
+# git aliases
+alias chbranch='git switch'
+alias commit-all-msg='git commit -a -m'
+
 # docker aliases
 alias d='docker'
 alias dps='docker ps'
