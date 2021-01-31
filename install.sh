@@ -255,11 +255,6 @@ if [ -f $HOME/.p10k.zsh ]; then
     mv $HOME/.p10k.zsh $HOME/Backup_Dotfiles
 fi
 
-if [ -f $HOME/.vimrc ]; then
-    printf ".vimrc already exists, making backup in $HOME/Backup_Dotfiles...\\n"
-    mv $HOME/.vimrc $HOME/Backup_Dotfiles
-fi
-
 if [ -f $HOME/.zprofile ]; then
     printf ".zprofile already exists, making backup in $HOME/Backup_Dotfiles...\\n"
     mv $HOME/.zprofile $HOME/Backup_Dotfiles
@@ -280,11 +275,6 @@ printf "Finished backing up any existing files to $HOME/Backup_Dotfiles."
 # COPY FILES FROM REPO
 
 cd $CLONED_REPO/other_files
-
-# .vimrc needs to go in home directory
-if [ -f ./.vimrc ]; then
-    cp -f ./.vimrc $HOME
-fi
 
 # the two .zsh files in other_files need to go in .oh-my-zsh/custom/
 for i in *; do
