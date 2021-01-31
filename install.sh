@@ -101,7 +101,7 @@ while true; do
     read -p "Continue? [Y/n]:" yn
     case $yn in
         [Yy]* )
-            printf "\nContinuing install...\n"; && cd $HOME
+            printf "\nContinuing install...\n";
             if [ -f $HOME/.zshrc ]; then # backup .zshrc
                 mv $HOME/.zshrc $HOME/.zshrc-backup-$(date +"%Y-%m-%d")
                 printf "Backed up current .zshrc to .zshrc-backup-$(date +"%Y-%m-%d")\n"
@@ -117,42 +117,47 @@ done
 
 # CHOOSE INSTALL DIRECTORY
 while true; do
-    printf "\\nDefault install directory is:\\n$INSTALL_DIRECTORY\\n"
-    printf "  - Press ENTER to confirm the location\\n"
-    printf "  - Press CTRL-C to abort the installation\\n"
-    printf "  - Or specify a different location below\\n"
-    printf "[%s] >>> " "$INSTALL_DIRECTORY"
-    read -r user_prefix
-    if [ "$user_prefix" != "" ]; then
-        case "$user_prefix" in
+    if [ ! -e "$INSTALL_DIRECTORY" ]; then
+        printf "\\nDefault install directory is:\\n$INSTALL_DIRECTORY\\n"
+        printf "  - Press ENTER to confirm the location\\n"
+        printf "  - Press CTRL-C to abort the installation\\n"
+        printf "  - Or specify a different location below\\n"
+        printf "[%s] >>> " "$INSTALL_DIRECTORY"
+        read -r user_prefix
+        if [ "$user_prefix" != "" ]; then
+            case "$user_prefix" in
+                *\ * )
+                    printf "ERROR: Cannot install into directories with spaces\\n" >&2
+                    continue;;
+                *)
+                    eval INSTALL_DIRECTORY="$user_prefix"
+                    ;;
+            esac
+        fi
+
+        case "$INSTALL_DIRECTORY" in
             *\ * )
                 printf "ERROR: Cannot install into directories with spaces\\n" >&2
                 continue;;
-            *)
-                eval INSTALL_DIRECTORY="$user_prefix"
-                ;;
         esac
-    fi
 
-    case "$INSTALL_DIRECTORY" in
-        *\ * )
-            printf "ERROR: Cannot install into directories with spaces\\n" >&2
-            continue;;
-    esac
-
-    if [ -e "$INSTALL_DIRECTORY" ]; then
-        printf "Directory already exists, no need to create it."
-        break
-    else
-        if mkdir -p "$INSTALL_DIRECTORY" 2>/dev/null; then
-            printf "Directory created.\\n" && ls -ld "$INSTALL_DIRECTORY"
+        if [ -e "$INSTALL_DIRECTORY" ]; then
+            printf "Directory already exists, no need to create it."
             break
         else
-            printf "Couldn't create directory: $INSTALL_DIRECTORY\\nMake sure you have the correct permissions to create the directory.\\n"
-            sleep 1
-            INSTALL_DIRECTORY=$HOME/.config/zsh
-            continue
+            if mkdir -p "$INSTALL_DIRECTORY" 2>/dev/null; then
+                printf "Directory created.\\n" && ls -ld "$INSTALL_DIRECTORY"
+                break
+            else
+                printf "Couldn't create directory: $INSTALL_DIRECTORY\\nMake sure you have the correct permissions to create the directory.\\n"
+                sleep 1
+                INSTALL_DIRECTORY=$HOME/.config/zsh
+                continue
+            fi
         fi
+    else
+        printf "$INSTALL_DIRECTORY already exists. No need to create it.\\nContinuing..."
+        break
     fi
 done
 

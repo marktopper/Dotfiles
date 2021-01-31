@@ -45,7 +45,7 @@ alias-finder autojump colored-man-pages colorize
 common-aliases conda-zsh-completion cp
 docker docker-compose docker-machine dotenv extract fzf
 git git-escape-magic gitfast github gitignore
-jump man node npm perms
+jump man node nordvpn npm perms
 pip pipenv postgres pyenv pylint python
 sudo systemd thefuck themes vscode
 zsh-autosuggestions zsh-syntax-highlighting zsh_reload)
