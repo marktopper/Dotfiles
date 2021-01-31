@@ -1,10 +1,5 @@
 #!/bin/sh
 
-# make sure install.sh is being run with bash
-if [ "$BASH_VERSION" = '' ]; then
-    echo "You are trying to run this script using sh. Please run this script again using bash.\\n" && exit
-fi
-
 # check if necessary packages are installed
 if command -v zsh &> /dev/null && command -v git &> /dev/null && command -v wget &> /dev/null; then
     printf "Zsh, Git and wget are already installed\\n"
