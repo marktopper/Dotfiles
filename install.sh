@@ -173,7 +173,36 @@ else
 fi
 
 # INSTALL FONTS
-printf "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono, Source Code Pro\\n"
+printf "Installing various Nerd Fonts...\\n"
+
+if [ -f $HOME/.fonts/MesloLGS\ NF\ Regular.ttf ]; then
+    printf "MesloLGS NF Regular already installed.\\n"
+else
+    printf "Installing Nerd Fonts version of MesloLGS NF Regular.\\n"
+    wget -q --show-progress -N https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf -P $HOME/.fonts/
+fi
+
+if [ -f $HOME/.fonts/MesloLGS\ NF\ Bold.ttf ]; then
+    printf "MesloLGS NF Bold already installed.\\n"
+else
+    printf "Installing Nerd Fonts version of MesloLGS NF Bold.\\n"
+    wget -q --show-progress -N https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf -P $HOME/.fonts/
+fi
+
+if [ -f $HOME/.fonts/MesloLGS\ NF\ Italic.ttf ]; then
+    printf "MesloLGS NF Italic already installed.\\n"
+else
+    printf "Installing Nerd Fonts version of MesloLGS NF Italic.\\n"
+    wget -q --show-progress -N https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf -P $HOME/.fonts/
+fi
+
+if [ -f $HOME/.fonts/MesloLGS\ NF\ Bold\ Italic.ttf ]; then
+    printf "MesloLGS NF Bold Italic already installed.\\n"
+else
+    printf "Installing Nerd Fonts version of MesloLGS NF Bold Italic.\\n"
+    wget -q --show-progress -N https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf -P $HOME/.fonts/
+fi
+
 if [ -f $HOME/.fonts/DejaVu\ Sans\ Mono\ Nerd\ Font\ Complete.ttf ]; then
     printf "DejaVu Sans Mono Nerd Font already installed.\\n"
 else
