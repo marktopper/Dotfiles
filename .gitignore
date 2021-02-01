@@ -6,3 +6,6 @@
 
 # Ignore zshrc.zwc file
 .zshrc.zwc
+
+# Ignore test-install.sh
+test-install.sh
