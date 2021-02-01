@@ -28,7 +28,7 @@ else
                 cd $HOME/Dotfiles && CLONED_REPO=$(pwd);
                 break;;
             [Nn]* )
-                printf "Please move the repo to your home directory before running this script again." && exit;
+                printf "Please move the repo to your home directory before running this script again.";
                 break;;
             * )
                 printf "Please provide a valid answer.";;
@@ -88,7 +88,10 @@ else
     done
 fi
 
-[[ -f $HOME/Miniconda3-latest-Linux-x86_64.sh && -d $HOME/miniconda3 ]] && printf "\\nRemoving Miniconda3 install file..." && rm -f $HOME/Miniconda3-latest-Linux*
+if [ -f $HOME/Miniconda3-latest-Linux-x86_64.sh ] && [ -d $HOME/miniconda3 ]; then
+    printf "\\nRemoving Miniconda3 install file..."
+    rm -f $HOME/Miniconda3-latest-Linux*
+fi
 
 # Ask if user is ready to continue to Zsh configuration
 while true; do
@@ -321,7 +324,7 @@ done
 cd $CLONED_REPO
 for i in .* ; do
     if [ -f $i ]; then
-        if [[ "$i" != ".gitignore" ]]; then
+        if [ "$i" != ".gitignore" ]; then
             printf "Copying $i to $INSTALL_DIRECTORY\\n"
             cp -f $i $INSTALL_DIRECTORY
         fi
@@ -342,7 +345,7 @@ else
     [[ -f /etc/zsh/zshenv ]] && echo 'export ZDOTDIR=$HOME/.config/zsh' | sudo tee -a /etc/zsh/zshenv > /dev/null
 fi
 
-# source $HOME/.zshrc
+# source .zshrc
 printf "\\nSudo access is needed to change default shell\\n"
 
 if chsh -s $(which zsh) && /bin/zsh -i -c upgrade_oh_my_zsh; then
