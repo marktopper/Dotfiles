@@ -61,55 +61,55 @@ fi
 
 # MINICONDA INSTALL
 if [ -d $HOME/miniconda3 ]; then
-    printf "Miniconda3 is already installed.\\n"
+    printf "\\nMiniconda3 is already installed.\\n"
 else
-    printf "Miniconda3 is not installed.\\n"
+    printf "\\nMiniconda3 is not installed.\\n"
     while true; do
-        read -p "Do you want to install Miniconda? [Y/n]:" yn
+        read -p "\\nDo you want to install Miniconda? [Y/n]:" yn
         case $yn in
             [Yy]* )
-                printf "Please be sure to install Miniconda3 to your users home directory.";
+                printf "Please be sure to install Miniconda3 to your users home directory.\\n";
                 if [ -f $HOME/Miniconda3-latest-Linux-x86_64.sh ]; then # to prevent downloading Miniconda3 setup file multiple times
-                    printf "Miniconda3 is already downloaded\\nStarting Miniconda3 setup..."
+                    printf "Miniconda3 is already downloaded\\nStarting Miniconda3 setup...\\n"
                     bash $HOME/Miniconda3-latest-Linux-x86_64.sh
                 else
                     printf "Downloading Miniconda3..."
                     wget -q --show-progress https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -P $HOME/
-                    printf "Download finished.\\nStarting Miniconda3 setup..."
+                    printf "Download finished.\\nStarting Miniconda3 setup...\\n"
                     bash $HOME/Miniconda3-latest-Linux-x86_64.sh
                 fi;
                 break;;
             [Nn]* )
-                printf "Answer: No.\\nContinuing...";
+                printf "Answer: No.\\nContinuing...\\n";
                 break;;
             * )
-                printf "Please provide a valid answer.";;
+                printf "\\nPlease provide a valid answer.\\n";;
         esac
     done
 fi
 
 if [ -f $HOME/Miniconda3-latest-Linux-x86_64.sh ] && [ -d $HOME/miniconda3 ]; then
-    printf "\\nRemoving Miniconda3 install file..."
+    printf "\\nRemoving Miniconda3 install file...\\n"
     rm -f $HOME/Miniconda3-latest-Linux*
 fi
 
 # Ask if user is ready to continue to Zsh configuration
 while true; do
-    printf "About to start Zsh configuration.\\nOh-My-Zsh, nerd fonts, OMZ plugins and Powerlevel10K theme will be installed.\\n"
+    printf "\\nAbout to start Zsh configuration.\\nOh-My-Zsh, nerd fonts, OMZ plugins and Powerlevel10K theme will be installed.\\n"
     read -p "Continue? [Y/n]:" yn
     case $yn in
         [Yy]* )
-            printf "\\nContinuing install...\\n";
+            printf "\\nContinuing install...\n";
             if [ -f $HOME/.zshrc ]; then # backup .zshrc
                 mv $HOME/.zshrc $HOME/.zshrc-backup-$(date +"%Y-%m-%d")
-                printf "Backed up current .zshrc to .zshrc-backup-$(date +"%Y-%m-%d")\\n"
+                printf "\\nBacked up current .zshrc to .zshrc-backup-$(date +"%Y-%m-%d")\\n"
             fi;
             break;;
         [Nn]* )
             printf "\\nStopping install...\\n" && exit;
             break;;
         * )
-            printf "Please provide a valid answer.";;
+            printf "\\nPlease provide a valid answer.\\n";;
     esac
 done
 
@@ -135,48 +135,48 @@ while true; do
 
         case "$INSTALL_DIRECTORY" in
             *\ * )
-                printf "ERROR: Cannot install into directories with spaces\\n" >&2
+                printf "\\nERROR: Cannot install into directories with spaces\\n" >&2
                 continue;;
         esac
 
         if [ -e "$INSTALL_DIRECTORY" ]; then
-            printf "Directory already exists, no need to create it."
+            printf "\\nDirectory already exists, no need to create it.\\n"
             break
         else
             if mkdir -p "$INSTALL_DIRECTORY" 2>/dev/null; then
-                printf "Directory created.\\n" && ls -ld "$INSTALL_DIRECTORY"
+                printf "\\nDirectory created.\\n" && ls -ld "$INSTALL_DIRECTORY\\n"
                 break
             else
-                printf "Couldn't create directory: $INSTALL_DIRECTORY\\nMake sure you have the correct permissions to create the directory.\\n"
+                printf "\\nCouldn't create directory: $INSTALL_DIRECTORY\\nMake sure you have the correct permissions to create the directory.\\n"
                 sleep 1
                 INSTALL_DIRECTORY=$HOME/.config/zsh
                 continue
             fi
         fi
     else
-        printf "$INSTALL_DIRECTORY already exists. No need to create it.\\nContinuing..."
+        printf "\\n$INSTALL_DIRECTORY already exists. No need to create it.\\nContinuing...\\n"
         break
     fi
 done
 
 # OMZ INSTALL
-printf "Installing oh-my-zsh\\n"
+printf "\\nInstalling oh-my-zsh\\n"
 if [ -d $HOME/.oh-my-zsh ]; then
-    printf "oh-my-zsh is already installed in home directory, moving to new $HOME/.config/zsh directory...\\n"
+    printf "\\noh-my-zsh is already installed in home directory, moving to new $HOME/.config/zsh directory...\\n"
     mv $HOME/.oh-my-zsh $INSTALL_DIRECTORY
     cd $INSTALL_DIRECTORY/.oh-my-zsh && git pull
 else
     if [ -d $INSTALL_DIRECTORY/.oh-my-zsh ]; then
-        printf "oh-my-zsh is already installed in $INSTALL_DIRECTORY.\\n"
+        printf "\\noh-my-zsh is already installed in $INSTALL_DIRECTORY.\\n"
         cd $INSTALL_DIRECTORY/.oh-my-zsh && git pull
     else
-        printf "oh-my-zsh is not installed in $INSTALL_DIRECTORY. Installing...\\n"
+        printf "\\noh-my-zsh is not installed in $INSTALL_DIRECTORY. Installing...\\n"
         git clone --depth=1 git://github.com/robbyrussell/oh-my-zsh.git $INSTALL_DIRECTORY/.oh-my-zsh
     fi
 fi
 
 # INSTALL FONTS
-printf "Installing various Nerd Fonts...\\n"
+printf "\\nInstalling various Nerd Fonts...\\n"
 
 if [ -f $HOME/.fonts/MesloLGS\ NF\ Regular.ttf ]; then
     printf "MesloLGS NF Regular already installed.\\n"
@@ -297,7 +297,7 @@ if [ -f $HOME/.zshrc ]; then
     mv $HOME/.zshrc $HOME/Backup_Dotfiles
 fi
 
-printf "Finished backing up any existing files to $HOME/Backup_Dotfiles."
+printf "\\nFinished backing up any existing files to $HOME/Backup_Dotfiles.\\n"
 
 # COPY FILES FROM REPO
 
@@ -307,11 +307,14 @@ cd $CLONED_REPO/other_files
 for i in *; do
     if [ -f $i ]; then
         cp -f $i $INSTALL_DIRECTORY/.oh-my-zsh/custom
+    elif [ -d $i ]; then # to copy nordvpn completions omz plugin (still hasnt been merged to OMZ stable branch yet but I found it on a test branch)
+        cp -f $i $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins
     fi
 done
 
 # directory for storing Powerlevel10K themes
 mkdir -p $INSTALL_DIRECTORY/P10K-themes
+
 # copy repo themes to new P10K-themes directory
 cd $CLONED_REPO/P10K-themes
 for i in * ; do
@@ -325,20 +328,20 @@ cd $CLONED_REPO
 for i in .* ; do
     if [ -f $i ]; then
         if [ "$i" != ".gitignore" ]; then
-            printf "Copying $i to $INSTALL_DIRECTORY\\n"
+            printf "\\nCopying $i to $INSTALL_DIRECTORY\\n"
             cp -f $i $INSTALL_DIRECTORY
         fi
     fi
 done
 
-printf "Finished setting up repo files in new $INSTALL_DIRECTORY directory.\\n"
+printf "\\nFinished setting up repo files in new $INSTALL_DIRECTORY directory.\\n"
 cd $HOME
 
 # check if /etc/zsh/zshenv contains line exporting ZDOTDIR
 FILE="/etc/zsh/zshenv"
 STRING="export ZDOTDIR=\"\$HOME/.config/zsh\""
 if grep -q "$STRING" "$FILE"; then
-    printf "ZDOTDIR is already set in /etc/zsh/zshenv"
+    printf "\\nZDOTDIR is already set in /etc/zsh/zshenv\\n"
 else
     # set $ZDOTDIR environment variable inside /etc/zsh/zshenv system-wide zshenv file
     printf "\\nSudo access is needed to set ZDOTDIR in /etc/zsh/zshenv\\n"
@@ -349,9 +352,9 @@ fi
 printf "\\nSudo access is needed to change default shell\\n"
 
 if chsh -s $(which zsh) && /bin/zsh -i -c upgrade_oh_my_zsh; then
-    printf "Installation Successful, exit terminal and enter a new session"
+    printf "\\nInstallation Successful, exit terminal and enter a new session\\n"
 else
-    printf "Something went wrong"
+    printf "\\nSomething went wrong\\n"
 fi
 
 exit

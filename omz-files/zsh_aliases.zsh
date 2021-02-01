@@ -47,8 +47,9 @@ alias cleanup='sudo apt-get --purge autoremove -y && sudo apt-get autoclean -y'
 alias upgrade-parrot='sudo parrot-upgrade'
 
 # git aliases
-alias chbranch='git switch'
-alias commit-all-msg='git commit -a -m'
+alias gitbranch='git switch'
+alias commit-all='git commit -a -m'
+alias status='git status'
 
 # docker aliases
 alias d='docker'
