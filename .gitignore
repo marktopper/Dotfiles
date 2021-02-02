@@ -9,3 +9,6 @@
 
 # Ignore test-install.sh
 test-install.sh
+
+# Ignore update.sh script
+update.sh
