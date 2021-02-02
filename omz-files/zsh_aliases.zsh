@@ -68,7 +68,7 @@ helpmessage() {
     echo '`showpkg` | `searchpkg` | `mark-auto` | `mark-manual` | `reconfigure` | `add-architecture`'
     echo '\nGit Alias Commands:\n`gswitch` | `gcommitall` | `gstatus`\n'
     echo 'Use `z` to change to $ZDOTDIR.\nYou can use `own` `owndir` to take ownership of files and directories, respectively.'
-    echo 'NOTE: `ownall` recursively gives you ownership of ALL files in a directory.'
+    echo 'NOTE: `owndir` recursively gives you ownership of ALL files in a directory.'
   fi
 }
 
