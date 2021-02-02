@@ -2,9 +2,6 @@
 # password prompts, etc. must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-  TRANSIENT_ON="true"
-else
-  TRANSIENT_ON="false"
 fi
 
 # For easily navigating to zsh file directory
@@ -82,4 +79,4 @@ fi
 
 # Don't `cls` unless transient prompt is on and current shell is zsh
 # `cls` just clears the screen and puts the prompt at the bottom.
-[[ -n "$ZSH_VERSION" && "$TRANSIENT_ON" = "true" ]] && cls
+[[ -n "$ZSH_VERSION" ]] && cls
