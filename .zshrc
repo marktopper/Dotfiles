@@ -8,8 +8,6 @@ fi
 ZDIR=~/.config/zsh
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
-# Because powerlevel10k doesn't magically start at the bottom :(
-printf '\n%.0s' {1..100}
 
 # Uncomment the following line to use hyphen-insensitive completion.
 # Case-sensitive completion must be off. _ and - will be interchangeable.
@@ -79,4 +77,6 @@ else
   [[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
 fi
 
+# terminal starts with prompt at bottom then runs helpmessage
+prompt-at-bottom
 helpmessage
