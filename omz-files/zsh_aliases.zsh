@@ -46,6 +46,7 @@ alias gswitch='git switch'
 alias gcommitall='git commit -a'
 alias gstatus='git status'
 
+
 # docker aliases
 alias d='docker'
 alias dps='docker ps'
@@ -85,6 +86,25 @@ p10k-prompt-info() {
   p10k display -a '*'
   printf '%-32s = %q\n' ${(@kv)reply} | sort
 }
+
+commit-push() {
+  if [[ $VCS_STATUS_HAS_UNSTAGED != 0 || $VCS_STATUS_HAS_UNTRACKED != 0 ]]; then
+    git status
+    printf "\nEnter a commit message: "
+    read -r commit_msg
+    if [ "$commit_msg" != "" ]; then
+      git commit -a -m "$commit_msg"
+      git push
+      printf "\nChanges committed and pushed to the upstream branch successfully.\n"
+    else
+      printf "\nCommit message cannot be nothing. Nothing committed.\n"
+    fi
+  else
+    printf "Nothing to commit!\n"
+  fi
+}
+
+
 
 # cheat sheets (github.com/chubin/cheat.sh), find out how to use commands
 # example 'cheat tar'
