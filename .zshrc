@@ -77,6 +77,6 @@ else
   [[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
 fi
 
-# terminal starts with prompt at bottom then runs helpmessage
-prompt-at-bottom
-helpmessage
+# Don't `cls` unless transient prompt is on and current shell is zsh
+# `cls` just clears the screen and puts the prompt at the bottom.
+[[ -n "$ZSH_VERSION" ]] && cls
