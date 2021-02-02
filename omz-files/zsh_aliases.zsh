@@ -14,6 +14,7 @@ alias z='cd $ZDOTDIR'
 alias zdir="$ZDOTDIR/"
 alias update-db="sudo updatedb --prunepaths='/timeshift/snapshots /media /run/timeshift /run/user'"
 alias e='echo'
+alias cls='clear && prompt-at-bottom'
 alias s='sudo'
 alias cpd='cp -r'
 alias cpd-ffs='sudo cp -r'
@@ -70,6 +71,12 @@ helpmessage() {
     echo 'Use `z` to change to $ZDOTDIR.\nYou can use `own` `owndir` to take ownership of files and directories, respectively.'
     echo 'NOTE: `owndir` recursively gives you ownership of ALL files in a directory.'
   fi
+}
+
+# This is because I'm using transient prompt and my prompt
+# doesn't magically start at the bottom of the terminal
+prompt-at-bottom() {
+  printf '\n%.0s' {1..100}
 }
 
 # this will show all Powerlevel10K prompt elements
