@@ -308,7 +308,7 @@ for i in *; do
     if [ -f $i ]; then
         cp -f $i $INSTALL_DIRECTORY/.oh-my-zsh/custom
     elif [ -d $i ]; then # to copy nordvpn completions omz plugin (still hasnt been merged to OMZ stable branch yet but I found it on a test branch)
-        cp -f $i $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins
+        cp -rf $i $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins
     fi
 done
 
