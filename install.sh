@@ -28,7 +28,7 @@ else
                 cd $HOME/Dotfiles && CLONED_REPO=$(pwd);
                 break;;
             [Nn]* )
-                printf "Please move the repo to your home directory before running this script again.";
+                printf "If an error occurs, you may want to try again after moving the repo to your home directory.";
                 break;;
             * )
                 printf "Please provide a valid answer.";;
@@ -144,7 +144,7 @@ while true; do
             break
         else
             if mkdir -p "$INSTALL_DIRECTORY" 2>/dev/null; then
-                printf "\\nDirectory created.\\n" && ls -ld "$INSTALL_DIRECTORY\\n"
+                printf "\\nDirectory created.\\n" && ls -ld "$INSTALL_DIRECTORY"
                 break
             else
                 printf "\\nCouldn't create directory: $INSTALL_DIRECTORY\\nMake sure you have the correct permissions to create the directory.\\n"
@@ -351,7 +351,7 @@ fi
 # source .zshrc
 printf "\\nSudo access is needed to change default shell\\n"
 
-if chsh -s $(which zsh) && /bin/zsh -i -c upgrade_oh_my_zsh; then
+if chsh -s $(which zsh) && /bin/zsh -i -c 'omz update'; then
     printf "\\nInstallation Successful, exit terminal and enter a new session\\n"
 else
     printf "\\nSomething went wrong\\n"
