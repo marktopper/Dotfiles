@@ -301,9 +301,9 @@ printf "\\nFinished backing up any existing files to $HOME/Backup_Dotfiles.\\n"
 
 # COPY FILES FROM REPO
 
-cd $CLONED_REPO/other_files
+cd $CLONED_REPO/omz-files
 
-# the two .zsh files in other_files need to go in .oh-my-zsh/custom/
+# the two .zsh files in omz-files need to go in .oh-my-zsh/custom/
 for i in *; do
     if [ -f $i ]; then
         cp -f $i $INSTALL_DIRECTORY/.oh-my-zsh/custom
