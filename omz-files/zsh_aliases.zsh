@@ -1,6 +1,77 @@
 # Zsh aliases and functions
 
-# Custom Functions
+
+# ALIASES
+# this alias shouldn't be set unless on parrot distro
+if var=$(cat /etc/os-release | grep -wo 'parrot'); then
+    alias sys-update='sudo parrot-upgrade'
+else
+    unalias sys-update
+fi
+
+# aliases for cp, symlinks, etc.
+alias z='cd $ZDOTDIR'
+alias zdir="$ZDOTDIR/"
+alias update-db="sudo updatedb --prunepaths='/timeshift/snapshots /media /run/timeshift /run/user'"
+alias e='echo'
+alias s='sudo'
+alias cpd='cp -r'
+alias cpd-ffs='sudo cp -r'
+alias symlinkmk='ln -srv'
+alias symlinkmk-ffs='sudo ln -srv'
+alias own='sudo chown -v $USER:$USER'
+alias owndir='sudo chown -R $USER:$USER'
+alias fk='fuck'
+
+# apt/apt-get/dpkg aliases
+alias fix='sudo apt-get install -f'
+alias au='sudo apt-get update'
+alias ai='sudo apt-get install'
+alias ar='sudo apt-get remove'
+alias ap='sudo apt purge'
+alias sapt-get='sudo apt-get'
+alias sapt='sudo apt'
+alias sapt-cache='sudo apt-cache'
+alias showpkg='sudo apt show'
+alias searchpkg='sudo apt search'
+alias mark-auto='sudo apt-mark auto'
+alias mark-manual='sudo apt-mark manual'
+alias cleanup='sudo apt-get --purge autoremove -y && sudo apt-get autoclean -y'
+alias reconfigure='sudo dpkg-reconfigure'
+alias add-architecture='sudo dpkg --add-architecture'
+
+# git aliases
+alias gswitch='git switch'
+alias gcommitall='git commit -a'
+alias gstatus='git status'
+
+# docker aliases
+alias d='docker'
+alias dps='docker ps'
+
+# ip info aliases and other system aliases
+alias extip='curl https://ipecho.net/plain; echo'
+alias intip='hostname -I; echo'
+alias shutdown='sudo shutdown now'
+alias help='run-help'
+alias sysctl='sudo systemctl'
+alias sysd='sudo systemd'
+
+# FUNCTIONS
+
+# displays alias information when zsh is started if $aliasmsg is true in .zshrc
+helpmessage() {
+  if $aliasmsg; then
+    echo 'Remember to use cheat to lookup cheatsheets if needing help\n'
+    echo 'Aliases to remember are:\n`sys-update` to run `parrot-upgrade` | `cpd` (`cp -r`) | `cpd-ffs` (`sudo cpd`) | `symlinkmk` (`ln -srv`)'
+    echo '\nPackage Handling Alias Commands:\n`au` | `ai` | `ar` | `ap` (update install remove purge)'
+    echo '`showpkg` | `searchpkg` | `mark-auto` | `mark-manual` | `reconfigure` | `add-architecture`'
+    echo '\nGit Alias Commands:\n`gswitch` | `gcommitall` | `gstatus`\n'
+    echo 'Use `z` to change to $ZDOTDIR.\nYou can use `own` `owndir` to take ownership of files and directories, respectively.'
+    echo 'NOTE: `owndir` recursively gives you ownership of ALL files in a directory.'
+  fi
+}
+
 # this will show all Powerlevel10K prompt elements
 p10k-prompt-info() {
   typeset -A reply
@@ -23,44 +94,3 @@ cheat() {
 speedtest() {
     curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python3 -
 }
-
-# Aliases
-#-------------------
-alias omz-dir="$ZDOTDIR/.oh-my-zsh"
-alias zsh-dir="$ZDOTDIR/"
-alias update-db="sudo updatedb --prunepaths='/timeshift/snapshots /media /run/timeshift /run/user'"
-alias e='echo'
-alias s='sudo'
-alias cpd='cp -r'
-alias fk='fuck'
-alias mksymlink='ln -srv'
-alias mksymlinkffs='sudo ln -srv'
-alias search='find | grep -r'
-
-# apt/apt-get aliases and upgrade alias
-alias fix='sudo apt-get install -f'
-alias update-apt='sudo apt update'
-alias sapt-get='sudo apt-get'
-alias sapt='sudo apt'
-alias scache='sudo apt-cache'
-alias cleanup='sudo apt-get --purge autoremove -y && sudo apt-get autoclean -y'
-alias upgrade-parrot='sudo parrot-upgrade'
-
-# git aliases
-alias gitbranch='git switch'
-alias commit-all='git commit -a -m'
-alias status='git status'
-
-# docker aliases
-alias d='docker'
-alias dps='docker ps'
-
-# ip info aliases and other system aliases
-alias extip='curl https://ipecho.net/plain; echo'
-alias intip='hostname -I; echo'
-alias pc-shutdown='sudo shutdown now'
-alias pc-restart='sudo reboot'
-alias help='run-help'
-alias sysctl='sudo systemctl'
-alias sysd='sudo systemd'
-#-------------------

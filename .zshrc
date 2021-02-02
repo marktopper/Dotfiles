@@ -38,6 +38,8 @@ DISABLE_AUTO_TITLE="true"
 COMPLETION_WAITING_DOTS="true"
 ENABLE_CORRECTION="false"
 CASE_SENSITIVE="false"
+# change this to false to turn off the help text upon prompt startup
+HELPMSG='true'
 
 # Oh-my-zsh enabled plugins
 plugins=(
@@ -76,3 +78,5 @@ if [[ -v P10K_THEME ]]; then
 else
   [[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
 fi
+
+helpmessage
