@@ -12,3 +12,7 @@ test-install.sh
 
 # Ignore update.sh script
 update.sh
+# Ignore .p10k.zsh
+.p10k.zsh
+# Ignore ignored directory
+ignored
