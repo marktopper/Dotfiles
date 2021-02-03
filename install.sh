@@ -1,13 +1,13 @@
 #!/bin/sh
 
 # check if necessary packages are installed
-if command -v zsh &> /dev/null && command -v git &> /dev/null && command -v wget &> /dev/null; then
-    printf "Zsh, Git and wget are already installed\\n"
+if command -v zsh &> /dev/null && command -v git &> /dev/null && command -v wget && command -v neofetch &> /dev/null; then
+    printf "Zsh, Git, wget and neofetch are already installed\\n"
 else
     if sudo apt install -y zsh git wget || sudo pacman -S zsh git wget || sudo dnf install -y zsh git wget || sudo yum install -y zsh git wget || sudo brew install git zsh wget || pkg install git zsh wget ; then
-        printf "Zsh, Git and wget Installed\\n"
+        printf "Zsh, Git, wget and neofetch Installed\\n"
     else
-        printf "Please install the following packages first, then try again: zsh git wget\\n" && exit
+        printf "Please install the following packages first, then try again: zsh git wget neofetch\\n" && exit
     fi
 fi
 

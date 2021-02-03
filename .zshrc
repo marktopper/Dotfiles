@@ -77,8 +77,6 @@ else
   [[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
 fi
 
-# Don't `cls` unless transient prompt is on and current shell is zsh
-# `cls` just clears the screen and puts the prompt at the bottom.
-[[ -n "$ZSH_VERSION" && ! "$POWERLEVEL9K_TRANSIENT_PROMPT" = "off" ]] && prompt-at-bottom
-
-helpmessage
+# Don't `prompt-info` unless transient prompt is on and current shell is zsh.
+# This displays system information, a graphic, and information on aliases (if HELP_MSG) is set to true
+[[ -n "$ZSH_VERSION" && ! "$POWERLEVEL9K_TRANSIENT_PROMPT" = "off" ]] && prompt-cfg

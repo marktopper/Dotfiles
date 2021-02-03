@@ -16,3 +16,5 @@ update.sh
 .p10k.zsh
 # Ignore ignored directory
 ignored
+# ignore banner.txt for now
+banner.txt
