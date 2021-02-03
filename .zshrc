@@ -37,7 +37,7 @@ COMPLETION_WAITING_DOTS="true"
 ENABLE_CORRECTION="false"
 CASE_SENSITIVE="false"
 # change this to false to turn off the help text upon prompt startup
-HELPMSG='true'
+HELP_MSG='true'
 
 # Oh-my-zsh enabled plugins
 plugins=(
@@ -71,12 +71,12 @@ source $ZSH/oh-my-zsh.sh
 # Or set P10K_THEME below to a file name in P10K-themes directory
 P10K_THEME="docstheme"
 
-if [[ -v P10K_THEME ]]; then
+if [ ! "$P10K_THEME" = "" ]; then
   [[ -f $ZDOTDIR/P10K-themes/p10k-theme-config.sh ]] && source $ZDOTDIR/P10K-themes/p10k-theme-config.sh
 else
   [[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
 fi
 
-# Don't `cls` unless transient prompt is on and current shell is zsh
-# `cls` just clears the screen and puts the prompt at the bottom.
-[[ -n "$ZSH_VERSION" ]] && cls
+# Don't `prompt-info` unless transient prompt is on and current shell is zsh.
+# This displays system information, a graphic, and information on aliases (if HELP_MSG) is set to true
+[[ -n "$ZSH_VERSION" && ! "$POWERLEVEL9K_TRANSIENT_PROMPT" = "off" ]] && prompt-cfg
