@@ -277,6 +277,36 @@ cd $HOME
 mkdir -p $HOME/Backup_Dotfiles
 
 # BACKUP USER'S FILES
+while true; do
+    printf "\\nAre there dotfiles in your home directory that you want to backup?\\n"
+    read -p "Backup existing dotfiles in home directory? [Y/n]:" yn
+    case $yn in
+        [Yy]* )
+            printf "\\nStarting backup...\n";
+            if [ -f $HOME/.p10k.zsh ]; then
+                printf "Found .p10k.zsh, moving file to $HOME/Backup_Dotfiles...\\n"
+                mv $HOME/.p10k.zsh $HOME/Backup_Dotfiles
+            fi;
+            if [ -f $HOME/.zprofile ]; then
+                printf "Found .zprofile, moving file to $HOME/Backup_Dotfiles...\\n"
+                mv $HOME/.zprofile $HOME/Backup_Dotfiles
+            fi;
+            if [ -f $HOME/.zshenv ]; then
+                printf "Found .zshenv, moving file to $HOME/Backup_Dotfiles...\\n"
+                mv $HOME/.zshenv $HOME/Backup_Dotfiles
+            fi;
+            if [ -f $HOME/.zshrc ]; then
+                printf "Found .zshrc, moving file to $HOME/Backup_Dotfiles...\\n"
+                mv $HOME/.zshrc $HOME/Backup_Dotfiles
+            fi;
+            break;;
+        [Nn]* )
+            printf "\\nWill continue without trying to backup existing files. Continuing...\\n" && exit;
+            break;;
+        * )
+            printf "\\nPlease provide a valid answer.\\n";;
+    esac
+done
 if [ -f $HOME/.p10k.zsh ]; then
     printf ".p10k.zsh already exists, making backup in $HOME/Backup_Dotfiles...\\n"
     mv $HOME/.p10k.zsh $HOME/Backup_Dotfiles
@@ -306,7 +336,12 @@ cd $CLONED_REPO/omz-files
 # the two .zsh files in omz-files need to go in .oh-my-zsh/custom/
 for i in *; do
     if [ -f $i ]; then
-        cp -f $i $INSTALL_DIRECTORY/.oh-my-zsh/custom
+        if [ "$i" = "_better-help" ]; then
+            [[ ! -d $INSTALL_DIRECTORY/.oh-my-zsh/completions ]] && mkdir -p $INSTALL_DIRECTORY/.oh-my-zsh/completions # in case completioons dir isn't there
+            cp $i $INSTALL_DIRECTORY/.oh-my-zsh/completions
+        else
+            cp -f $i $INSTALL_DIRECTORY/.oh-my-zsh/custom
+        fi
     elif [ -d $i ]; then # to copy nordvpn completions omz plugin (still hasnt been merged to OMZ stable branch yet but I found it on a test branch)
         cp -rf $i $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins
     fi
