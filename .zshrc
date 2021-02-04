@@ -1,7 +1,7 @@
 # P10K instant prompt. Keep close to top of .zshrc. Code that may require console input 
 # password prompts, etc. must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+	source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 # For easily navigating to zsh file directory
@@ -36,8 +36,8 @@ DISABLE_AUTO_TITLE="true"
 COMPLETION_WAITING_DOTS="true"
 ENABLE_CORRECTION="false"
 CASE_SENSITIVE="false"
-# change this to false to turn off the help text upon prompt startup
-HELP_MSG='true'
+# change this to false to turn off the help message and neofetch on terminal startup
+STARTUP_CONTENT='true'
 
 # Oh-my-zsh enabled plugins
 plugins=(
@@ -52,16 +52,16 @@ zsh-autosuggestions zsh-syntax-highlighting zsh_reload)
 
 # Homebrew completions
 if type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
-  autoload -Uz compinit
-  compinit
+	FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+	autoload -Uz compinit
+	compinit
 fi
 
 # GitHub CLI completions
 if [[ ! -d "$ZSH/completions" || ! -f "$ZSH/completions/_gh" ]]; then
-    mkdir -pv $ZSH/completions
-    gh completion --shell zsh > $ZSH/completions/_gh
-    echo "gh added completions: gh completion --shell zsh > $ZSH/completions/_gh"
+		mkdir -pv $ZSH/completions
+		gh completion --shell zsh > $ZSH/completions/_gh
+		echo "gh added completions: gh completion --shell zsh > $ZSH/completions/_gh"
 fi
 
 # sourced files
@@ -71,12 +71,13 @@ source $ZSH/oh-my-zsh.sh
 # Or set P10K_THEME below to a file name in P10K-themes directory
 P10K_THEME="docstheme"
 
+# This handles the p10k themes, don't touch it
 if [ ! "$P10K_THEME" = "" ]; then
-  [[ -f $ZDOTDIR/P10K-themes/p10k-theme-config.sh ]] && source $ZDOTDIR/P10K-themes/p10k-theme-config.sh
+	[[ -f $ZDOTDIR/P10K-themes/p10k-theme-config.sh ]] && source $ZDOTDIR/P10K-themes/p10k-theme-config.sh
 else
-  [[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
+	[[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
 fi
 
-# Don't `prompt-info` unless transient prompt is on and current shell is zsh.
-# This displays system information, a graphic, and information on aliases (if HELP_MSG) is set to true
-[[ -n "$ZSH_VERSION" && ! "$POWERLEVEL9K_TRANSIENT_PROMPT" = "off" ]] && prompt-cfg
+# Don't `terminal-startup` unless transient prompt isn't off and current shell is zsh.
+# This displays system information, a graphic, and information on aliases (if STARTUP_CONTENT) is set to true
+[[ -n "$ZSH_VERSION" && ! "$POWERLEVEL9K_TRANSIENT_PROMPT" = "off" ]] && terminal-startup
