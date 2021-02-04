@@ -301,7 +301,7 @@ while true; do
             fi;
             break;;
         [Nn]* )
-            printf "\\nWill continue without trying to backup existing files. Continuing...\\n" && exit;
+            printf "\\nWill continue without trying to backup existing files. Continuing...\\n";
             break;;
         * )
             printf "\\nPlease provide a valid answer.\\n";;
