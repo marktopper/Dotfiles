@@ -1,0 +1,7 @@
+#compdef better-help
+local d expl
+local HELPDIR=/usr/share/zsh/5.8/help
+[[ -d  ]] && {
+	d=(/*(:t))
+	((28)) && d+=('.' ':') && _wanted commands expl 'command' compadd -a d
+} || _man
