@@ -1,4 +1,12 @@
-# P10K instant prompt. Keep close to top of .zshrc. Code that may require console input 
+# $ZDOTDIR/.zshrc
+
+# If not running as interactive prompt, do nothing.
+case $- in
+	*i*) ;;
+	*) return;;
+esac
+
+# P10K instant prompt. Keep close to top of .zshrc. Code that may require console input
 # password prompts, etc. must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
 	source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
@@ -33,7 +41,7 @@ HIST_STAMPS="mm/dd/yyyy"
 # disable auto-setting terminal title.
 DISABLE_AUTO_TITLE="true"
 # display red dots whilst waiting for completion.
-COMPLETION_WAITING_DOTS="true"
+COMPLETION_WAITING_DOTS="false"
 ENABLE_CORRECTION="false"
 CASE_SENSITIVE="false"
 # change this to false to turn off the help message and neofetch on terminal startup
@@ -43,11 +51,11 @@ STARTUP_CONTENT='true'
 plugins=(
 alias-finder autojump colored-man-pages colorize
 common-aliases conda-zsh-completion cp
-docker docker-compose docker-machine dotenv extract fzf
-git git-escape-magic gitfast github gitignore
-jump man node nordvpn npm perms
-pip pipenv postgres pyenv pylint python
-sudo systemd thefuck themes vscode
+docker extract fzf
+git git-escape-magic gitignore
+jump man nordvpn perms
+pip postgres python
+sudo thefuck vscode
 zsh-autosuggestions zsh-syntax-highlighting zsh_reload)
 
 # Homebrew completions
@@ -59,9 +67,9 @@ fi
 
 # GitHub CLI completions
 if [[ ! -d "$ZSH/completions" || ! -f "$ZSH/completions/_gh" ]]; then
-		mkdir -pv $ZSH/completions
-		gh completion --shell zsh > $ZSH/completions/_gh
-		echo "gh added completions: gh completion --shell zsh > $ZSH/completions/_gh"
+	mkdir -pv $ZSH/completions
+	gh completion --shell zsh > $ZSH/completions/_gh
+	echo "gh added completions: gh completion --shell zsh > $ZSH/completions/_gh"
 fi
 
 # sourced files

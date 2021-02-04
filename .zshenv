@@ -16,5 +16,5 @@ export PKG_CONFIG_PATH="/home/linuxbrew/.linuxbrew/opt/isl@0.18/lib/pkgconfig"
  if [[ -n $SSH_CONNECTION ]]; then
    export EDITOR='vim'
  else
-   export EDITOR='nvim'
+   export EDITOR='gvim'
  fi
