@@ -16,9 +16,5 @@ export PKG_CONFIG_PATH="/home/linuxbrew/.linuxbrew/opt/isl@0.18/lib/pkgconfig"
  if [[ -n $SSH_CONNECTION ]]; then
    export EDITOR='vim'
  else
-<<<<<<< HEAD
-   export EDITOR='gvim'
-=======
    export EDITOR='gedit'
->>>>>>> 882637e (install script now installs oh-my-zsh with the --unattended flag using oh-my-zsh's install script. Now the final check at the end of the install script will successfully run the 'omz update' command and inform of a successful install.)
  fi
