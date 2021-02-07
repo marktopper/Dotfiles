@@ -12,9 +12,6 @@ if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; th
 	source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# For easily navigating to zsh file directory
-ZDIR=~/.config/zsh
-
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Uncomment the following line to use hyphen-insensitive completion.
@@ -53,7 +50,11 @@ alias-finder autojump colored-man-pages colorize
 common-aliases conda-zsh-completion cp
 docker extract fzf
 git git-escape-magic gitignore
+<<<<<<< HEAD
 jump man nordvpn perms
+=======
+jump man nordvpn
+>>>>>>> 882637e (install script now installs oh-my-zsh with the --unattended flag using oh-my-zsh's install script. Now the final check at the end of the install script will successfully run the 'omz update' command and inform of a successful install.)
 pip postgres python
 sudo thefuck vscode
 zsh-autosuggestions zsh-syntax-highlighting zsh_reload)

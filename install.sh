@@ -170,8 +170,9 @@ else
         printf "\\noh-my-zsh is already installed in $INSTALL_DIRECTORY.\\n"
         cd $INSTALL_DIRECTORY/.oh-my-zsh && git pull
     else
-        printf "\\noh-my-zsh is not installed in $INSTALL_DIRECTORY. Installing...\\n"
-        git clone --depth=1 git://github.com/robbyrussell/oh-my-zsh.git $INSTALL_DIRECTORY/.oh-my-zsh
+        printf "\\noh-my-zsh is not installed. Installing...\\n"
+        ZSH=$INSTALL_DIRECTORY/.oh-my-zsh
+        sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)" "" --unattended
     fi
 fi
 
@@ -307,6 +308,7 @@ while true; do
             printf "\\nPlease provide a valid answer.\\n";;
     esac
 done
+
 if [ -f $HOME/.p10k.zsh ]; then
     printf ".p10k.zsh already exists, making backup in $HOME/Backup_Dotfiles...\\n"
     mv $HOME/.p10k.zsh $HOME/Backup_Dotfiles
@@ -348,7 +350,9 @@ for i in *; do
 done
 
 # directory for storing Powerlevel10K themes
-mkdir -p $INSTALL_DIRECTORY/P10K-themes
+if [ ! -d $INSTALL_DIRECTORY/P10K-themes ]; then
+    mkdir -p $INSTALL_DIRECTORY/P10K-themes
+fi
 
 # copy repo themes to new P10K-themes directory
 cd $CLONED_REPO/P10K-themes
@@ -379,9 +383,12 @@ if grep -q "$STRING" "$FILE"; then
     printf "\\nZDOTDIR is already set in /etc/zsh/zshenv\\n"
 else
     # set $ZDOTDIR environment variable inside /etc/zsh/zshenv system-wide zshenv file
-    printf "\\nSudo access is needed to set ZDOTDIR in /etc/zsh/zshenv\\n"
-    [[ -f /etc/zsh/zshenv ]] && echo 'export ZDOTDIR=$HOME/.config/zsh' | sudo tee -a /etc/zsh/zshenv > /dev/null
+    printf "\\nAppended:\\n"
+    [[ -f /etc/zsh/zshenv ]] && echo 'export ZDOTDIR=$HOME/.config/zsh' | sudo tee -a /etc/zsh/zshenv
+    printf "To  file /etc/zsh/zshenv\\n"
 fi
+
+export ZDOTDIR='$HOME/.config/zsh'
 
 # source .zshrc
 printf "\\nSudo access is needed to change default shell\\n"
