@@ -1,8 +1,24 @@
-# .zshenv is always sourced, and so should contain exported
-# variables that should be available to other programs.
+# .zshenv is sourced on ALL invocations of the shell, unless the -f option is
+# set.  It should NOT normally contain commands to set the command search path,
+# or other common environment variables unless you really know what you're
+# doing.  E.g. running "PATH=/custom/path gdb program" sources this file (when
+# gdb runs the program via $SHELL), so you want to be sure not to override a
+# custom environment in such cases.  Note also that .zshenv should not contain
+# commands that produce output or assume the shell is attached to a tty.
 
-export PATH=~/bin:/sbin:/usr/local/bin:usr/share:/snap/bin:$PATH
-export ZSH=$ZDOTDIR/.oh-my-zsh
+# If ZDOTDIR isn't already set in /etc/zsh/zshenv
+if [ ! -v ZDOTDIR ] && [ -d ~/.config/zsh ]; then
+	export ZDOTDIR=~/.config/zsh
+fi
+
+# ensure ZSH isn't set already and ensure .oh-my-zsh directory is present
+if [[ ! -v ZSH && -d $ZDOTDIR/.oh-my-zsh ]]; then # if oh-my-zsh is in $ZDOTDIR directory
+	export ZSH=$ZDOTDIR/.oh-my-zsh
+elif [[ ! -v ZSH && -d $HOME/.oh-my-zsh ]]; then # if oh-my-zsh is in $HOME directory
+    export ZSH=$HOME/.oh-my-zsh
+fi
+
+# export PATH=~/bin:/sbin:/usr/local/bin:usr/share:$PATH
 
 # Linuxbrew stuff
 eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
