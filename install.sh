@@ -185,12 +185,12 @@ if [ -d $HOME/.oh-my-zsh ]; then
     mv $HOME/.oh-my-zsh $INSTALL_DIRECTORY
     cd $INSTALL_DIRECTORY/.oh-my-zsh && git pull
 else
+    ZSH=$INSTALL_DIRECTORY/.oh-my-zsh
     if [ -d $INSTALL_DIRECTORY/.oh-my-zsh ]; then
         printf "\noh-my-zsh is already installed in $INSTALL_DIRECTORY.\n"
         cd $INSTALL_DIRECTORY/.oh-my-zsh && git pull
     else
         printf "\noh-my-zsh is not installed. Installing...\n"
-        ZSH=$INSTALL_DIRECTORY/.oh-my-zsh
         sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)" "" --unattended
     fi
 fi
