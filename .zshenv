@@ -24,7 +24,3 @@ if command -v brew >/dev/null 2>&1; then
 	# For pkg-config to find isl@0.18 you may need to set:
 	export PKG_CONFIG_PATH="/home/linuxbrew/.linuxbrew/opt/isl@0.18/lib/pkgconfig"
 fi
-
-if [ ! -n "$ZDOTDIR" ] && [ -d /home/doc/.config/zsh ]; then
-    export ZDOTDIR=/home/doc/.config/zsh
-fi
