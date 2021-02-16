@@ -1,15 +1,16 @@
 # $ZDOTDIR/.zshrc
 
-# If not running as interactive prompt, do nothing.
-case $- in
-	*i*) ;;
-	*) return;;
-esac
-
 # P10K instant prompt. Keep close to top of .zshrc. Code that may require console input
 # password prompts, etc. must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
 	source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# if there's a $ZDOTDIR directory, oh-my-zsh is probably in it
+if [[ -n "$ZDOTDIR" ]]; then
+	export ZSH=$ZDOTDIR/.oh-my-zsh
+else # oh-my-zsh is probably in home directory
+    export ZSH=$HOME/.oh-my-zsh
 fi
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
