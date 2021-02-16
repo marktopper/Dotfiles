@@ -6,31 +6,21 @@
 # custom environment in such cases.  Note also that .zshenv should not contain
 # commands that produce output or assume the shell is attached to a tty.
 
-# If ZDOTDIR isn't already set in /etc/zsh/zshenv
-if [ ! -v ZDOTDIR ] && [ -d ~/.config/zsh ]; then
-	export ZDOTDIR=~/.config/zsh
-fi
-
-# ensure ZSH isn't set already and ensure .oh-my-zsh directory is present
-if [[ ! -v ZSH && -d $ZDOTDIR/.oh-my-zsh ]]; then # if oh-my-zsh is in $ZDOTDIR directory
-	export ZSH=$ZDOTDIR/.oh-my-zsh
-elif [[ ! -v ZSH && -d $HOME/.oh-my-zsh ]]; then # if oh-my-zsh is in $HOME directory
-    export ZSH=$HOME/.oh-my-zsh
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+   export EDITOR='vim'
+else
+   export EDITOR='gedit'
 fi
 
 # export PATH=~/bin:/sbin:/usr/local/bin:usr/share:$PATH
 
 # Linuxbrew stuff
-eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-# For compilers to find isl@0.18 you may need to set:
-export LDFLAGS="-L/home/linuxbrew/.linuxbrew/opt/isl@0.18/lib"
-export CPPFLAGS="-I/home/linuxbrew/.linuxbrew/opt/isl@0.18/include"
-# For pkg-config to find isl@0.18 you may need to set:
-export PKG_CONFIG_PATH="/home/linuxbrew/.linuxbrew/opt/isl@0.18/lib/pkgconfig"
-
-# Preferred editor for local and remote sessions
- if [[ -n $SSH_CONNECTION ]]; then
-   export EDITOR='vim'
- else
-   export EDITOR='gedit'
- fi
+if [[ -d /home/linuxbrew ]]; then
+	eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+	# For compilers to find isl@0.18 you may need to set:
+	export LDFLAGS="-L/home/linuxbrew/.linuxbrew/opt/isl@0.18/lib"
+	export CPPFLAGS="-I/home/linuxbrew/.linuxbrew/opt/isl@0.18/include"
+	# For pkg-config to find isl@0.18 you may need to set:
+	export PKG_CONFIG_PATH="/home/linuxbrew/.linuxbrew/opt/isl@0.18/lib/pkgconfig"
+fi
