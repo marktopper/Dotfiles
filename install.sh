@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
 # check if necessary packages are installed
-if command -v zsh &> /dev/null && command -v git &> /dev/null && command -v wget && command -v neofetch &> /dev/null; 
+if command -v zsh > /dev/null 2>&1 && command -v git > /dev/null 2>&1 && command -v wget > /dev/null 2>&1 && command -v neofetch > /dev/null 2>&1; 
 then
     printf "Zsh, Git, wget and neofetch are already installed\n"
 else
@@ -20,30 +20,6 @@ if [[ ! -d $HOME/Dotfiles ]]; then
 printf "Moving cloned Dotfiles repo directory to user's home directory.\n"
     cd $HOME && mv $CLONED_REPO $HOME/Dotfiles
     cd $HOME/Dotfiles && CLONED_REPO=$(pwd)
-fi
-
-# HOMEBREW/LINUXBREW INSTALL
-if command -v brew &> /dev/null; then
-    printf "Homebrew is already installed.\n"
-else
-    printf "Homebrew not installed.\n" 
-    while true; do
-        read -p "Do you want to install Homebrew? [Y/n]:" yn
-        case $yn in
-            [Yy]* )
-                printf "Installing Homebrew..."
-                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-                break
-                ;;
-            [Nn]* )
-                printf "Homebrew will not be installed.\nContinuing..."
-                break
-                ;;
-            * )
-                printf "Please provide a valid answer."
-                ;;
-        esac
-    done
 fi
 
 # MINICONDA INSTALL
@@ -127,59 +103,54 @@ done
 
 # CHOOSE INSTALL DIRECTORY
 while true; do
-    if [[ ! -e "$INSTALL_DIRECTORY" ]]; then
-        printf "\n"
-        printf "Where should your zsh and oh-my-zsh configuration files be installed?\n"
-        printf "!!!(FYI - the location should be in your user's home directory)\n"
-        printf "\n"
-        printf "Default install directory is: $INSTALL_DIRECTORY\n"
-        printf "  - Press ENTER to confirm the location\n"
-        printf "  - Press CTRL-C to abort the installation\n"
-        printf "  - Or specify a different location below\n"
-        printf "[%s] >>> " "$INSTALL_DIRECTORY"
-        read -r user_prefix
-        if [ "$user_prefix" != "" ]; then
-            case "$user_prefix" in
-                *\ * )
-                    printf "ERROR: Cannot install into directories with spaces\n" >&2
-                    continue
-                    ;;
-                *)
-                    eval INSTALL_DIRECTORY="$user_prefix"
-                    ;;
-            esac
-        fi
-        # check if user entry contained spaces
-        case "$INSTALL_DIRECTORY" in
+    printf "\n"
+    printf "Where should your zsh and oh-my-zsh configuration files be installed?\n"
+    printf "!!!(FYI - the location should be in your user's home directory)\n\n"
+
+    INSTALL_DIRECTORY=$HOME/.config/zsh # Default installation directory
+    
+    printf "Default install directory is: $INSTALL_DIRECTORY\n"
+    printf "  - Press ENTER to confirm the location\n"
+    printf "  - Press CTRL-C to abort the installation\n"
+    printf "  - Or specify a different location below\n"
+    printf "[%s] >>> " "$INSTALL_DIRECTORY"
+    read -r user_prefix
+    if [ "$user_prefix" != "" ]; then
+        case "$user_prefix" in
             *\ * )
-                printf "!!!\n"
                 printf "ERROR: Cannot install into directories with spaces\n" >&2
                 continue
                 ;;
+            *)
+                eval INSTALL_DIRECTORY="$user_prefix"
+                ;;
         esac
-        # if directory exists, don't try creating it
-        if [ -e "$INSTALL_DIRECTORY" ]; then
-            printf "\n"
-            printf "Directory already exists, no need to create it.\n"
-            break
-        else
-            if mkdir -p "$INSTALL_DIRECTORY" 2>/dev/null; then
-                printf "\n"
-                printf "Directory created.\n" && ls -ld "$INSTALL_DIRECTORY" && sleep 1
-                break
-            else # let user know we couldn't create directory
-                printf "!!!\n"
-                printf "Couldn't create directory: $INSTALL_DIRECTORY \n"
-                printf "Make sure you have the correct permissions to create the directory.\n" && sleep 1
-                INSTALL_DIRECTORY=$HOME/.config/zsh
-                continue
-            fi
-        fi
-    else
+    fi
+    # check if user entry contained spaces
+    case "$INSTALL_DIRECTORY" in
+        *\ * )
+            printf "!!!\n"
+            printf "ERROR: Cannot install into directories with spaces\n" >&2
+            continue
+            ;;
+    esac
+    # if directory exists, don't try creating it
+    if [ -e "$INSTALL_DIRECTORY" ]; then
         printf "\n"
-        printf "$INSTALL_DIRECTORY already exists. No need to create it.\n"
-        printf "Continuing...\n"
+        printf "Directory already exists, no need to create it.\n"
         break
+    else
+        if mkdir -p "$INSTALL_DIRECTORY" 2>/dev/null; then
+            printf "\n"
+            printf "Directory created.\n" && ls -ld "$INSTALL_DIRECTORY" && sleep 1
+            break
+        else # let user know we couldn't create directory
+            printf "!!!\n"
+            printf "Couldn't create directory: $INSTALL_DIRECTORY \n"
+            printf "Make sure you have the correct permissions to create the directory.\n" && sleep 1
+            INSTALL_DIRECTORY=$HOME/.config/zsh
+            continue
+        fi
     fi
 done
 
@@ -368,9 +339,10 @@ printf "\nFinished setting up repo files in new $INSTALL_DIRECTORY directory.\n"
 cd $HOME
 
 while true; do
-    printf "\nTo set the ZDOTDIR variable required to let Zsh know where to look for the .zsh files, we can either symlink the .zshenv file with the export ZDOTDIR line in it from your install directory, or we can export the variable in /etc/zsh/zshenv.\n"
-    printf "If you'd prefer to set it some other way, choose option 3.\n"
-    printf "\nHOW SHOULD ZDOTDIR BE SET?\n"
+    INSTALL_DIRECTORY=$HOME/.config/zsh
+    printf "\nTo set the ZDOTDIR variable required to let Zsh know where to look for the .zsh files, we can either symlink the .zshenv file\nwith the export ZDOTDIR line in it from your install directory, or we can export the variable in /etc/zsh/zshenv.\n"
+    printf "\nIf you'd prefer to set it some other way, choose option 3.\n"
+    printf "\nOPTIONS:\n"
     printf "[1]     Create symbolic link to $INSTALL_DIRECTORY/.zshenv in $HOME directory and append lines exporting ZDOTDIR to it\n"
     printf "[2]     Use /etc/zsh/zshenv file to set ZDOTDIR to $INSTALL_DIRECTORY (may require sudo priviledges)\n"
     printf "[3]     Do nothing; ZDOTDIR is already set, or I am going to set the ZDOTDIR variable myself.\n"
@@ -378,16 +350,19 @@ while true; do
     read -r choice
     case $choice in
         [1] )
+            INSERT_TEXT="\n[[ ! -n \"\$ZDOTDIR\" && -d $INSTALL_DIRECTORY ]] && export ZDOTDIR=$INSTALL_DIRECTORY"
             printf "\nCreated symbolic link in home directory:\n"
             ln -sv $INSTALL_DIRECTORY/.zshenv $HOME/.zshenv
             printf "Inserting lines to export ZDOTDIR into .zshenv file...\n"
-            echo "\nif [[ ! -n \"\$ZDOTDIR\" ]] && [ -d $INSTALL_DIRECTORY ]; then\n    export ZDOTDIR=$INSTALL_DIRECTORY\nfi" >> $HOME/.zshenv
-            sleep 1
+            echo $INSERT_TEXT >> $HOME/.zshenv
+            printf "Operation complete: zsh will look for .zshenv in user's home directory and ZDOTDIR will be set by it" && sleep 1
             break
             ;;
         [2] )
-            echo "\n[[ -d $INSTALL_DIRECTORY && -f $INSTALL_DIRECTORY/.zshrc ]] && export ZDOTDIR=$INSTALL_DIRECTORY" | sudo tee -a /etc/zsh/zshenv > /dev/null
-            printf "/etc/zsh/zshenv will now set and export the ZDOTDIR variable. Be sure to modify this file if you wish to change the location of your zsh dotfiles directory.\n" && sleep 1
+            INSERT_TEXT="\n[[ -d $INSTALL_DIRECTORY && -f $INSTALL_DIRECTORY/.zshrc ]] && export ZDOTDIR=$INSTALL_DIRECTORY"
+            echo $INSERT_TEXT | sudo tee -a /etc/zsh/zshenv > /dev/null
+            printf "/etc/zsh/zshenv will now set and export the ZDOTDIR variable.\n"
+            printf "!!!IMPORTANT: YOU NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!\n" && sleep 1
             break
             ;;
         [3] )
@@ -404,14 +379,10 @@ export ZDOTDIR=$INSTALL_DIRECTORY
 
 # Change shell to zsh and run omz update
 printf "Sudo access is needed to change default shell\n"
-if chsh -s $(which zsh); then
-    if /bin/zsh -i -c 'omz update'; then
-        printf "Installation Successful, exit terminal and enter a new session\n"
-    elif /bin/zsh -i -c upgrade_oh_my_zsh; then # in case omz update fails, will fallback to using upgrade_oh_my_zsh to finish install
-        printf "Installation Successful, exit terminal and enter a new session\n"
-    else
-        printf "Something went wrong\n"
-    fi
+if chsh -s $(which zsh) && /bin/zsh -i -c 'omz update'; then
+    printf "Installation Successful, exit terminal and enter a new session\n"
+elif /bin/zsh -i -c upgrade_oh_my_zsh > /dev/null 2>&1; then # in case omz update fails, will fallback to using upgrade_oh_my_zsh to finish install
+    printf "Installation Successful, exit terminal and enter a new session\n"
 else
     printf "Something went wrong\n"
 fi

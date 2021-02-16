@@ -16,7 +16,7 @@ fi
 # export PATH=~/bin:/sbin:/usr/local/bin:usr/share:$PATH
 
 # Linuxbrew stuff
-if command -v brew >/dev/null 2>&1; then
+if [[ -d /home/linuxbrew ]]; then
 	eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 	# For compilers to find isl@0.18 you may need to set:
 	export LDFLAGS="-L/home/linuxbrew/.linuxbrew/opt/isl@0.18/lib"
