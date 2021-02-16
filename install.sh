@@ -28,7 +28,6 @@ if command -v brew &> /dev/null; then
 else
     printf "Homebrew not installed.\n" 
     while true; do
-        printf "------------------------------------\n"
         read -p "Do you want to install Homebrew? [Y/n]:" yn
         case $yn in
             [Yy]* )
@@ -53,7 +52,6 @@ if [ -d $HOME/miniconda3 ]; then
 else
     printf "Miniconda3 is not installed.\n"
     while true; do
-        printf "----------------------------------------\n"
         read -p "Do you want to install Miniconda? [Y/n]:" yn
         case $yn in
             [Yy]* )
@@ -130,10 +128,10 @@ done
 # CHOOSE INSTALL DIRECTORY
 while true; do
     if [[ ! -e "$INSTALL_DIRECTORY" ]]; then
-        printf "-------------------------------------------------\n"
+        printf "\n"
         printf "Where should your zsh and oh-my-zsh configuration files be installed?\n"
         printf "!!!(FYI - the location should be in your user's home directory)\n"
-        printf "-------------------------------------------------\n"
+        printf "\n"
         printf "Default install directory is: $INSTALL_DIRECTORY\n"
         printf "  - Press ENTER to confirm the location\n"
         printf "  - Press CTRL-C to abort the installation\n"
@@ -187,7 +185,7 @@ done
 
 
 # OMZ INSTALL
-printf "----------------------"
+printf "\n"
 printf "Installing oh-my-zsh\n" && sleep 1
 export ZSH=$INSTALL_DIRECTORY/.oh-my-zsh
 if [ -d $HOME/.oh-my-zsh ]; then # OMZ already installed, but located in user's home dir
