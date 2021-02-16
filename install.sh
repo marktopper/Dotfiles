@@ -354,13 +354,13 @@ while true; do
             printf "\nCreated symbolic link in home directory:\n"
             ln -sv $INSTALL_DIRECTORY/.zshenv $HOME/.zshenv
             printf "Inserting lines to export ZDOTDIR into .zshenv file...\n"
-            echo $INSERT_TEXT >> $HOME/.zshenv
+            echo -e $INSERT_TEXT >> $HOME/.zshenv
             printf "Operation complete: zsh will look for .zshenv in user's home directory and ZDOTDIR will be set by it" && sleep 1
             break
             ;;
         [2] )
             INSERT_TEXT="\n[[ -d $INSTALL_DIRECTORY && -f $INSTALL_DIRECTORY/.zshrc ]] && export ZDOTDIR=$INSTALL_DIRECTORY"
-            echo $INSERT_TEXT | sudo tee -a /etc/zsh/zshenv > /dev/null
+            echo -e $INSERT_TEXT | sudo tee -a /etc/zsh/zshenv > /dev/null
             printf "/etc/zsh/zshenv will now set and export the ZDOTDIR variable.\n"
             printf "!!!IMPORTANT: YOU NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!\n" && sleep 1
             break
