@@ -309,7 +309,7 @@ for i in *; do
     # symlink alias and function files (they both begin with "doc_") so they can easily be modified from omz-files directory
     [[ "$i" = "doc_"* ]] && ln -sv $i $INSTALL_DIRECTORY/.oh-my-zsh/custom
     # copy nordvpn plugin to custom plugins directory (nordvpn plugin is yet to be included in oh-my-zsh outside of it's testing branch)
-    [[ "$i" = "nordvpn" ]] && cp -ru $i $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins
+    [[ -d $i ]] && cp -ru $i $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins
 done && sleep 1
 
 # recursively copy all dotfiles in the cloned repo directory (except .gitignore)
