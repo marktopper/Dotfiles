@@ -4,8 +4,6 @@
 # this alias shouldn't be set unless on parrot distro
 if var=$(cat /etc/os-release | grep -wo 'parrot'); then
     alias sys-update='sudo parrot-upgrade'
-else
-    unalias sys-update
 fi
 
 # Useful aliases

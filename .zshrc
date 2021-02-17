@@ -64,10 +64,12 @@ if type brew &>/dev/null; then
 fi
 
 # GitHub CLI completions
-if [[ ! -d "$ZSH/completions" || ! -f "$ZSH/completions/_gh" ]]; then
-	mkdir -pv $ZSH/completions
-	gh completion --shell zsh > $ZSH/completions/_gh
-	echo "gh added completions: gh completion --shell zsh > $ZSH/completions/_gh"
+if command -v gh > /dev/null &>2; then
+	if [[ ! -d "$ZSH/completions" || ! -f "$ZSH/completions/_gh" ]]; then
+		mkdir -pv $ZSH/completions
+		gh completion --shell zsh > $ZSH/completions/_gh
+		echo "gh added completions: gh completion --shell zsh > $ZSH/completions/_gh"
+	fi
 fi
 
 # sourced files
