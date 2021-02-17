@@ -307,7 +307,7 @@ for i in *; do
     # if miniconda is installed, need to copy conda_setup.zsh as well
     [[ "$i" = "conda_setup.zsh" && -f $HOME/miniconda3/condabin/conda ]] && cp -uv $i $INSTALL_DIRECTORY/.oh-my-zsh/custom
     # symlink alias and function files (they both begin with "doc_") so they can easily be modified from omz-files directory
-    [[ "$i" = "doc_"* ]] && ln -sv $i $INSTALL_DIRECTORY/.oh-my-zsh/custom
+    [[ "$i" = "doc_"* ]] && ln -sv $(pwd)/$i $INSTALL_DIRECTORY/.oh-my-zsh/custom
     # copy nordvpn plugin to custom plugins directory (nordvpn plugin is yet to be included in oh-my-zsh outside of it's testing branch)
     [[ -d $i ]] && cp -ru $i $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins
 done && sleep 1
