@@ -23,7 +23,7 @@ printf "Moving cloned Dotfiles repo directory to user's home directory.\n"
 fi
 
 # MINICONDA INSTALL
-if [ -d $HOME/miniconda3 ]; then
+if [ -f $HOME/miniconda3/condabin/conda ]; then
     printf "Miniconda3 is already installed.\n"
 else
     printf "Miniconda3 is not installed.\n"
@@ -32,7 +32,7 @@ else
         case $yn in
             [Yy]* )
                 printf "Be sure to install Miniconda3 within your user's home directory.\n"
-                if [ -f $HOME/Miniconda3-latest-Linux-x86_64.sh ]; then # to prevent downloading Miniconda3 setup file multiple times
+                if [ -f $HOME/Miniconda3-latest-* ]; then # to prevent downloading Miniconda3 setup file multiple times
                     printf "Miniconda3 is already downloaded\n"
                     printf "Starting Miniconda3 setup...\n"
                     bash $HOME/Miniconda3-latest-Linux-x86_64.sh
@@ -58,7 +58,7 @@ else
 fi
 
 # INSTALL CLEANUP
-if [ -f ~/Miniconda3-latest-* ] && [ -d ~/miniconda3 ]; then
+if [[ -f $HOME/Miniconda3-latest-* && -f $HOME/miniconda3/condabin/conda ]]; then
     printf "Removing Miniconda3 install file...\n"
     ls -l ~/Miniconda3-latest-*
     rm -f ~/Miniconda3-latest-*
@@ -66,6 +66,7 @@ fi
 
 # ASK TO BACKUP FILES --- ZSH CONFIG INSTALLS BEGIN AFTER THIS
 while true; do
+    printf "During this install, any zsh related dotfiles (such as .zshrc, .zshenv) in user's home directory will be deleted.\n"
     printf "Are there dotfiles in your home directory that you want to backup?\n"
     read -p "Backup existing dotfiles in home directory? [Y/n]:" yn
     case $yn in
@@ -100,15 +101,12 @@ while true; do
     esac
 done
 
-
+INSTALL_DIRECTORY="$HOME/.config/zsh" # Default installation directory
 # CHOOSE INSTALL DIRECTORY
 while true; do
     printf "\n"
     printf "Where should your zsh and oh-my-zsh configuration files be installed?\n"
     printf "!!!(FYI - the location should be in your user's home directory)\n\n"
-
-    INSTALL_DIRECTORY=$HOME/.config/zsh # Default installation directory
-    
     printf "Default install directory is: $INSTALL_DIRECTORY\n"
     printf "  - Press ENTER to confirm the location\n"
     printf "  - Press CTRL-C to abort the installation\n"
@@ -157,7 +155,7 @@ done
 
 # OMZ INSTALL
 printf "\n"
-printf "Installing oh-my-zsh\n" && sleep 1
+printf "Installing oh-my-zsh into $INSTALL_DIRECTORY\n" && sleep 1
 export ZSH=$INSTALL_DIRECTORY/.oh-my-zsh
 if [ -d $HOME/.oh-my-zsh ]; then # OMZ already installed, but located in user's home dir
     printf "oh-my-zsh is already installed in home directory, moving to new $INSTALL_DIRECTORY directory...\n"
@@ -294,48 +292,45 @@ while true; do
     esac
 done
 
-# COPY FILES FROM REPO
-# the two .zsh files in omz-files need to go in .oh-my-zsh/custom/
-cd $CLONED_REPO/omz-files
+# START TO COPY FILES FROM REPO
+# First copy omz-files and P10K-themes directories to $INSTALL_DIRECTORY
+cp -r $CLONED_REPO/omz-files $INSTALL_DIRECTORY
+cp -r $CLONED_REPO/P10K-themes $INSTALL_DIRECTORY
+
+# Start operations within omz-files directory
+cd $INSTALL_DIRECTORY/omz-files
 for i in *; do
-    if [ -f $i ]; then
-        if [ "$i" = "_better-help" ]; then
-            [[ ! -d $INSTALL_DIRECTORY/.oh-my-zsh/completions ]] &&
-            mkdir $INSTALL_DIRECTORY/.oh-my-zsh/completions && # in case completions dir isn't there
-            cp $i $INSTALL_DIRECTORY/.oh-my-zsh/completions
-        else
-            cp -f $i $INSTALL_DIRECTORY/.oh-my-zsh/custom
-        fi
-    elif [ -d $i ]; then # to copy nordvpn completions omz plugin (still hasnt been merged to OMZ stable branch yet but I found it on a test branch)
-        cp -rf $i $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins
-    fi
-done
-
-# directory for storing Powerlevel10K themes
-if [[ ! -d $INSTALL_DIRECTORY/P10K-themes ]]; then
-    mkdir -p $INSTALL_DIRECTORY/P10K-themes
-fi
-
-# copy repo themes to new P10K-themes directory
-cd $CLONED_REPO/P10K-themes
-for i in * ; do
-    if [ -f $i ]; then
-        cp -f $i $INSTALL_DIRECTORY/P10K-themes
-    fi
-done
+    # create completions directory in .oh-my-zsh if needed
+    [[ ! -d $INSTALL_DIRECTORY/.oh-my-zsh/completions ]] && mkdir $INSTALL_DIRECTORY/.oh-my-zsh/completions
+    # copy completion files to oh-my-zsh
+    [[ "$i" = "_"* ]] && cp -uv $i $INSTALL_DIRECTORY/.oh-my-zsh/completions
+    # if miniconda is installed, need to copy conda_setup.zsh as well
+    [[ "$i" = "conda_setup.zsh" && -f $HOME/miniconda3/condabin/conda ]] && cp -uv $i $INSTALL_DIRECTORY/.oh-my-zsh/custom
+    # symlink alias and function files (they both begin with "doc_") so they can easily be modified from omz-files directory
+    [[ "$i" = "doc_"* ]] && ln -sv $i $INSTALL_DIRECTORY/.oh-my-zsh/custom
+    # copy nordvpn plugin to custom plugins directory (nordvpn plugin is yet to be included in oh-my-zsh outside of it's testing branch)
+    [[ "$i" = "nordvpn" ]] && cp -ru $i $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins
+done && sleep 1
 
 # recursively copy all dotfiles in the cloned repo directory (except .gitignore)
 cd $CLONED_REPO
 for i in .* ; do
-    if [ -f $i ]; then
-        if [ "$i" != ".gitignore" ]; then
-            printf "\nCopying $i to $INSTALL_DIRECTORY\n"
-            cp -f $i $INSTALL_DIRECTORY
-        fi
+    if [[ -f $i && "$i" != ".gitignore" ]]; then
+        printf "\nCopying $i to $INSTALL_DIRECTORY\n"
+        cp -fv $i $INSTALL_DIRECTORY
     fi
 done
 
-printf "\nFinished setting up repo files in new $INSTALL_DIRECTORY directory.\n"
+printf "Finished setting up repo files in new $INSTALL_DIRECTORY directory.\n" && sleep 1
+# Remove remaining zsh files in $HOME directory (if the install directory isn't $HOME)
+if [ $INSTALL_DIRECTORY != $HOME ]; then
+    printf "Removing remaining zsh dotfiles in user's home directory...\n"
+    [ -f $HOME/.zprofile ] && rm -fv $HOME/.zprofile
+    [ -f $HOME/.zshenv ] && rm -fv $HOME/.zshenv
+    [ -f $HOME/.zshrc ] && rm -fv $HOME/.zshrc
+    printf "Done\n" && sleep 1
+fi
+
 cd $HOME
 
 while true; do
@@ -380,8 +375,6 @@ export ZDOTDIR=$INSTALL_DIRECTORY
 # Change shell to zsh and run omz update
 printf "Sudo access is needed to change default shell\n"
 if chsh -s $(which zsh) && /bin/zsh -i -c 'omz update'; then
-    printf "Installation Successful, exit terminal and enter a new session\n"
-elif /bin/zsh -i -c upgrade_oh_my_zsh > /dev/null 2>&1; then # in case omz update fails, will fallback to using upgrade_oh_my_zsh to finish install
     printf "Installation Successful, exit terminal and enter a new session\n"
 else
     printf "Something went wrong\n"
