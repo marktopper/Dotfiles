@@ -7,6 +7,7 @@ fi
 
 # Useful aliases
 alias s='sudo'
+alias rt='sudo -i'
 alias e='echo'
 alias update-db="sudo updatedb --prunepaths='/timeshift/snapshots /media /run/timeshift /run/user'"
 alias sysinfo='neofetch && info-message'
