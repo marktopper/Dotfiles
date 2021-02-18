@@ -23,7 +23,7 @@ info-message() {
   echo -e '"cleanzsh" removes zcompdump and .zwc files in your zsh directory.'
   echo -e 'Use "own" to take ownership of files. Use "owndir" to recursively take ownership of directories.'
   echo -e 'Use "z" to change to $ZDOTDIR. Use "cheat" to lookup cheatsheets if needing help.\n'
-  echo -e $Purple'APT/DPKG:\n"cleanapt" cleanup apt | "afix" apt-get install -f'
+  echo -e $Cyan'APT/DPKG:\n"cleanapt" cleanup apt | "afix" apt-get install -f'
   echo -e 'a apt | ag apt-get | "ac" apt-cache | "fix" apt-get install -f'
   echo -e '"au" update | "ai" install | "ar" reinstall | "arm" remove | "ap" purge | "af" search | "ash" show'
   echo -e '"mark-auto" apt-mark auto | "mark-manual" apt-mark manual'
