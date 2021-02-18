@@ -1,5 +1,5 @@
 # $ZDOTDIR/.zshrc
-
+#
 # P10K instant prompt. Keep close to top of .zshrc. Code that may require console input
 # password prompts, etc. must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
@@ -12,8 +12,6 @@ if [[ -n "$ZDOTDIR" ]]; then
 else # oh-my-zsh is probably in home directory
     export ZSH=$HOME/.oh-my-zsh
 fi
-
-ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Uncomment the following line to use hyphen-insensitive completion.
 # Case-sensitive completion must be off. _ and - will be interchangeable.
@@ -30,8 +28,8 @@ HYPHEN_INSENSITIVE="true"
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
+# Set command history file location and name with below variable.
+HISTFILE=$ZDOTDIR/.zsh_history
 # You can set one of the optional three formats:
 # "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # see 'man strftime' for details.
@@ -47,45 +45,41 @@ STARTUP_CONTENT='true'
 
 # Oh-my-zsh enabled plugins
 plugins=(
-alias-finder autojump colored-man-pages colorize
-common-aliases conda-zsh-completion cp
-docker extract fzf
-git git-escape-magic gitignore
-jump man nordvpn
+alias-finder autojump
+colored-man-pages colorize
+common-aliases conda-zsh-completion
+cp docker extract fzf
+git git-escape-magic
+gitignore jump man nordvpn
 pip postgres python
 sudo thefuck vscode
-zsh-autosuggestions zsh-syntax-highlighting zsh_reload)
+zsh-autosuggestions
+zsh-syntax-highlighting
+zsh_reload)
 
-# Homebrew completions
-if type brew &>/dev/null; then
-	FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
-	autoload -Uz compinit
-	compinit
-fi
-
-# GitHub CLI completions
-if command -v gh > /dev/null &>2; then
-	if [[ ! -d "$ZSH/completions" || ! -f "$ZSH/completions/_gh" ]]; then
-		mkdir -pv $ZSH/completions
-		gh completion --shell zsh > $ZSH/completions/_gh
-		echo "gh added completions: gh completion --shell zsh > $ZSH/completions/_gh"
-	fi
-fi
-
-# sourced files
+# P10K is only theme
+ZSH_THEME="powerlevel10k/powerlevel10k"
 source $ZSH/oh-my-zsh.sh
 
-# To customize prompt, run `p10k configure`, edit $ZDOTDIR/.p10k.zsh,
-# Or set P10K_THEME below to a file name in P10K-themes directory
+# To customize prompt, run `p10k configure`, edit $ZDOTDIR/.p10k.zsh or set P10K_THEME below to a prompt file name in P10K-themes directory.
 P10K_THEME="docstheme"
-
-# This handles the p10k themes, don't touch it
-if [ ! "$P10K_THEME" = "" ]; then
+# Uses powerlevel10k prompt themes if using powerlevel10k and P10K_THEME is set
+if [[ -n "$P10K_THEME" && "$ZSH_THEME" = *"powerlevel10k"* ]]; then
 	[[ -f $ZDOTDIR/P10K-themes/p10k-theme-config.sh ]] && source $ZDOTDIR/P10K-themes/p10k-theme-config.sh
 else
 	[[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
 fi
 
-# Don't `terminal-startup` unless transient prompt isn't off and current shell is zsh.
-# This displays system information, a graphic, and information on aliases (if STARTUP_CONTENT) is set to true
-[[ -n "$ZSH_VERSION" && ! "$POWERLEVEL9K_TRANSIENT_PROMPT" = "off" ]] && terminal-startup
+# Deduplicates path and manpath variables
+[[ -e $ZSH/custom/custom_functions.zsh ]] && {
+	dedup_pathvar PATH
+	dedup_pathvar MANPATH
+}
+
+# Terminal startup output (won't run if STARTUP_CONTENT is false)
+if [[ -o interactive && $STARTUP_CONTENT ]]; then
+	neofetch
+	info-message
+elif [[ -o login && $STARTUP_CONTENT ]]; then
+	info-message
+fi

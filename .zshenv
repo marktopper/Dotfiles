@@ -1,3 +1,5 @@
+# $ZDOTDIR/.zshenv
+#
 # .zshenv is sourced on ALL invocations of the shell, unless the -f option is
 # set.  It should NOT normally contain commands to set the command search path,
 # or other common environment variables unless you really know what you're
@@ -13,14 +15,18 @@ else
    export EDITOR='gedit'
 fi
 
-# export PATH=~/bin:/sbin:/usr/local/bin:usr/share:$PATH
+export PATH=~/.local/bin:/snap/bin:/usr/sandbox/:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/share/games:/usr/local/sbin:/usr/sbin:/sbin:$PATH
 
-# Linuxbrew stuff
-if [[ -d /home/linuxbrew ]]; then
-	eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-	# For compilers to find isl@0.18 you may need to set:
-	export LDFLAGS="-L/home/linuxbrew/.linuxbrew/opt/isl@0.18/lib"
-	export CPPFLAGS="-I/home/linuxbrew/.linuxbrew/opt/isl@0.18/include"
-	# For pkg-config to find isl@0.18 you may need to set:
-	export PKG_CONFIG_PATH="/home/linuxbrew/.linuxbrew/opt/isl@0.18/lib/pkgconfig"
-fi
+# For dedepuplicating path variables
+get_var () {
+    eval 'printf "%s\n" "${'"$1"'}"'
+}
+set_var () {
+    eval "$1=\"\$2\""
+}
+dedup_pathvar () {
+    pathvar_name="$1"
+    pathvar_value="$(get_var "$pathvar_name")"
+    deduped_path="$(perl -e 'print join(":",grep { not $seen{$_}++ } split(/:/, $ARGV[0]))' "$pathvar_value")"
+    set_var "$pathvar_name" "$deduped_path"
+}

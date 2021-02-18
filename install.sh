@@ -153,9 +153,8 @@ while true; do
 done
 
 
-# OMZ INSTALL
-printf "\n"
-printf "Installing oh-my-zsh into $INSTALL_DIRECTORY\n" && sleep 1
+# Oh-My-ZSH INSTALL
+printf "\nInstalling oh-my-zsh into $INSTALL_DIRECTORY\n" && sleep 1
 export ZSH=$INSTALL_DIRECTORY/.oh-my-zsh
 if [ -d $HOME/.oh-my-zsh ]; then # OMZ already installed, but located in user's home dir
     printf "oh-my-zsh is already installed in home directory, moving to new $INSTALL_DIRECTORY directory...\n"
@@ -171,11 +170,20 @@ else
     fi
 fi
 
-printf "Ready to install OMZ plugins...\n" && sleep 1
+printf "\nREADY TO INSTALL Oh-My-ZSH PLUGINS\n" && sleep 1
 
-
-if [ -d $INSTALL_DIRECTORY/.oh-my-zsh ]; then
-    # OMZ PLUGINS
+if [ ! -d $INSTALL_DIRECTORY/.oh-my-zsh ]; then
+    printf "Something's wrong, oh-my-zsh isn't in $INSTALL_DIRECTORY...\n"
+    printf "Checking if oh-my-zsh is in home directory...\n" && sleep 1
+    if [ -d ~/.oh-my-zsh ]; then
+        printf "oh-my-zsh is in home directory, will move it to $INSTALL_DIRECTORY...\n"
+        mv ~/.oh-my-zsh $INSTALL_DIRECTORY && printf "oh-my-zsh directory moved to $INSTALL_DIRECTORY, can proceed now\n" && sleep 1
+    else
+        printf "oh-my-zsh is NOT in home directory, something is wrong\n"
+        printf "Exitting before attempting anything further\n" && sleep 1
+        exit
+    fi
+else # INSTALL (or update) OMZ PLUGINS
     if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]; then
         cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-autosuggestions && git pull
     else
@@ -210,17 +218,6 @@ if [ -d $INSTALL_DIRECTORY/.oh-my-zsh ]; then
         cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/themes/powerlevel10k && git pull
     else
         git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $INSTALL_DIRECTORY/.oh-my-zsh/custom/themes/powerlevel10k
-    fi
-else
-    printf "Something's wrong, oh-my-zsh isn't in $INSTALL_DIRECTORY...\n"
-    printf "Checking if oh-my-zsh is in home directory...\n" && sleep 1
-    if [ -d ~/.oh-my-zsh ]; then
-        printf "oh-my-zsh is in home directory, will move it to $INSTALL_DIRECTORY...\n"
-        mv ~/.oh-my-zsh $INSTALL_DIRECTORY && printf "oh-my-zsh directory moved to $INSTALL_DIRECTORY, can proceed now\n" && sleep 1
-    else
-        printf "oh-my-zsh is NOT in home directory, something is wrong\n"
-        printf "Exitting before attempting anything further\n" && sleep 1
-        exit
     fi
 fi
 
@@ -306,10 +303,10 @@ for i in *; do
     [[ "$i" = "_"* ]] && cp -uv $i $INSTALL_DIRECTORY/.oh-my-zsh/completions
     # if miniconda is installed, need to copy conda_setup.zsh as well
     [[ "$i" = "conda_setup.zsh" && -f $HOME/miniconda3/condabin/conda ]] && cp -uv $i $INSTALL_DIRECTORY/.oh-my-zsh/custom
-    # symlink alias and function files (they both begin with "doc_") so they can easily be modified from omz-files directory
-    [[ "$i" = "doc_"* ]] && ln -sv $(pwd)/$i $INSTALL_DIRECTORY/.oh-my-zsh/custom
+    # symlink alias and function files (they both begin with "custom_") so they can easily be modified from omz-files directory
+    [[ "$i" = "custom_"* ]] && ln -sv $(pwd)/$i $INSTALL_DIRECTORY/.oh-my-zsh/custom
     # copy nordvpn plugin to custom plugins directory (nordvpn plugin is yet to be included in oh-my-zsh outside of it's testing branch)
-    [[ -d $i ]] && cp -ru $i $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins
+    [[ -d $i ]] && cp -ruv $i $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins
 done && sleep 1
 
 # recursively copy all dotfiles in the cloned repo directory (except .gitignore)

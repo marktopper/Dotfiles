@@ -1,28 +1,28 @@
-#!/bin/zsh
 # ALIASES
 
-# this alias shouldn't be set unless on parrot distro
+# alias should only be set if on Parrot OS
 if var=$(cat /etc/os-release | grep -wo 'parrot'); then
     alias sys-update='sudo parrot-upgrade'
 fi
 
 # Useful aliases
 alias s='sudo'
+alias e='echo'
 alias update-db="sudo updatedb --prunepaths='/timeshift/snapshots /media /run/timeshift /run/user'"
-alias sys-info='neofetch && info-message'
+alias sysinfo='neofetch && info-message'
 alias fk='fuck'
 alias own='sudo chown -v $USER:$USER'
 alias owndir='sudo chown -R $USER:$USER'
 alias z='cd $ZDOTDIR'
 alias zdir="$ZDOTDIR/"
 alias help='better-help'
-
-# cp, symlinks, etc.
-alias e='echo'
+# copy, symlinks
 alias cpd='cp -r'
 alias cpd-ffs='sudo cp -r'
-alias symlinkmk='ln -srv'
-alias symlinkmk-ffs='sudo ln -srv'
+alias sl='ln -srv'
+alias sl-ffs='sudo ln -srv'
+# clean zcomp and zwc zsh files
+alias cleanzsh='rm -rf ${ZDOTDIR:-$HOME}/.zcompdump* && rm -rf ${ZDOTDIR:-$HOME}/.zshrc.zwc'
 
 # apt/apt-get/dpkg
 alias afix='sudo apt-get install -f'
@@ -38,12 +38,11 @@ alias a='sudo apt'
 alias ac='sudo apt-cache'
 alias mark-auto='sudo apt-mark auto'
 alias mark-manual='sudo apt-mark manual'
-alias clean='sudo apt-get --purge autoremove -y && sudo apt-get autoclean -y'
+alias cleanapt='sudo apt-get --purge autoremove -y && sudo apt-get autoclean -y'
 alias reconfigure='sudo dpkg-reconfigure'
 alias add-architecture='sudo dpkg --add-architecture'
 
 # git aliases
-alias gcall='git commit -a'
 alias gstat='git status'
 alias prcreate='gh pr create --fill'
 alias prmerge='gh pr merge'
@@ -58,6 +57,3 @@ alias intip='hostname -I; echo'
 alias shutdown='sudo shutdown now'
 alias sysctl='sudo systemctl'
 alias sysd='sudo systemd'
-
-# misc aliases
-# alias neofetch='neofetch --source $ZDOTDIR/banner.txt'
