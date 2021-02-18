@@ -1,6 +1,9 @@
 # Ignore oh-my-zsh folder
 .oh-my-zsh
 
+# Ignore .zsh_history
+.zsh_history
+
 # Ignore .zcompdump files
 .zcompdump*
 
