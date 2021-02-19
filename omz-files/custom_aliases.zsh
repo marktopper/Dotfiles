@@ -16,7 +16,6 @@ alias own='sudo chown -v $USER:$USER'
 alias owndir='sudo chown -R $USER:$USER'
 alias z='cd $ZDOTDIR'
 alias zdir="$ZDOTDIR/"
-alias help='better-help'
 # copy, symlinks
 alias cpd='cp -r'
 alias cpd-ffs='sudo cp -r'

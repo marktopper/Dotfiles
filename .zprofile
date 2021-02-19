@@ -6,8 +6,11 @@
 #
 # Order: .zshenv, .zprofile, .zshrc
 
+# For Homebrew
 if [[ -d /home/linuxbrew ]]; then
     export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+    export FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
     export MANPATH="/home/linuxbrew/.linuxbrew/share/man:$MANPATH"
     export INFOPATH="/home/linuxbrew/.linuxbrew/share/info:$INFOPATH"
 fi
+

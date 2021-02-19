@@ -37,9 +37,10 @@ better-help() {
   if [ "$*" = "" ]; then
     info-message
   else
-    run-help "$*"
+    run-help "$1"
   fi
 }
+alias help='better-help'
 
 # this will show all Powerlevel10K prompt elements
 p10k-prompt-info() {
