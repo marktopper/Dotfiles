@@ -17,8 +17,9 @@ Black=`tput setaf 8`
 # considering splitting up certain parts of this function into smaller function messages
 info-message() {
   echo -e $Red'             USEFUL COMMANDS\n'
-  echo -e $Blue'GENERAL(Certain aliases have -ffs versions that use sudo):'
-  echo -e '"s" (sudo) "e" (echo) "cpd" (copy directory & contents in it) | "sl" (symlink w/ -srv options set)'
+  echo -e $Blue'GENERAL(Certain aliases like cpd have -ffs versions that use sudo):'
+  echo -e '"s" (sudo) | "rt" (switch to root user) | "e" (echo)'
+  echo -e '"cpd" (copy directory & contents in it) | "sl" (symlink w/ -srv options set)'
   echo -e '"sysinfo" will dispay information about your system (and this entire message).'
   echo -e '"cleanzsh" removes zcompdump and .zwc files in your zsh directory.'
   echo -e 'Use "own" to take ownership of files. Use "owndir" to recursively take ownership of directories.'
@@ -36,9 +37,10 @@ better-help() {
   if [ "$*" = "" ]; then
     info-message
   else
-    run-help "$*"
+    run-help "$1"
   fi
 }
+alias help='better-help'
 
 # this will show all Powerlevel10K prompt elements
 p10k-prompt-info() {

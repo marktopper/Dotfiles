@@ -7,6 +7,7 @@ fi
 
 # Useful aliases
 alias s='sudo'
+alias rt='sudo -i'
 alias e='echo'
 alias update-db="sudo updatedb --prunepaths='/timeshift/snapshots /media /run/timeshift /run/user'"
 alias sysinfo='neofetch && info-message'
@@ -15,7 +16,6 @@ alias own='sudo chown -v $USER:$USER'
 alias owndir='sudo chown -R $USER:$USER'
 alias z='cd $ZDOTDIR'
 alias zdir="$ZDOTDIR/"
-alias help='better-help'
 # copy, symlinks
 alias cpd='cp -r'
 alias cpd-ffs='sudo cp -r'

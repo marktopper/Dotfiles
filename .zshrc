@@ -1,16 +1,24 @@
 # $ZDOTDIR/.zshrc
-#
+	
 # P10K instant prompt. Keep close to top of .zshrc. Code that may require console input
 # password prompts, etc. must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
 	source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+   export EDITOR='vim'
+else
+   export EDITOR='gedit'
+fi
+
 # if there's a $ZDOTDIR directory, oh-my-zsh is probably in it
 if [[ -n "$ZDOTDIR" ]]; then
 	export ZSH=$ZDOTDIR/.oh-my-zsh
-else # oh-my-zsh is probably in home directory
-    export ZSH=$HOME/.oh-my-zsh
+else # oh-my-zsh is probably in home directory, can probably set ZDOTDIR to $HOME to avoid anything breaking :)
+	export ZDOTDIR=~
+	export ZSH=~/.oh-my-zsh
 fi
 
 # Uncomment the following line to use hyphen-insensitive completion.
@@ -45,7 +53,7 @@ STARTUP_CONTENT='true'
 
 # Oh-my-zsh enabled plugins
 plugins=(
-alias-finder autojump
+alias-finder autojump brew
 colored-man-pages colorize
 common-aliases conda-zsh-completion
 cp docker extract fzf
@@ -61,6 +69,13 @@ zsh_reload)
 ZSH_THEME="powerlevel10k/powerlevel10k"
 source $ZSH/oh-my-zsh.sh
 
+if type brew &>/dev/null; then
+	FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+
+	autoload -Uz compinit
+	rm -f $ZDOTDIR/.zcompdump; compinit
+fi
+
 # To customize prompt, run `p10k configure`, edit $ZDOTDIR/.p10k.zsh or set P10K_THEME below to a prompt file name in P10K-themes directory.
 P10K_THEME="docstheme"
 # Uses powerlevel10k prompt themes if using powerlevel10k and P10K_THEME is set
@@ -70,13 +85,13 @@ else
 	[[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
 fi
 
-# Deduplicates path and manpath variables
+# Deduplicates path, fpath and manpath variables
 [[ -e $ZSH/custom/custom_functions.zsh ]] && {
 	dedup_pathvar PATH
-	dedup_pathvar MANPATH
+	dedup_pathvar FPATH
 }
 
-# Terminal startup output (won't run if STARTUP_CONTENT is false)
+# Terminal startup output (won't run unless $STARTUP_CONTENT is true)
 if [[ -o interactive && $STARTUP_CONTENT ]]; then
 	neofetch
 	info-message
