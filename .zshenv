@@ -8,13 +8,6 @@
 # custom environment in such cases.  Note also that .zshenv should not contain
 # commands that produce output or assume the shell is attached to a tty.
 
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-   export EDITOR='vim'
-else
-   export EDITOR='gedit'
-fi
-
 export PATH=~/.local/bin:/snap/bin:/usr/sandbox/:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/share/games:/usr/local/sbin:/usr/sbin:/sbin:$PATH
 
 # For dedepuplicating path variables
@@ -30,3 +23,5 @@ dedup_pathvar () {
     deduped_path="$(perl -e 'print join(":",grep { not $seen{$_}++ } split(/:/, $ARGV[0]))' "$pathvar_value")"
     set_var "$pathvar_name" "$deduped_path"
 }
+
+

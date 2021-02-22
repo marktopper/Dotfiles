@@ -1,16 +1,23 @@
 # $ZDOTDIR/.zshrc
-#
+	
 # P10K instant prompt. Keep close to top of .zshrc. Code that may require console input
 # password prompts, etc. must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
 	source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+   export EDITOR='vim'
+else
+   export EDITOR='gedit'
+fi
+
 # if there's a $ZDOTDIR directory, oh-my-zsh is probably in it
 if [[ -n "$ZDOTDIR" ]]; then
 	export ZSH=$ZDOTDIR/.oh-my-zsh
 else # oh-my-zsh is probably in home directory, can probably set ZDOTDIR to $HOME to avoid anything breaking :)
-    export ZDOTDIR=~
+	export ZDOTDIR=~
 	export ZSH=~/.oh-my-zsh
 fi
 
@@ -46,7 +53,7 @@ STARTUP_CONTENT='true'
 
 # Oh-my-zsh enabled plugins
 plugins=(
-alias-finder autojump
+alias-finder autojump brew
 colored-man-pages colorize
 common-aliases conda-zsh-completion
 cp docker extract fzf
@@ -66,7 +73,7 @@ if type brew &>/dev/null; then
 	FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
 
 	autoload -Uz compinit
-	rm -f ~/.zcompdump; compinit
+	rm -f $ZDOTDIR/.zcompdump; compinit
 fi
 
 # To customize prompt, run `p10k configure`, edit $ZDOTDIR/.p10k.zsh or set P10K_THEME below to a prompt file name in P10K-themes directory.
