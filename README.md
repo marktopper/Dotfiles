@@ -1,6 +1,8 @@
 # Dotfiles personalized for Parrot OS
 My Parrot Linux Zsh dotfiles (plus an install script for automatically setting them up)
-Keep in mind I've tried keeping everything POSIX compliant, but as much as I'd like this dotfiles install to be able to be run on any system, I don't yet know enough about this sort of thing, and so I have to warn anyone not using Parrot OS that you may encounter issues.
+Keep in mind I've attempted to keep everything POSIX compliant, but as much as I'd like this dotfiles install to be able to be run on any system, I don't yet know enough about this sort of thing, and so I have to warn anyone not using Parrot OS that you may encounter issues.
+
+The last time I tested it, using the install script on Kali Linux did set everything up correctly. That said, make sure to back anything up that you don't want to lose prior to running it.
 
 # INSTALL REQUIREMENTS: zsh, git, neofetch, wget
 I'd also recommend installing autojump, fzf, and thefuck, as the OMZ plugins for them are in the repo zshrc file.
@@ -11,16 +13,15 @@ If you don't intend to use any of these, I recommend going into .zshrc and remov
 # Choose a particular powerlevel10k prompt config file
 You see a custom prompt file that someone else has set up for P10K and you decide you'd like to use it.
 Normally, you'd have to go into .zshrc, after knowing where this P10K file is located, and source it, or copy and paste the entire file into your .zshrc and clutter it up.
-Well, I didn't really like having to do any of that every time I wanted to change my zsh p10k prompt, so I added a short file within P10K-themes/ called p10k-theme-config.sh to handle sourcing a custom prompt theme, or sourcing good ole .p10k.zsh if the custom prompt theme cannot be found for sourcing.
-Instead of typing source and all that, simply set the P10K_THEME variable in your .zshrc file to the name of a custom p10k .zsh theme file you've placed within P10K-themes.
 
-# Be sure to add .zsh to the end of whatever p10k theme files you wanna use, otherwise there will likely be problems.
-Example: To use my prompt theme (now rennamed docstheme.zsh, located in the P10K-themes directory) you simply add to .zshrc: P10K_THEME="docstheme"
-In .zshrc the lines at the very bottom (of the .zshrc file included in this repo anyway) are for providing this functionality, so bear that in mind.
+Well, I didn't really like having to do any of that every time I wanted to change my zsh p10k prompt, so I created a plugin (called p10k-promptconfig) that will get cloned into oh-my-zsh's custom plugins directory. The plugin handles using any .<theme_name>.zsh files located in the same directory as .zshrc, and as long as you have `P10K_PROMPT="<theme_name>"` set in .zshrc. The plugin will fallback to sourcing the good ole .p10k.zsh file if the custom prompt theme cannot be found for sourcing. If there is no .p10k.zsh file, the plugin will ask if you'd like to use p10k configure to create one.
+
+So, simply set the P10K_PROMPT variable in .zshrc and the plugin will do the rest.
+
+# Be sure to add a . to the front of and .zsh to the end of the name of whatever p10k theme files you wanna use, otherwise there will likely be problems.
+Example: To use my prompt theme (.docstheme.zsh) you simply add to .zshrc: `P10K_PROMPT="docstheme"`
 
 # The help command is useful again when run without any arguments
-Now, like with bash, it will display information about useful command aliases and other useful information.
-I will likely add more information for it to display in the future, but for now at least it isn't just saying "no help topic available for this" (or whatever it says when run without arguments)
+Now, somewhat like with bash, it will display information about useful command aliases and other useful information.
 
-# Temporarily removed for further development ~~Automatically call a command to commit all changes, then prompt for a commit message and finally automatically push the commit to github.~~
-~~The command is commit-push, only use it if you're sure all of the changes you've made are good to commit and push, as there's no going back after entering the commit message.~~
+I will likely add more information for it to display in the future, but for now at least it isn't just saying "no help topic available for this" (or whatever it says when run without arguments)
