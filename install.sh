@@ -184,6 +184,12 @@ if [ ! -d $INSTALL_DIRECTORY/.oh-my-zsh ]; then
         exit
     fi
 else # INSTALL (or update) OMZ PLUGINS
+    if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/p10k-promptconfig ]; then
+        cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/p10k-promptconfig && git pull
+    else
+        git clone --depth=1 https://github.com/doctormemes/p10k-promptconfig.git $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/p10k-promptconfig
+    fi
+
     if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]; then
         cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-autosuggestions && git pull
     else
@@ -213,6 +219,7 @@ else # INSTALL (or update) OMZ PLUGINS
     else
         git clone --depth=1 https://github.com/zsh-users/zsh-history-substring-search.git $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-history-substring-search
     fi
+    
     # POWERLEVEL10K THEME
     if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/themes/powerlevel10k ]; then
         cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/themes/powerlevel10k && git pull
@@ -223,7 +230,7 @@ fi
 
 # INSTALL EMOJI FONTS IF NONE FOUND
 if fc-list | grep -i emoji >/dev/null; then
-    printf "Emoji fonts found, won't install any more. If emojis are missing try downloading fonts-noto-color-emoji and fonts-recommended packages\n"
+    printf "Emoji fonts found, won't install any more. If emojis are missing try downloading fonts-noto-color-emoji and fonts-recommended packages\n" && sleep 1
 else
     if sudo apt install -y fonts-noto-color-emoji fonts-recommended || sudo pacman -S fonts-noto-color-emoji fonts-recommended || sudo dnf install -y fonts-noto-color-emoji fonts-recommended || sudo yum install -y fonts-noto-color-emoji fonts-recommended || pkg install fonts-noto-color-emoji fonts-recommended;
     then
@@ -290,9 +297,8 @@ while true; do
 done
 
 # START TO COPY FILES FROM REPO
-# First copy omz-files and P10K-themes directories to $INSTALL_DIRECTORY
+# First copy omz-files directory to $INSTALL_DIRECTORY
 cp -r $CLONED_REPO/omz-files $INSTALL_DIRECTORY
-cp -r $CLONED_REPO/P10K-themes $INSTALL_DIRECTORY
 
 # Start operations within omz-files directory
 cd $INSTALL_DIRECTORY/omz-files
