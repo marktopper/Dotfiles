@@ -78,6 +78,7 @@ if type brew &>/dev/null; then
 
 	autoload -Uz compinit
 	rm -f $ZDOTDIR/.zcompdump; compinit
+
 fi
 
 # Deduplicates path, fpath and manpath variables
