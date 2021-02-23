@@ -14,6 +14,7 @@ alias sysinfo='neofetch && info-message'
 alias fk='fuck'
 alias own='sudo chown -v $USER:$USER'
 alias owndir='sudo chown -R $USER:$USER'
+alias c='conda activate'
 alias z='cd $ZDOTDIR'
 alias zdir="$ZDOTDIR/"
 # copy, symlinks

@@ -14,7 +14,7 @@ else
 fi
 
 # if there's a $ZDOTDIR directory, oh-my-zsh is probably in it
-if [[ -n "$ZDOTDIR" ]]; then
+if [[ -n $ZDOTDIR ]]; then
 	export ZSH=$ZDOTDIR/.oh-my-zsh
 else # oh-my-zsh is probably in home directory, can probably set ZDOTDIR to $HOME to avoid anything breaking :)
 	export ZDOTDIR=~
@@ -49,7 +49,7 @@ COMPLETION_WAITING_DOTS="false"
 ENABLE_CORRECTION="false"
 CASE_SENSITIVE="false"
 # change this to false to turn off the help message and neofetch on terminal startup
-STARTUP_CONTENT='true'
+STARTUP_CONTENT="true"
 
 # Oh-my-zsh enabled plugins
 plugins=(
@@ -58,7 +58,7 @@ colored-man-pages colorize
 common-aliases conda-zsh-completion
 cp docker extract fzf
 git git-escape-magic
-gitignore jump man nordvpn
+gitignore jump man nordvpn p10k-promptconfig
 pip postgres python
 sudo thefuck vscode
 zsh-autosuggestions
@@ -67,6 +67,10 @@ zsh_reload)
 
 # P10K is only theme
 ZSH_THEME="powerlevel10k/powerlevel10k"
+# To customize prompt, run `p10k configure`, edit $ZDOTDIR/.p10k.zsh or set P10K_PROMPT below to a prompt file name in P10K-themes directory.
+# For example, below I've set my prompt as "docstheme". The actual file name is .docstheme.zsh. Ensure you follow the same format.
+P10K_PROMPT="docstheme"
+
 source $ZSH/oh-my-zsh.sh
 
 if type brew &>/dev/null; then
@@ -76,25 +80,18 @@ if type brew &>/dev/null; then
 	rm -f $ZDOTDIR/.zcompdump; compinit
 fi
 
-# To customize prompt, run `p10k configure`, edit $ZDOTDIR/.p10k.zsh or set P10K_THEME below to a prompt file name in P10K-themes directory.
-P10K_THEME="docstheme"
-# Uses powerlevel10k prompt themes if using powerlevel10k and P10K_THEME is set
-if [[ -n "$P10K_THEME" && "$ZSH_THEME" = *"powerlevel10k"* ]]; then
-	[[ -f $ZDOTDIR/P10K-themes/p10k-theme-config.sh ]] && source $ZDOTDIR/P10K-themes/p10k-theme-config.sh
-else
-	[[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
-fi
-
 # Deduplicates path, fpath and manpath variables
-[[ -e $ZSH/custom/custom_functions.zsh ]] && {
+[[ -e "$ZSH/custom/custom_functions.zsh" ]] && {
 	dedup_pathvar PATH
 	dedup_pathvar FPATH
+	dedup_pathvar MANPATH
 }
 
 # Terminal startup output (won't run unless $STARTUP_CONTENT is true)
-if [[ -o interactive && $STARTUP_CONTENT ]]; then
-	neofetch
-	info-message
-elif [[ -o login && $STARTUP_CONTENT ]]; then
-	info-message
+if [ -e "$ZSH/custom/custom_functions.zsh" ]; then
+	if [[ -o interactive && $STARTUP_CONTENT ]]; then
+		neofetch && info-message
+	elif [[ -o login && $STARTUP_CONTENT ]]; then
+		info-message
+	fi
 fi
