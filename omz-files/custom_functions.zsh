@@ -25,11 +25,11 @@ info-message() {
   echo -e 'Use "own" to take ownership of files. Use "owndir" to recursively take ownership of directories.'
   echo -e 'Use "z" to change to $ZDOTDIR. Use "cheat" to lookup cheatsheets if needing help.\n'
   echo -e $Cyan'APT/DPKG:\n"cleanapt" cleanup apt | "afix" apt-get install -f'
-  echo -e 'a apt | ag apt-get | "ac" apt-cache | "fix" apt-get install -f'
+  echo -e '"a" apt | "ag" apt-get | "ac" apt-cache'
   echo -e '"au" update | "ai" install | "ar" reinstall | "arm" remove | "ap" purge | "af" search | "ash" show'
   echo -e '"mark-auto" apt-mark auto | "mark-manual" apt-mark manual'
   echo -e '"reconfigure"  dpkg-reconfigure | "add-architecture" dpkg --add-architecture\n'
-  echo -e 'GIT:\n"gcedit" edit git commit msg | "gstat" status | "gsw" switch branch | "gl" pull | "gp" push | "gca" commit all'
+  echo -e 'GIT:\n"gcedit" edit git commit msg | "gst" status | "gsw" switch branch | "gl" pull | "gp" push | "gca" commit all'
 }
 
 # Because getting told "there is no list of special help topoics available at this time." is just not helpful enough

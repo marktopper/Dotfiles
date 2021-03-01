@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # check if necessary packages are installed
-if command -v zsh > /dev/null 2>&1 && command -v git > /dev/null 2>&1 && command -v wget > /dev/null 2>&1 && command -v neofetch > /dev/null 2>&1; 
+if command -v zsh > /dev/null 2>&1 && command -v git > /dev/null 2>&1 && command -v wget > /dev/null 2>&1 && command -v neofetch > /dev/null 2>&1;
 then
     printf "Zsh, Git, wget and neofetch are already installed\n"
 else
@@ -43,16 +43,13 @@ else
                     printf "Starting Miniconda3 setup...\n"
                     bash $HOME/Miniconda3-latest-Linux-x86_64.sh
                 fi
-                break
-                ;;
+                break ;;
             [Nn]* )
                 printf "Answer: No.\n"
                 printf "Continuing...\n" && sleep 1
-                break
-                ;;
+                break ;;
             * )
-                printf "Please provide a valid answer.\n"
-                ;;
+                printf "Please provide a valid answer.\n" ;;
         esac
     done
 fi
@@ -89,15 +86,12 @@ while true; do
                 printf "Backed up current .zshrc to .zshrc-backup-$(date +"%Y-%m-%d")\n"
             fi
             printf "Finished backing up any existing zsh files. Continuing...\n" && sleep 1
-            break
-            ;;
+            break ;;
         [Nn]* )
             printf "Will continue without trying to backup existing files. Continuing...\n" && sleep 1
-            break
-            ;;
+            break ;;
         * )
-            printf "Please provide a valid answer.\n"
-            ;;
+            printf "Please provide a valid answer.\n" ;;
     esac
 done
 
@@ -117,11 +111,9 @@ while true; do
         case "$user_prefix" in
             *\ * )
                 printf "ERROR: Cannot install into directories with spaces\n" >&2
-                continue
-                ;;
+                continue ;;
             *)
-                eval INSTALL_DIRECTORY="$user_prefix"
-                ;;
+                eval INSTALL_DIRECTORY="$user_prefix" ;;
         esac
     fi
     # check if user entry contained spaces
@@ -129,8 +121,7 @@ while true; do
         *\ * )
             printf "!!!\n"
             printf "ERROR: Cannot install into directories with spaces\n" >&2
-            continue
-            ;;
+            continue ;;
     esac
     # if directory exists, don't try creating it
     if [ -e "$INSTALL_DIRECTORY" ]; then
@@ -151,7 +142,6 @@ while true; do
         fi
     fi
 done
-
 
 # Oh-My-ZSH INSTALL
 printf "\nInstalling oh-my-zsh into $INSTALL_DIRECTORY\n" && sleep 1
@@ -284,15 +274,12 @@ while true; do
             fi
             # Scan new fonts and build font information cache files
             fc-cache -fv $HOME/.fonts
-            break
-            ;;
+            break ;;
         [Nn]* )
             printf "\nWill not install Nerd Fonts. Continuing...\n";
-            break
-            ;;
+            break ;;
         * )
-            printf "\nPlease provide a valid answer.\n"
-            ;;
+            printf "\nPlease provide a valid answer.\n" ;;
     esac
 done
 
@@ -341,9 +328,9 @@ while true; do
     printf "\nTo set the ZDOTDIR variable required to let Zsh know where to look for the .zsh files, we can either symlink the .zshenv file\nwith the export ZDOTDIR line in it from your install directory, or we can export the variable in /etc/zsh/zshenv.\n"
     printf "\nIf you'd prefer to set it some other way, choose option 3.\n"
     printf "\nOPTIONS:\n"
+    printf "[Enter] Do nothing; ZDOTDIR is already set, or I am going to set the ZDOTDIR variable myself.\n"
     printf "[1]     Create symbolic link to $INSTALL_DIRECTORY/.zshenv in $HOME directory and append lines exporting ZDOTDIR to it\n"
     printf "[2]     Use /etc/zsh/zshenv file to set ZDOTDIR to $INSTALL_DIRECTORY (may require sudo priviledges)\n"
-    printf "[3]     Do nothing; ZDOTDIR is already set, or I am going to set the ZDOTDIR variable myself.\n"
     printf ">>> "
     read -r choice
     case $choice in
@@ -354,33 +341,40 @@ while true; do
             printf "Inserting lines to export ZDOTDIR into .zshenv file...\n"
             echo -e "$INSERT_TEXT" | tee -a $HOME/.zshenv > /dev/null
             printf "Operation complete: zsh will look for .zshenv in user's home directory and ZDOTDIR will be set by it" && sleep 1
-            break
-            ;;
+            break ;;
         [2] )
             INSERT_TEXT="\n[[ -d $INSTALL_DIRECTORY && -f $INSTALL_DIRECTORY/.zshrc ]] && export ZDOTDIR=$INSTALL_DIRECTORY"
             echo -e "$INSERT_TEXT" | sudo tee -a /etc/zsh/zshenv > /dev/null
             printf "/etc/zsh/zshenv will now set and export the ZDOTDIR variable.\n"
             printf "!!!IMPORTANT: YOU NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!\n" && sleep 1
-            break
-            ;;
-        [3] )
-            printf "\nNothing will be done. Continuing on to final steps...\n" && sleep 1
-            break
-            ;;
+            break ;;
+        "" )
+            printf "Nothing will be done. Continuing on to final steps...\n" && sleep 1
+            break ;;
         * )
-            printf "\nPlease enter a valid choice.\n"
-            ;;
+            printf "\nPlease enter a valid choice.\n" ;;
     esac
 done
 
-export ZDOTDIR=$INSTALL_DIRECTORY
+[[ -z "$ZDOTDIR" ]] && export ZDOTDIR=$INSTALL_DIRECTORY
 
-# Change shell to zsh and run omz update
-printf "Sudo access is needed to change default shell\n"
-if chsh -s $(which zsh) && /bin/zsh -i -c 'omz update'; then
-    printf "Installation Successful, exit terminal and enter a new session\n"
+# Check if default shell is zsh
+if [[ "$SHELL" != *"/zsh" ]]; then
+    # Change default shell to zsh & run omz update
+    printf "Sudo access is needed to change default shell\n"
+    if chsh -s $(which zsh) && $(which zsh) -i -c 'omz update'; then
+        printf "Installation Successful, exit terminal and enter a new session\n"
+    else
+        printf "Something went wrong\n"
+    fi
 else
-    printf "Something went wrong\n"
+    printf "Default shell is already $(which zsh)\n"
+    printf "Updating oh-my-zsh\n"
+    if $(which zsh) -i -c 'omz update'; then
+        printf "Installation Successful, exit terminal and enter a new session\n"
+    else
+        printf "Something went wrong\n"
+    fi
 fi
 
 exit

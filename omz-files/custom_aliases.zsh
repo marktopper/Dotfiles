@@ -44,7 +44,6 @@ alias reconfigure='sudo dpkg-reconfigure'
 alias add-architecture='sudo dpkg --add-architecture'
 
 # git aliases
-alias gstat='git status'
 alias prcreate='gh pr create --fill'
 alias prmerge='gh pr merge'
 
