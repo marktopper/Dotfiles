@@ -23,5 +23,3 @@ dedup_pathvar () {
     deduped_path="$(perl -e 'print join(":",grep { not $seen{$_}++ } split(/:/, $ARGV[0]))' "$pathvar_value")"
     set_var "$pathvar_name" "$deduped_path"
 }
-
-

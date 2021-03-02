@@ -1,5 +1,5 @@
 # $ZDOTDIR/.zshrc
-	
+
 # P10K instant prompt. Keep close to top of .zshrc. Code that may require console input
 # password prompts, etc. must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
@@ -24,18 +24,8 @@ fi
 # Uncomment the following line to use hyphen-insensitive completion.
 # Case-sensitive completion must be off. _ and - will be interchangeable.
 HYPHEN_INSENSITIVE="true"
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
-# Uncomment the following line to automatically update without prompting.
-# DISABLE_UPDATE_PROMPT="true"
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
 # Uncomment the following line if pasting URLs and other text is messed up.
 # DISABLE_MAGIC_FUNCTIONS="true"
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Set command history file location and name with below variable.
 HISTFILE=$ZDOTDIR/.zsh_history
 # You can set one of the optional three formats:
@@ -75,17 +65,15 @@ source $ZSH/oh-my-zsh.sh
 
 if type brew &>/dev/null; then
 	FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
-
 	autoload -Uz compinit
 	rm -f $ZDOTDIR/.zcompdump; compinit
 
 fi
 
-# Deduplicates path, fpath and manpath variables
+# Deduplicates path & fpath
 [[ -e "$ZSH/custom/custom_functions.zsh" ]] && {
 	dedup_pathvar PATH
 	dedup_pathvar FPATH
-	dedup_pathvar MANPATH
 }
 
 # Terminal startup output (won't run unless $STARTUP_CONTENT is true)
