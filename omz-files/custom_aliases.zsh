@@ -27,6 +27,7 @@ alias cleanzsh='rm -rf ${ZDOTDIR:-$HOME}/.zcompdump* && rm -rf ${ZDOTDIR:-$HOME}
 
 # apt/apt-get/dpkg
 alias afix='sudo apt-get install -f'
+alias alu='apt list --upgradeable'
 alias au='sudo apt-get update'
 alias ai='sudo apt install'
 alias ar='sudo apt reinstall'
@@ -37,11 +38,11 @@ alias ash='sudo apt show'
 alias ag='sudo apt-get'
 alias a='sudo apt'
 alias ac='sudo apt-cache'
-alias mark-auto='sudo apt-mark auto'
-alias mark-manual='sudo apt-mark manual'
-alias cleanapt='sudo apt-get --purge autoremove -y && sudo apt-get autoclean -y'
-alias reconfigure='sudo dpkg-reconfigure'
-alias add-architecture='sudo dpkg --add-architecture'
+alias mark-a='sudo apt-mark auto'
+alias mark-m='sudo apt-mark manual'
+alias aptc='sudo apt-get --purge autoremove -y && sudo apt-get autoclean -y'
+alias reconf='sudo dpkg-reconfigure'
+alias add-arch='sudo dpkg --add-architecture'
 
 # git aliases
 alias prcreate='gh pr create --fill'

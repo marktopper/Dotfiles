@@ -17,46 +17,48 @@ Black=`tput setaf 8`
 # considering splitting up certain parts of this function into smaller function messages
 info-message() {
   echo -e $Red'             USEFUL COMMANDS\n'
-  echo -e $Blue'GENERAL(Certain aliases like cpd have -ffs versions that use sudo):'
+  echo -e $Blue'GENERAL(those with -ffs in command use sudo):'
   echo -e '"s" (sudo) | "rt" (switch to root user) | "e" (echo)'
   echo -e '"cpd" (copy directory & contents in it) | "sl" (symlink w/ -srv options set)'
   echo -e '"sysinfo" will dispay information about your system (and this entire message).'
   echo -e '"cleanzsh" removes zcompdump and .zwc files in your zsh directory.'
+  echo -e '"sysctl" sudo systemctl | "sysd" sudo systemd'
   echo -e 'Use "own" to take ownership of files. Use "owndir" to recursively take ownership of directories.'
   echo -e 'Use "z" to change to $ZDOTDIR. Use "cheat" to lookup cheatsheets if needing help.\n'
-  echo -e $Cyan'APT/DPKG:\n"cleanapt" cleanup apt | "afix" apt-get install -f'
+  echo -e $Cyan'APT/DPKG:\n"aptc" clean up apt pkgs | "afix" apt-get install -f'
   echo -e '"a" apt | "ag" apt-get | "ac" apt-cache'
   echo -e '"au" update | "ai" install | "ar" reinstall | "arm" remove | "ap" purge | "af" search | "ash" show'
-  echo -e '"mark-auto" apt-mark auto | "mark-manual" apt-mark manual'
-  echo -e '"reconfigure"  dpkg-reconfigure | "add-architecture" dpkg --add-architecture\n'
+  echo -e '"mark-a" apt-mark auto | "mark-m" apt-mark manual'
+  echo -e '"reconf"  dpkg-reconfigure | "add-arch" dpkg --add-architecture\n'
   echo -e 'GIT:\n"gcedit" edit git commit msg | "gst" status | "gsw" switch branch | "gl" pull | "gp" push | "gca" commit all'
+  echo -e '"prcreate" gh pr create --fill | "prmerge" gh pr merge'
 }
 
 # Because getting told "there is no list of special help topoics available at this time." is just not helpful enough
 better-help() {
-  if [ "$*" = "" ]; then
-    info-message
-  else
-    run-help "$1"
-  fi
+if [ "$*" = "" ]; then
+	info-message
+else
+	run-help "$1"
+fi
 }
 alias help='better-help'
 
 # this will show all Powerlevel10K prompt elements
 p10k-prompt-info() {
-	typeset -A reply
-	p10k display -a '*'
-	printf '%-32s = %q\n' ${(@kv)reply} | sort
+typeset -A reply
+p10k display -a '*'
+printf '%-32s = %q\n' ${(@kv)reply} | sort
 }
 
 # edit recent git commit
 function gcedit() {
-	git add .
-  if [ "$1" != "" ]; then
-      git commit -m "$1"
-  else
-      git commit -m update # default commit message is `update`
-  fi
+git add .
+if [ "$1" != "" ]; then
+	git commit -m "$1"
+else
+	git commit -m update # default commit message is `update`
+fi
 }
 
 # cheat sheets (github.com/chubin/cheat.sh), find out how to use commands
@@ -64,21 +66,21 @@ function gcedit() {
 # for language specific question supply 2 args first for language, second as the question
 # eample: cheat python3 execute external program
 cheat() {
-	if [ "$2" ]; then
-		curl "https://cheat.sh/$1/$2+$3+$4+$5+$6+$7+$8+$9+$10"
-	else
-		curl "https://cheat.sh/$1"
-	fi
+if [ "$2" ]; then
+	curl "https://cheat.sh/$1/$2+$3+$4+$5+$6+$7+$8+$9+$10"
+else
+	curl "https://cheat.sh/$1"
+fi
 }
 
 speedtest() {
-  	curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python3 -
+curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python3 -
 }
 
 print-colormap() {
-	for i in {0..255}; do
-		print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}
-	done
+for i in {0..255}; do
+	print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}
+done
 }
 
 # function for committing changes and pushing to github automatically
