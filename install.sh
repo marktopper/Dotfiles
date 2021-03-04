@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # check if necessary packages are installed
 if command -v zsh > /dev/null 2>&1 && command -v git > /dev/null 2>&1 && command -v wget > /dev/null 2>&1 && command -v neofetch > /dev/null 2>&1;
