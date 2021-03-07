@@ -1,23 +1,7 @@
-# Ignore oh-my-zsh folder
-.oh-my-zsh
-
-# Ignore .zsh_history
-.zsh_history
-
-# Ignore .zcompdump files
-.zcompdump*
-
-# Ignore zshrc.zwc file
-.zshrc.zwc
-
-# Ignore test-install.sh
-test-install.sh
-
-# Ignore update.sh script
-update.sh
-# Ignore .p10k.zsh
-.p10k.zsh
-# Ignore ignored directory
 ignored
-# ignore banner.txt for now
-banner.txt
+.oh-my-zsh
+.zsh_history
+.zcompdump*
+*.zwc
+.p10k.zsh
+

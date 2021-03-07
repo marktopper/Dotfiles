@@ -67,7 +67,6 @@ if type brew &>/dev/null; then
 	FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
 	autoload -Uz compinit
 	rm -f $ZDOTDIR/.zcompdump; compinit
-
 fi
 
 # Deduplicates path & fpath
@@ -77,10 +76,8 @@ fi
 }
 
 # Terminal startup output (won't run unless $STARTUP_CONTENT is true)
-if [ -e "$ZSH/custom/custom_functions.zsh" ]; then
-	if [[ -o interactive && $STARTUP_CONTENT ]]; then
-		neofetch && info-message
-	elif [[ -o login && $STARTUP_CONTENT ]]; then
-		info-message
+if [[ -o interactive && "$STARTUP_CONTENT" = "true" ]]; then
+        if [ -e "$ZSH/custom/custom_functions.zsh" ]; then
+		sinfo
 	fi
 fi
