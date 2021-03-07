@@ -1,5 +1,26 @@
 #!/bin/bash
 
+function clone_omz_plugin()
+{
+    git_plugin=$1
+    x=$2
+    name=$(echo "${git_plugin##*/}" | cut -f 1 -d '.')
+    # if x is 1, this is a theme, so use custom/themes directory
+    if [ $x -eq 1 ]; then
+        if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/themes/$name ]; then
+            cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/themes/$name && git pull
+        else
+            git clone --depth=1 $git_plugin $INSTALL_DIRECTORY/.oh-my-zsh/custom/themes/$name
+        fi
+    elif [ $x -eq 0 ]; then # this is a plugin, use plugins directory
+        if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/$name ]; then
+            cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/$name && git pull
+        else
+            git clone --depth=1 $git_plugin $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/$name
+        fi
+    fi
+}
+
 # check if necessary packages are installed
 if command -v zsh > /dev/null 2>&1 && command -v git > /dev/null 2>&1 && command -v wget > /dev/null 2>&1 && command -v neofetch > /dev/null 2>&1;
 then
@@ -16,7 +37,7 @@ fi
 CLONED_REPO=$(pwd)
 
 # move cloned repo to home directory if not already there
-if [[ ! -d $HOME/Dotfiles ]]; then
+if [ ! -d $HOME/Dotfiles ]; then
 printf "Moving cloned Dotfiles repo directory to user's home directory.\n"
     cd $HOME && mv $CLONED_REPO $HOME/Dotfiles
     cd $HOME/Dotfiles && CLONED_REPO=$(pwd)
@@ -100,7 +121,6 @@ INSTALL_DIRECTORY="$HOME/.config/zsh" # Default installation directory
 while true; do
     printf "\n"
     printf "Where should your zsh and oh-my-zsh configuration files be installed?\n"
-    printf "!!!(FYI - the location should be in your user's home directory)\n\n"
     printf "Default install directory is: $INSTALL_DIRECTORY\n"
     printf "  - Press ENTER to confirm the location\n"
     printf "  - Press CTRL-C to abort the installation\n"
@@ -160,7 +180,7 @@ else
     fi
 fi
 
-printf "\nREADY TO INSTALL Oh-My-ZSH PLUGINS\n" && sleep 1
+printf "\nREADY TO INSTALL OhMyZSH PLUGINS\n\n" && sleep 1
 
 if [ ! -d $INSTALL_DIRECTORY/.oh-my-zsh ]; then
     printf "Something's wrong, oh-my-zsh isn't in $INSTALL_DIRECTORY...\n"
@@ -174,48 +194,14 @@ if [ ! -d $INSTALL_DIRECTORY/.oh-my-zsh ]; then
         exit
     fi
 else # INSTALL (or update) OMZ PLUGINS
-    if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/p10k-promptconfig ]; then
-        cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/p10k-promptconfig && git pull
-    else
-        git clone --depth=1 https://github.com/doctormemes/p10k-promptconfig.git $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/p10k-promptconfig
-    fi
-
-    if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]; then
-        cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-autosuggestions && git pull
-    else
-        git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-    fi
-
-    if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/conda-zsh-completion ]; then
-        cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/conda-zsh-completion && git pull
-    else
-        git clone --depth=1 https://github.com/esc/conda-zsh-completion.git $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/conda-zsh-completion
-    fi
-
-    if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]; then
-        cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting && git pull
-    else
-        git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-    fi
-
-    if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-autocompletion ]; then
-        cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-autocompletion && git pull
-    else
-        git clone --depth=1 https://github.com/marlonrichert/zsh-autocomplete.git $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-autocomplete
-    fi
-
-    if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-history-substring-search ]; then
-        cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-history-substring-search && git pull
-    else
-        git clone --depth=1 https://github.com/zsh-users/zsh-history-substring-search.git $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/zsh-history-substring-search
-    fi
-    
+    clone_omz_plugin https://github.com/doctormemes/p10k-promptconfig.git 0
+    clone_omz_plugin https://github.com/zsh-users/zsh-autosuggestions.git 0
+    clone_omz_plugin https://github.com/esc/conda-zsh-completion.git 0
+    clone_omz_plugin https://github.com/zsh-users/zsh-syntax-highlighting.git 0
+    clone_omz_plugin https://github.com/marlonrichert/zsh-autocomplete.git 0
+    clone_omz_plugin https://github.com/zsh-users/zsh-history-substring-search.git 0
     # POWERLEVEL10K THEME
-    if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/themes/powerlevel10k ]; then
-        cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/themes/powerlevel10k && git pull
-    else
-        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $INSTALL_DIRECTORY/.oh-my-zsh/custom/themes/powerlevel10k
-    fi
+    clone_omz_plugin https://github.com/romkatv/powerlevel10k.git 1
 fi
 
 # INSTALL EMOJI FONTS IF NONE FOUND
@@ -291,7 +277,7 @@ cp -r $CLONED_REPO/omz-files $INSTALL_DIRECTORY
 cd $INSTALL_DIRECTORY/omz-files
 for i in *; do
     # create completions directory in .oh-my-zsh if needed
-    [[ ! -d $INSTALL_DIRECTORY/.oh-my-zsh/completions ]] && mkdir $INSTALL_DIRECTORY/.oh-my-zsh/completions
+    [ ! -d $INSTALL_DIRECTORY/.oh-my-zsh/completions ] && mkdir $INSTALL_DIRECTORY/.oh-my-zsh/completions
     # copy completion files to oh-my-zsh
     [[ "$i" = "_"* ]] && cp -uv $i $INSTALL_DIRECTORY/.oh-my-zsh/completions
     # if miniconda is installed, need to copy conda_setup.zsh as well
@@ -299,7 +285,7 @@ for i in *; do
     # symlink alias and function files (they both begin with "custom_") so they can easily be modified from omz-files directory
     [[ "$i" = "custom_"* ]] && ln -sv $(pwd)/$i $INSTALL_DIRECTORY/.oh-my-zsh/custom
     # copy nordvpn plugin to custom plugins directory (nordvpn plugin is yet to be included in oh-my-zsh outside of it's testing branch)
-    [[ -d $i ]] && cp -ruv $i $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins
+    [ -d $i ] && cp -ruv $i $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins
 done && sleep 1
 
 # recursively copy all dotfiles in the cloned repo directory (except .gitignore)
@@ -316,22 +302,20 @@ printf "Finished setting up repo files in new $INSTALL_DIRECTORY directory.\n" &
 if [ $INSTALL_DIRECTORY != $HOME ]; then
     printf "Removing remaining zsh dotfiles in user's home directory...\n"
     [ -f $HOME/.zprofile ] && rm -fv $HOME/.zprofile
-    [ -f $HOME/.zshenv ] && rm -fv $HOME/.zshenv
-    [ -f $HOME/.zshrc ] && rm -fv $HOME/.zshrc
+    rm -fv $HOME/.zsh*
     printf "Done\n" && sleep 1
 fi
 
 cd $HOME
 
 while true; do
-    INSTALL_DIRECTORY=$HOME/.config/zsh
     printf "\nTo set the ZDOTDIR variable required to let Zsh know where to look for the .zsh files, we can either symlink the .zshenv file\nwith the export ZDOTDIR line in it from your install directory, or we can export the variable in /etc/zsh/zshenv.\n"
-    printf "\nIf you'd prefer to set it some other way, choose option 3.\n"
-    printf "\nOPTIONS:\n"
-    printf "[Enter] Do nothing; ZDOTDIR is already set, or I am going to set the ZDOTDIR variable myself.\n"
-    printf "[1]     Create symbolic link to $INSTALL_DIRECTORY/.zshenv in $HOME directory and append lines exporting ZDOTDIR to it\n"
-    printf "[2]     Use /etc/zsh/zshenv file to set ZDOTDIR to $INSTALL_DIRECTORY (may require sudo priviledges)\n"
-    printf ">>> "
+    printf "\nIf you'd prefer to set it some other way, press enter.\n"
+    printf "\n%-50sOPTIONS:\n"
+    printf "\t[1] \t\tCreate symbolic link to $INSTALL_DIRECTORY/.zshenv in $HOME directory and append lines exporting ZDOTDIR to it\n"
+    printf "\t[2] \t\tUse /etc/zsh/zshenv file to set ZDOTDIR to $INSTALL_DIRECTORY (may require sudo priviledges)\n"
+    printf "\t[Enter] \tDo nothing; ZDOTDIR is already set, or I am going to set the ZDOTDIR variable myself.\n"
+    printf "\t>>> "
     read -r choice
     case $choice in
         [1] )
@@ -356,7 +340,7 @@ while true; do
     esac
 done
 
-[[ -z "$ZDOTDIR" ]] && export ZDOTDIR=$INSTALL_DIRECTORY
+[ -z "$ZDOTDIR" ] && export ZDOTDIR=$INSTALL_DIRECTORY
 
 # Check if default shell is zsh
 if [[ "$SHELL" != *"/zsh" ]]; then
@@ -369,7 +353,7 @@ if [[ "$SHELL" != *"/zsh" ]]; then
     fi
 else
     printf "Default shell is already $(which zsh)\n"
-    printf "Updating oh-my-zsh\n"
+    printf "Updating oh-my-zsh\n" && sleep 1
     if $(which zsh) -i -c 'omz update'; then
         printf "Installation Successful, exit terminal and enter a new session\n"
     else

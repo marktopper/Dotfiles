@@ -8,7 +8,7 @@
 # custom environment in such cases.  Note also that .zshenv should not contain
 # commands that produce output or assume the shell is attached to a tty.
 
-export PATH=~/.local/bin:/snap/bin:/usr/sandbox/:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/share/games:/usr/local/sbin:/usr/sbin:/sbin:$PATH
+export PATH=/snap/bin:/usr/sandbox/:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/share/games:/usr/local/sbin:/usr/sbin:/sbin:$PATH
 
 # For dedepuplicating path variables
 get_var () {
