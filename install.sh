@@ -2,22 +2,13 @@
 
 function clone_omz_plugin()
 {
-    git_plugin=$1
-    x=$2
-    name=$(echo "${git_plugin##*/}" | cut -f 1 -d '.')
-    # if x is 1, this is a theme, so use custom/themes directory
-    if [ $x -eq 1 ]; then
-        if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/themes/$name ]; then
-            cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/themes/$name && git pull
-        else
-            git clone --depth=1 $git_plugin $INSTALL_DIRECTORY/.oh-my-zsh/custom/themes/$name
-        fi
-    elif [ $x -eq 0 ]; then # this is a plugin, use plugins directory
-        if [ -d $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/$name ]; then
-            cd $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/$name && git pull
-        else
-            git clone --depth=1 $git_plugin $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins/$name
-        fi
+    repo=$1
+    type=$2 # repo type, either plugins or themes
+    name=$(echo "${repo##*/}" | cut -f 1 -d '.')
+    if [ -d $ZSH/custom/$type/$name ]; then
+        cd $ZSH/custom/$type/$name && git pull
+    else
+        git clone --depth=1 $repo $ZSH/custom/$type/$name
     fi
 }
 
@@ -49,21 +40,19 @@ if [ -f $HOME/miniconda3/condabin/conda ]; then
 else
     printf "Miniconda3 is not installed.\n"
     while true; do
-        read -p "Do you want to install Miniconda? [Y/n]:" yn
+        read -p "Do you want to install Miniconda? [Y/n]: " yn
         case $yn in
             [Yy]* )
                 printf "Be sure to install Miniconda3 within your user's home directory.\n"
-                if [ -f $HOME/Miniconda3-latest-* ]; then # to prevent downloading Miniconda3 setup file multiple times
+                if [ -f $HOME/Miniconda3-latest-Linux-x86_64.sh ]; then # to prevent downloading Miniconda3 setup file multiple times
                     printf "Miniconda3 is already downloaded\n"
-                    printf "Starting Miniconda3 setup...\n"
-                    bash $HOME/Miniconda3-latest-Linux-x86_64.sh
                 else
                     printf "Downloading Miniconda3..."
                     wget -q --show-progress https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -P $HOME/
                     printf "Download finished.\n"
-                    printf "Starting Miniconda3 setup...\n"
-                    bash $HOME/Miniconda3-latest-Linux-x86_64.sh
                 fi
+                printf "Starting Miniconda3 setup...\n"
+                bash $HOME/Miniconda3-latest-Linux-x86_64.sh
                 break ;;
             [Nn]* )
                 printf "Answer: No.\n"
@@ -86,30 +75,30 @@ fi
 while true; do
     printf "During this install, any zsh related dotfiles (such as .zshrc, .zshenv) in user's home directory will be deleted.\n"
     printf "Are there dotfiles in your home directory that you want to backup?\n"
-    read -p "Backup existing dotfiles in home directory? [Y/n]:" yn
+    read -p "Backup existing dotfiles in home directory? [Y/n]: " yn
     case $yn in
         [Yy]* )
             printf "Starting backup...\n"
             mkdir -p $HOME/Backup_Dotfiles # Create file backup directory
             if [ -f $HOME/.zprofile ]; then
                 printf "Found .zprofile, backing up file to $HOME/Backup_Dotfiles...\n"
-                mv $HOME/.zprofile $HOME/Backup_Dotfiles/.zprofile-backup-$(date +"%Y-%m-%d")
+                cp $HOME/.zprofile $HOME/Backup_Dotfiles/.zprofile-backup-$(date +"%Y-%m-%d")
                 printf "Backed up current .zprofile to .zprofile-backup-$(date +"%Y-%m-%d")\n"
             fi
             if [ -f $HOME/.zshenv ]; then
                 printf "Found .zshenv, backing up file to $HOME/Backup_Dotfiles...\n"
-                mv $HOME/.zshenv $HOME/Backup_Dotfiles/.zshenv-backup-$(date +"%Y-%m-%d")
+                cp $HOME/.zshenv $HOME/Backup_Dotfiles/.zshenv-backup-$(date +"%Y-%m-%d")
                 printf "Backed up current .zshenv to .zshenv-backup-$(date +"%Y-%m-%d")\n"
             fi
             if [ -f $HOME/.zshrc ]; then # backup .zshrc
                 printf "Found .zshrc, backing up file to $HOME/Backup_Dotfiles...\n"
-                mv $HOME/.zshrc $HOME/Backup_Dotfiles/.zshrc-backup-$(date +"%Y-%m-%d")
+                cp $HOME/.zshrc $HOME/Backup_Dotfiles/.zshrc-backup-$(date +"%Y-%m-%d")
                 printf "Backed up current .zshrc to .zshrc-backup-$(date +"%Y-%m-%d")\n"
             fi
             printf "Finished backing up any existing zsh files. Continuing...\n" && sleep 1
             break ;;
         [Nn]* )
-            printf "Will continue without trying to backup existing files. Continuing...\n" && sleep 1
+            printf "Continuing without backing up existing zsh files...\n" && sleep 1
             break ;;
         * )
             printf "Please provide a valid answer.\n" ;;
@@ -194,14 +183,14 @@ if [ ! -d $INSTALL_DIRECTORY/.oh-my-zsh ]; then
         exit
     fi
 else # INSTALL (or update) OMZ PLUGINS
-    clone_omz_plugin https://github.com/doctormemes/p10k-promptconfig.git 0
-    clone_omz_plugin https://github.com/zsh-users/zsh-autosuggestions.git 0
-    clone_omz_plugin https://github.com/esc/conda-zsh-completion.git 0
-    clone_omz_plugin https://github.com/zsh-users/zsh-syntax-highlighting.git 0
-    clone_omz_plugin https://github.com/marlonrichert/zsh-autocomplete.git 0
-    clone_omz_plugin https://github.com/zsh-users/zsh-history-substring-search.git 0
+    clone_omz_plugin https://github.com/doctormemes/p10k-promptconfig.git plugins
+    clone_omz_plugin https://github.com/zsh-users/zsh-autosuggestions.git plugins
+    clone_omz_plugin https://github.com/esc/conda-zsh-completion.git plugins
+    clone_omz_plugin https://github.com/zsh-users/zsh-syntax-highlighting.git plugins
+    clone_omz_plugin https://github.com/marlonrichert/zsh-autocomplete.git plugins
+    clone_omz_plugin https://github.com/zsh-users/zsh-history-substring-search.git plugins
     # POWERLEVEL10K THEME
-    clone_omz_plugin https://github.com/romkatv/powerlevel10k.git 1
+    clone_omz_plugin https://github.com/romkatv/powerlevel10k.git themes
 fi
 
 # INSTALL EMOJI FONTS IF NONE FOUND
@@ -219,7 +208,7 @@ fi
 # INSTALL NERD FONTS
 while true; do
     printf "\nWould you like to install nerd fonts?\n"
-    read -p "Install nerd fonts? [Y/n]:" yn
+    read -p "Install nerd fonts? [Y/n]: " yn
     case $yn in
         [Yy]* )
             printf "\nInstalling various Nerd Fonts...\n"
