@@ -36,29 +36,31 @@ info-message() {
 
 # Because getting told "there is no list of special help topoics available at this time." is just not helpful enough
 better-help() {
-if [ "$*" = "" ]; then
-	info-message
-else
-	run-help "$1"
-fi
+  if [ "$*" = "" ]
+  then
+    info-message
+  else
+    run-help "$1"
+  fi
 }
 alias help='better-help'
 
 # this will show all Powerlevel10K prompt elements
-p10k-prompt-info() {
-typeset -A reply
-p10k display -a '*'
-printf '%-32s = %q\n' ${(@kv)reply} | sort
+powerlevel-elements() {
+  typeset -A reply
+  p10k display -a '*'
+  printf '%-32s = %q\n' ${(@kv)reply} | sort
 }
 
 # edit recent git commit
 function gcedit() {
-git add .
-if [ "$1" != "" ]; then
-	git commit -m "$1"
-else
-	git commit -m update # default commit message is `update`
-fi
+  git add .
+  if [ "$1" != "" ]
+  then
+  	git commit -m "$1"
+  else
+  	git commit -m update # default commit message is `update`
+  fi
 }
 
 # cheat sheets (github.com/chubin/cheat.sh), find out how to use commands
@@ -66,41 +68,36 @@ fi
 # for language specific question supply 2 args first for language, second as the question
 # eample: cheat python3 execute external program
 cheat() {
-if [ "$2" ]; then
-	curl "https://cheat.sh/$1/$2+$3+$4+$5+$6+$7+$8+$9+$10"
-else
-	curl "https://cheat.sh/$1"
+  if [ "$2" ]
+  then
+	  curl "https://cheat.sh/$1/$2+$3+$4+$5+$6+$7+$8+$9+$10"
+  else
+  	curl "https://cheat.sh/$1"
 fi
 }
 
 speedtest() {
-curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python3 -
+  curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python3 -
 }
 
-print-colormap() {
-for i in {0..255}; do
-	print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}
-done
+echo_colormap() {
+  for i in {0..255}; do
+    print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}
+  done
 }
 
-# function for committing changes and pushing to github automatically
-#gc-push() {
-#	if [[ $VCS_STATUS_HAS_UNSTAGED != 0 || $VCS_STATUS_HAS_UNTRACKED != 0 ]]; then
-#		if git status; then
-#			printf "Enter a commit message:\n"
-#			vared -c commit_msg
-#			if [ "$commit_msg" != "" ]; then
-#				git commit -a -m "$commit_msg"
-#				if git push; then
-#					printf "Changes committed and pushed to the upstream branch successfully.\n"
-#				else
-#					printf "Something went wrong. Nothing pushed to upstream branch.\n"
-#				fi
-#			else
-#				printf "Commit message cannot be nothing.\n"
-#			fi
-#			else
-#				printf "Nothing to commit!\n"
-#		fi
-#	fi
-#}
+install_omz_plugin() {
+  if [ $# -eq 1 ]
+  then
+    local plugin=$1
+    local name=$(echo "${plugin##*/}" | cut -f 1 -d '.')
+    if [ -d $ZSH/custom/plugins/$name ]
+    then
+      cd $ZSH/custom/plugins/$name && git pull
+    else
+      git clone --depth=1 $plugin $ZSH/custom/plugins/$name
+    fi
+  else
+    echo "Command requires a single argument"
+  fi
+}

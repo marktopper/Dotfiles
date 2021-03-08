@@ -1,11 +1,6 @@
 # ALIASES
 
-# alias should only be set if on Parrot OS
-if (( $+commands[parrot-upgrade] )); then
-    alias sys-update='sudo parrot-upgrade'
-fi
-
-# Useful aliases
+# Useful stuff
 alias s='sudo'
 alias rt='sudo -i'
 alias e='echo'
@@ -19,15 +14,21 @@ alias cpd='cp -r'
 alias cpd-ffs='sudo cp -r'
 alias sl='ln -srv'
 alias sl-ffs='sudo ln -srv'
+alias rma='rm -drf'
+alias rma-ffs-'sudo rm -drf'
 # clean zcomp and zwc zsh files
-alias cleanzsh='rm -rf ${ZDOTDIR:-$HOME}/.zcompdump* && rm -rf ${ZDOTDIR:-$HOME}/.zshrc.zwc'
+alias cleanzsh='rm -f ${ZDOTDIR:-$HOME}/.zcompdump* && rm -f ${ZDOTDIR:-$HOME}/.zshrc.zwc'
+
+if (( $+commands[parrot-upgrade] )); then
+    alias sys-update='sudo parrot-upgrade'
+fi
 
 if (( $+commands[neofetch] )); then
 	alias sinfo='neofetch && info-message'
 fi
 
 if (( $+commands[fuck] )); then
-alias fk='fuck'
+	alias fk='fuck'
 fi
 
 # apt/apt-get
