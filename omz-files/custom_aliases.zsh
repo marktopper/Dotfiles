@@ -20,7 +20,7 @@ alias rma-ffs-'sudo rm -drf'
 alias cleanzsh='rm -f ${ZDOTDIR:-$HOME}/.zcompdump* && rm -f ${ZDOTDIR:-$HOME}/.zshrc.zwc'
 
 if (( $+commands[parrot-upgrade] )); then
-    alias sys-update='sudo parrot-upgrade'
+	alias sys-update='sudo parrot-upgrade'
 fi
 
 if (( $+commands[neofetch] )); then
