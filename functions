@@ -36,10 +36,11 @@ info-message() {
 
 # Because getting told "there is no list of special help topoics available at this time." is just not helpful enough
 better-help() {
-  if [ "$*" = "" ]
+  if [ $# -eq 0 ]
   then
     info-message
-  else
+  elif [ $# -eq 1 ]
+  then
     run-help "$1"
   fi
 }
@@ -84,20 +85,4 @@ echo_colormap() {
   for i in {0..255}; do
     print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}
   done
-}
-
-install_omz_plugin() {
-  if [ $# -eq 1 ]
-  then
-    local plugin=$1
-    local name=$(echo "${plugin##*/}" | cut -f 1 -d '.')
-    if [ -d $ZSH/custom/plugins/$name ]
-    then
-      cd $ZSH/custom/plugins/$name && git pull
-    else
-      git clone --depth=1 $plugin $ZSH/custom/plugins/$name
-    fi
-  else
-    echo "Command requires a single argument"
-  fi
 }
