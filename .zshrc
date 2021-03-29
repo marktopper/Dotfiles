@@ -63,6 +63,8 @@ P10K_PROMPT="docstheme"
 
 source $ZSH/oh-my-zsh.sh
 
+[[ -f $ZDOTDIR/.conda_init.zsh ]] && source $ZDOTDIR/.conda_init.zsh
+
 # custom aliases
 [[ -f $ZDOTDIR/aliases ]] && . $ZDOTDIR/aliases
 

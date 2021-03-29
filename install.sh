@@ -1,9 +1,11 @@
 #!/bin/bash
 
+# variables
 CLONED_REPO=$(dirname "$0")
 CLONED_REPO=$(cd "$CLONED_REPO" && pwd)
-INSTALL_DIRECTORY="$HOME/.config/zsh" # Default installation directory
+INSTALL_DIRECTORY="$HOME/.config/zsh"
 
+# functions
 function clone_to_omz()
 {
     type=$1 # repo type, either plugins or themes
@@ -16,18 +18,33 @@ function clone_to_omz()
     fi
 }
 
-# check if necessary packages are installed
-if command -v zsh > /dev/null 2>&1 && command -v git > /dev/null 2>&1 && command -v wget > /dev/null 2>&1 && command -v neofetch > /dev/null 2>&1;
-then
-    printf "Zsh, Git, wget and neofetch are already installed\n"
-else
-    if sudo apt install -y zsh git wget neofetch || sudo pacman -S zsh git wget neofetch || sudo dnf install -y zsh git wget neofetch || sudo yum install -y zsh git wget neofetch || pkg install git zsh wget neofetch;
-    then
-        printf "Zsh, Git, wget and neofetch installed.\n"
+function font_install(){
+    font=$1
+    link=$2
+    fontname=$(echo "${font//\\}" | cut -f 1 -d '.')
+    if [[ -f "$HOME/.fonts/$font" ]]; then
+        printf "%s\n" "$fontname already installed"
     else
-        printf "Please install the following packages first, then try again: zsh git wget neofetch\n" && exit
+        printf "%s\n" "Installing $fontname..."
+        wget -q --show-progress -N "$link" -P "$HOME/.fonts/"
     fi
-fi
+}
+
+# ============BEGIN============
+# check if necessary packages are installed
+req_pkgs=(zsh git wget neofetch)
+
+for i in "${req_pkgs[@]}"; do
+    if command -v "$i" > /dev/null 2>&1; then
+        printf "%s\n" "$i already installed"
+    else
+        if sudo apt install -y "$i" || sudo pacman -S "$i" || sudo dnf install -y "$i" || sudo yum install -y "$i" || pkg install "$i"; then
+            printf "%s\n" "$i installed."
+        else
+            printf "%s %s\n" "Please install the following packages first, then try again:" "${req_pkgs[*]}" && exit
+        fi
+    fi
+done
 
 # MINICONDA INSTALL
 if [ -f "$HOME/miniconda3/condabin/conda" ]; then
@@ -121,14 +138,12 @@ while true; do
     # check if user entry contained spaces
     case "$INSTALL_DIRECTORY" in
         *\ * )
-            printf "!!!\n"
             printf "ERROR: Cannot install into directories with spaces\n" >&2
             continue ;;
     esac
     # if directory exists, don't try creating it
     if [ -e "$INSTALL_DIRECTORY" ]; then
-        printf "\n"
-        printf "Directory already exists, no need to create it.\n"
+        printf "\n%s\n" "Directory already exists, no need to create it."
         break
     else
         if mkdir -p "$INSTALL_DIRECTORY" 2>/dev/null; then
@@ -136,8 +151,7 @@ while true; do
             printf "Directory created.\n" && ls -ld "$INSTALL_DIRECTORY" && sleep 1
             break
         else # let user know we couldn't create directory
-            printf "!!!\n"
-            printf "%s\n" "Couldn't create directory: $INSTALL_DIRECTORY"
+            printf "%s\n%s\n%s\n" '!-------------------------!' "Couldn't create directory: $INSTALL_DIRECTORY" '!-------------------------!'
             printf "Make sure you have the correct permissions to create the directory.\n" && sleep 1
             INSTALL_DIRECTORY=$HOME/.config/zsh
             continue
@@ -162,7 +176,7 @@ else
     fi
 fi
 
-printf "\n%+50s\n\v" "READY TO INSTALL OhMyZSH PLUGINS" && sleep 1
+printf "\n%+50s\n\n" "READY TO INSTALL OhMyZSH PLUGINS" && sleep 1
 
 if [ ! -d "$INSTALL_DIRECTORY/.oh-my-zsh" ]; then
     printf "%s\n" "Something's wrong, oh-my-zsh isn't in $INSTALL_DIRECTORY..."
@@ -171,7 +185,7 @@ if [ ! -d "$INSTALL_DIRECTORY/.oh-my-zsh" ]; then
         printf "%s\n" "oh-my-zsh is in home directory, will move it to $INSTALL_DIRECTORY..."
         mv "$HOME/.oh-my-zsh" "$INSTALL_DIRECTORY" && printf "%s\n" "oh-my-zsh directory moved to $INSTALL_DIRECTORY, can proceed now" && sleep 1
     else
-        printf "oh-my-zsh is NOT in home directory, something is wrong\n"
+        printf "oh-my-zsh is NOT in correct directory, something is wrong\n"
         printf "Exitting before attempting anything further\n" && sleep 1
         exit
     fi
@@ -183,7 +197,6 @@ else # INSTALL (or update) OMZ PLUGINS
     clone_to_omz plugins https://github.com/zsh-users/zsh-syntax-highlighting.git
     clone_to_omz plugins https://github.com/marlonrichert/zsh-autocomplete.git
     clone_to_omz plugins https://github.com/zsh-users/zsh-history-substring-search.git
-    # POWERLEVEL10K THEME
     clone_to_omz themes https://github.com/romkatv/powerlevel10k.git
 fi
 
@@ -205,42 +218,21 @@ while true; do
     read -rp "Install nerd fonts? [Y/n]: " yn
     case $yn in
         [Yy]* )
-            printf "\nInstalling various Nerd Fonts...\n"
             # Meslo LG S Regular Nerd Font
-            if [ -f "$HOME/.fonts/Meslo\ LG\ S\ Regular\ Nerd\ Font\ Complete.ttf" ]; then
-                printf "Meslo LG S Regular Nerd Font already installed.\n"
-            else
-                printf "Installing Meslo LG S Regular Nerd Font Complete...\n"
-                wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Meslo/S/Regular/complete/Meslo%20LG%20S%20Regular%20Nerd%20Font%20Complete.ttf -P "$HOME/.fonts/"
-            fi
+            font_install "Meslo LG S Regular Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Meslo/S/Regular/complete/Meslo%20LG%20S%20Regular%20Nerd%20Font%20Complete.ttf
+
             # DejaVu Sans Mono Nerd Font
-            if [ -f "$HOME/.fonts/DejaVu\ Sans\ Mono\ Nerd\ Font\ Complete.ttf" ]; then
-                printf "DejaVu Sans Mono Nerd Font already installed.\n"
-            else
-                printf "Installing DejaVu Sans Mono Nerd Font Complete...\n"
-                wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete.ttf -P "$HOME/.fonts/"
-            fi
+            font_install "DejaVu Sans Mono Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete.ttf
+
             # Roboto Mono Nerd Font
-            if [ -f "$HOME/.fonts/Roboto\ Mono\ Nerd\ Font\ Complete.ttf" ]; then
-                printf "Roboto Mono Nerd Font already installed.\n"
-            else
-                printf "Installing Roboto Mono Nerd Font Complete...\n"
-                wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/complete/Roboto%20Mono%20Nerd%20Font%20Complete.ttf -P "$HOME/.fonts/"
-            fi
+            font_install "Roboto Mono Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/complete/Roboto%20Mono%20Nerd%20Font%20Complete.ttf
+
             # Hack Regular Nerd Font
-            if [ -f "$HOME/.fonts/Hack\ Regular\ Nerd\ Font\ Complete.ttf" ]; then
-                printf "Hack Nerd Font already installed.\n"
-            else
-                printf "Installing Hack Regular Nerd Font Complete...\n"
-                wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete.ttf -P "$HOME/.fonts/"
-            fi
+            font_install "Hack Regular Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete.ttf
+
             # Sauce Code Pro Nerd Font
-            if [ -f "$HOME/.fonts/Sauce\ Code\ Pro\ Nerd\ Font\ Complete.ttf" ]; then
-                printf "Sauce Code Pro Nerd Font already installed.\n"
-            else
-                printf "Installing Sauce Code Pro Nerd Font Complete...\n"
-                wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete.ttf -P "$HOME/.fonts/"
-            fi
+            font_install "Sauce Code Pro Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete.ttf
+
             # Scan new fonts and build font information cache files
             fc-cache -fv "$HOME/.fonts"
             break ;;
@@ -256,21 +248,22 @@ done
 # First copy omz-files directory to $INSTALL_DIRECTORY
 cp -r "$CLONED_REPO/omz-files" "$INSTALL_DIRECTORY"
 
+# create completions directory in .oh-my-zsh if needed
+[ ! -d "$INSTALL_DIRECTORY/.oh-my-zsh/completions" ] && mkdir -p "$ZSH/completions"
+
 # Start operations within omz-files directory
 for i in "$INSTALL_DIRECTORY/omz-files/"*; do
-    # create completions directory in .oh-my-zsh if needed
-    [ ! -d "$INSTALL_DIRECTORY/.oh-my-zsh/completions" ] && mkdir "$ZSH/completions"
     # copy completion file to oh-my-zsh
     [[ "$i" = *"_better-help" ]] && cp -uv "$i" "$ZSH/completions"
     # if miniconda is installed, need to copy conda_setup.zsh
-    [[ "$i" = *"conda_setup.zsh" && -f $HOME/miniconda3/condabin/conda ]] && cp -uv "$i" "$ZSH/custom"
+    [[ "$i" = *"conda_init.zsh" && -f "$HOME/miniconda3/condabin/conda" ]] && cp -uv "$i" "$ZSH/custom"
     # copy nordvpn plugin to custom plugins directory (nordvpn plugin is yet to be included in oh-my-zsh outside of it's testing branch)
     [ -d "$i" ] && cp -ruv "$i" "$INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins"
 done && sleep 1
 
 # copy regular files
 for i in "$CLONED_REPO"/* ; do
-    if [[ -f $i && ("$i" != *"LICENSE" && "$i" != *"install.sh") ]]; then
+    if [[ -f "$i" && ("$i" != *"LICENSE" && "$i" != *"install.sh") ]]; then
         printf "\n%s\n" "Copying $i to $INSTALL_DIRECTORY"
         cp -fv "$i" "$INSTALL_DIRECTORY"
     fi
@@ -278,7 +271,7 @@ done
 
 # copy hidden files
 for i in "$CLONED_REPO"/.* ; do
-    if [[ -f $i && "$i" != *".gitignore" ]]; then
+    if [[ -f "$i" && "$i" != *".gitignore" ]]; then
         printf "\n%s\n" "Copying $i to $INSTALL_DIRECTORY"
         cp -fv "$i" "$INSTALL_DIRECTORY"
     fi
@@ -314,14 +307,14 @@ while true; do
             printf "Inserting lines to export ZDOTDIR into .zshenv file...\n"
             printf "\n%s\n" "$INSERT_TEXT" | tee -a "$HOME/.zshenv" > /dev/null
             printf "%s\n" "$HOME/.zshenv will set and export ZDOTDIR"
-            printf "!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!\n" && sleep 2
+            printf "%s\n" '!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!' && sleep 2
             break ;;
         [2] )
             INSERT_TEXT="[[ -z \"\$ZDOTDIR\" && -f ~/$PARTIAL_DIRECTORY/.zshrc ]] && export ZDOTDIR=~/$PARTIAL_DIRECTORY"
             printf "\n%s\n" "$INSERT_TEXT" | sudo tee -a /etc/zsh/zshenv > /dev/null
             echo -e "$INSERT_TEXT" | sudo tee -a /etc/zsh/zshenv > /dev/null
             printf "/etc/zsh/zshenv will set and export ZDOTDIR\n"
-            printf "!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!\n" && sleep 2
+            printf "%s\n" '!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!' && sleep 2
             break ;;
         "" )
             printf "Nothing will be done. Continuing on to final steps...\n" && sleep 1
