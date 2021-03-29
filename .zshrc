@@ -36,7 +36,7 @@ DISABLE_AUTO_TITLE="true"
 COMPLETION_WAITING_DOTS="false"
 ENABLE_CORRECTION="true"
 # change this to false to turn off the help message and neofetch on terminal startup
-STARTUP_CONTENT="true"
+STARTUP_CONTENT="false"
 
 # Oh-my-zsh enabled plugins
 plugins=(
@@ -71,12 +71,6 @@ source $ZSH/oh-my-zsh.sh
 # custom functions
 [[ -f $ZDOTDIR/functions ]] && . $ZDOTDIR/functions
 
-if type brew &>/dev/null; then
-	FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
-	autoload -Uz compinit
-	rm -f $ZDOTDIR/.zcompdump*; compinit
-fi
-
 # Deduplicates path & fpath
 [[ -f $ZDOTDIR/.zshenv ]] && {
 	dedup_pathvar PATH
@@ -85,5 +79,5 @@ fi
 
 # Terminal startup output (won't run unless $STARTUP_CONTENT is true)
 [[ -o interactive && -f $ZDOTDIR/functions ]] && {
-    [[ "$STARTUP_CONTENT" = "true" ]] && sinfo
+    [[ "$STARTUP_CONTENT" = "true" ]] && sinfo || neofetch
 }
