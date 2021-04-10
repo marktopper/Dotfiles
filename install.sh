@@ -143,8 +143,7 @@ while true; do
         break
     else
         if mkdir -p "$INSTALL_DIRECTORY" 2>/dev/null; then
-            printf "\n"
-            printf "Directory created.\n" && ls -ld "$INSTALL_DIRECTORY" && sleep 1
+            printf "\n%s\n" "Directory created." && ls -ld "$INSTALL_DIRECTORY" && sleep 1
             break
         else # let user know we couldn't create directory
             printf "%s\n%s\n%s\n" '!-------------------------!' "Couldn't create directory: $INSTALL_DIRECTORY" '!-------------------------!'
@@ -156,7 +155,7 @@ while true; do
 done
 
 # Oh-My-ZSH INSTALL
-printf "%s\n" "\nInstalling oh-my-zsh into $INSTALL_DIRECTORY" && sleep 1
+printf "\n%s\n" "Installing oh-my-zsh into $INSTALL_DIRECTORY" && sleep 1
 export ZSH=$INSTALL_DIRECTORY/.oh-my-zsh
 if [ -d "$HOME/.oh-my-zsh" ]; then # OMZ already installed, but located in user's home dir
     printf "%s\n" "oh-my-zsh is already installed in home directory, moving to new $INSTALL_DIRECTORY directory..."
