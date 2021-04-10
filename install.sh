@@ -77,12 +77,8 @@ else
 fi
 
 # MINICONDA INSTALL FILE CLEANUP
-if [ -f "$HOME/miniconda3/condabin/conda" ]; then
-    for i in "$HOME/Miniconda3-latest-Linux"*; do
-        printf "%s\n" "Removing $i install file..."
-        ls -l "$i"
-        rm -f "$i"
-    done
+if [[ -f "$HOME/miniconda3/condabin/conda" && -f "$HOME/Miniconda3-latest-Linux-x86_64.sh" ]]; then
+    rm -f "$HOME/Miniconda3-latest-Linux"*
 fi
 
 # ASK TO BACKUP FILES --- ZSH CONFIG INSTALLS BEGIN AFTER THIS
