@@ -48,7 +48,7 @@ git git-escape-magic
 gitignore jump man nordvpn p10k-promptconfig
 pip postgres python
 sudo thefuck vscode
-zsh-autosuggestions colored-man-pages
+zsh-autosuggestions
 zsh-syntax-highlighting
 zsh_reload)
 

@@ -19,8 +19,12 @@ alias rma-ffs-'sudo rm -drf'
 # clean zcomp and zwc zsh files
 alias cleanzsh='rm -f ${ZDOTDIR:-$HOME}/.zcompdump* ${ZDOTDIR:-$HOME}/.zshrc.zwc'
 
+if (( $+commands[psql] )); then
+        alias psql-admin='sudo -u postgres psql'
+fi
+
 if (( $+commands[parrot-upgrade] )); then
-	alias sys-update='sudo parrot-upgrade'
+	alias sys-upd='sudo parrot-upgrade'
 fi
 
 if (( $+commands[neofetch] )); then
