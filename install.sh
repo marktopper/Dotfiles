@@ -1,58 +1,70 @@
 #!/bin/bash
 
-function clone_omz_plugin()
+# variables
+CLONED_REPO=$(dirname "$0")
+CLONED_REPO=$(cd "$CLONED_REPO" && pwd)
+INSTALL_DIRECTORY="$HOME/.config/zsh"
+
+# functions
+function clone_to_omz()
 {
-    repo=$1
-    type=$2 # repo type, either plugins or themes
+    type=$1 # repo type, either plugins or themes
+    repo=$2
     name=$(echo "${repo##*/}" | cut -f 1 -d '.')
-    if [ -d $ZSH/custom/$type/$name ]; then
-        cd $ZSH/custom/$type/$name && git pull
+    if [ -d "$ZSH/custom/$type/$name" ]; then
+        cd "$ZSH/custom/$type/$name" && git pull
     else
-        git clone --depth=1 $repo $ZSH/custom/$type/$name
+        git clone --depth=1 "$repo" "$ZSH/custom/$type/$name"
     fi
 }
 
-# check if necessary packages are installed
-if command -v zsh > /dev/null 2>&1 && command -v git > /dev/null 2>&1 && command -v wget > /dev/null 2>&1 && command -v neofetch > /dev/null 2>&1;
-then
-    printf "Zsh, Git, wget and neofetch are already installed\n"
-else
-    if sudo apt install -y zsh git wget neofetch || sudo pacman -S zsh git wget neofetch || sudo dnf install -y zsh git wget neofetch || sudo yum install -y zsh git wget neofetch || pkg install git zsh wget neofetch;
-    then
-        printf "Zsh, Git, wget and neofetch installed.\n"
+function font_install(){
+    font=$1
+    link=$2
+    fontname=$(echo "${font//\\}" | cut -f 1 -d '.')
+    if [[ -f "$HOME/.fonts/$font" ]]; then
+        printf "%s\n" "$fontname already installed"
     else
-        printf "Please install the following packages first, then try again: zsh git wget neofetch\n" && exit
+        printf "%s\n" "Installing $fontname..."
+        wget -q --show-progress -N "$link" -P "$HOME/.fonts/"
     fi
-fi
+}
 
-CLONED_REPO=$(pwd)
+# ============BEGIN============
+# check if necessary packages are installed
+req_pkgs=(zsh git wget neofetch)
 
-# move cloned repo to home directory if not already there
-if [ ! -d $HOME/Dotfiles ]; then
-printf "Moving cloned Dotfiles repo directory to user's home directory.\n"
-    cd $HOME && mv $CLONED_REPO $HOME/Dotfiles
-    cd $HOME/Dotfiles && CLONED_REPO=$(pwd)
-fi
+for i in "${req_pkgs[@]}"; do
+    if command -v "$i" > /dev/null 2>&1; then
+        printf "%s\n" "$i already installed"
+    else
+        if sudo apt install -y "$i" || sudo pacman -S "$i" || sudo dnf install -y "$i" || sudo yum install -y "$i" || pkg install "$i"; then
+            printf "%s\n" "$i installed."
+        else
+            printf "%s %s\n" "Please install the following packages first, then try again:" "${req_pkgs[*]}" && exit
+        fi
+    fi
+done
 
 # MINICONDA INSTALL
-if [ -f $HOME/miniconda3/condabin/conda ]; then
+if [ -f "$HOME/miniconda3/condabin/conda" ]; then
     printf "Miniconda3 is already installed.\n"
 else
     printf "Miniconda3 is not installed.\n"
     while true; do
-        read -p "Do you want to install Miniconda? [Y/n]: " yn
+        read -rp "Do you want to install Miniconda? [Y/n]: " yn
         case $yn in
             [Yy]* )
                 printf "Be sure to install Miniconda3 within your user's home directory.\n"
-                if [ -f $HOME/Miniconda3-latest-Linux-x86_64.sh ]; then # to prevent downloading Miniconda3 setup file multiple times
+                if [ -f "$HOME/Miniconda3-latest-Linux-x86_64.sh" ]; then # to prevent downloading Miniconda3 setup file multiple times
                     printf "Miniconda3 is already downloaded\n"
                 else
-                    printf "Downloading Miniconda3..."
-                    wget -q --show-progress https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -P $HOME/
-                    printf "Download finished.\n"
+                    printf "%+57s\n" "Downloading Miniconda3..."
+                    wget -q --show-progress https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -P ~
+                    printf "%+50s\n" "Download finished."
                 fi
                 printf "Starting Miniconda3 setup...\n"
-                bash $HOME/Miniconda3-latest-Linux-x86_64.sh
+                bash ~/Miniconda3-latest-Linux-x86_64.sh
                 break ;;
             [Nn]* )
                 printf "Answer: No.\n"
@@ -64,36 +76,34 @@ else
     done
 fi
 
-# INSTALL CLEANUP
-if [[ -f $HOME/Miniconda3-latest-* && -f $HOME/miniconda3/condabin/conda ]]; then
-    printf "Removing Miniconda3 install file...\n"
-    ls -l ~/Miniconda3-latest-*
-    rm -f ~/Miniconda3-latest-*
+# MINICONDA INSTALL FILE CLEANUP
+if [[ -f "$HOME/miniconda3/condabin/conda" && -f "$HOME/Miniconda3-latest-Linux-x86_64.sh" ]]; then
+    rm -f "$HOME/Miniconda3-latest-Linux"*
 fi
 
 # ASK TO BACKUP FILES --- ZSH CONFIG INSTALLS BEGIN AFTER THIS
 while true; do
     printf "During this install, any zsh related dotfiles (such as .zshrc, .zshenv) in user's home directory will be deleted.\n"
     printf "Are there dotfiles in your home directory that you want to backup?\n"
-    read -p "Backup existing dotfiles in home directory? [Y/n]: " yn
+    read -rp "Backup existing dotfiles in home directory? [Y/n]: " yn
     case $yn in
         [Yy]* )
             printf "Starting backup...\n"
-            mkdir -p $HOME/Backup_Dotfiles # Create file backup directory
-            if [ -f $HOME/.zprofile ]; then
-                printf "Found .zprofile, backing up file to $HOME/Backup_Dotfiles...\n"
-                cp $HOME/.zprofile $HOME/Backup_Dotfiles/.zprofile-backup-$(date +"%Y-%m-%d")
-                printf "Backed up current .zprofile to .zprofile-backup-$(date +"%Y-%m-%d")\n"
+            mkdir -p "$HOME/Backup_Dotfiles" # Create file backup directory
+            if [ -f "$HOME/.zprofile" ]; then
+                printf "%s\n" "Found .zprofile, backing up file to $HOME/Backup_Dotfiles..."
+                cp "$HOME/.zprofile" "$HOME/Backup_Dotfiles/.zprofile-backup-$(date +"%Y-%m-%d")"
+                printf "%s\n" "Backed up current .zprofile to .zprofile-backup-$(date +"%Y-%m-%d")"
             fi
-            if [ -f $HOME/.zshenv ]; then
-                printf "Found .zshenv, backing up file to $HOME/Backup_Dotfiles...\n"
-                cp $HOME/.zshenv $HOME/Backup_Dotfiles/.zshenv-backup-$(date +"%Y-%m-%d")
-                printf "Backed up current .zshenv to .zshenv-backup-$(date +"%Y-%m-%d")\n"
+            if [ -f "$HOME/.zshenv" ]; then
+                printf "%s\n" "Found .zshenv, backing up file to $HOME/Backup_Dotfiles..."
+                cp "$HOME/.zshenv" "$HOME/Backup_Dotfiles/.zshenv-backup-$(date +"%Y-%m-%d")"
+                printf "%s\n" "Backed up current .zshenv to .zshenv-backup-$(date +"%Y-%m-%d")"
             fi
-            if [ -f $HOME/.zshrc ]; then # backup .zshrc
-                printf "Found .zshrc, backing up file to $HOME/Backup_Dotfiles...\n"
-                cp $HOME/.zshrc $HOME/Backup_Dotfiles/.zshrc-backup-$(date +"%Y-%m-%d")
-                printf "Backed up current .zshrc to .zshrc-backup-$(date +"%Y-%m-%d")\n"
+            if [ -f "$HOME/.zshrc" ]; then # backup .zshrc
+                printf "%s\n" "Found .zshrc, backing up file to $HOME/Backup_Dotfiles..."
+                cp "$HOME/.zshrc" "$HOME/Backup_Dotfiles/.zshrc-backup-$(date +"%Y-%m-%d")"
+                printf "%s\n" "Backed up current .zshrc to .zshrc-backup-$(date +"%Y-%m-%d")"
             fi
             printf "Finished backing up any existing zsh files. Continuing...\n" && sleep 1
             break ;;
@@ -105,15 +115,11 @@ while true; do
     esac
 done
 
-INSTALL_DIRECTORY="$HOME/.config/zsh" # Default installation directory
 # CHOOSE INSTALL DIRECTORY
 while true; do
-    printf "\n"
-    printf "Where should your zsh and oh-my-zsh configuration files be installed?\n"
-    printf "Default install directory is: $INSTALL_DIRECTORY\n"
-    printf "  - Press ENTER to confirm the location\n"
-    printf "  - Press CTRL-C to abort the installation\n"
-    printf "  - Or specify a different location below\n"
+    printf "\n%s\n" "Where should your zsh and oh-my-zsh configuration files be installed?"
+    printf "%s\n" "Default install directory is: $INSTALL_DIRECTORY"
+    printf "  - %s\n" "Press ENTER to confirm the location" "Press CTRL-C to abort the installation" "Or specify a different location below"
     printf "[%s] >>> " "$INSTALL_DIRECTORY"
     read -r user_prefix
     if [ "$user_prefix" != "" ]; then
@@ -128,23 +134,19 @@ while true; do
     # check if user entry contained spaces
     case "$INSTALL_DIRECTORY" in
         *\ * )
-            printf "!!!\n"
             printf "ERROR: Cannot install into directories with spaces\n" >&2
             continue ;;
     esac
     # if directory exists, don't try creating it
     if [ -e "$INSTALL_DIRECTORY" ]; then
-        printf "\n"
-        printf "Directory already exists, no need to create it.\n"
+        printf "\n%s\n" "Directory already exists, no need to create it."
         break
     else
         if mkdir -p "$INSTALL_DIRECTORY" 2>/dev/null; then
-            printf "\n"
-            printf "Directory created.\n" && ls -ld "$INSTALL_DIRECTORY" && sleep 1
+            printf "\n%s\n" "Directory created." && ls -ld "$INSTALL_DIRECTORY" && sleep 1
             break
         else # let user know we couldn't create directory
-            printf "!!!\n"
-            printf "Couldn't create directory: $INSTALL_DIRECTORY \n"
+            printf "%s\n%s\n%s\n" '!-------------------------!' "Couldn't create directory: $INSTALL_DIRECTORY" '!-------------------------!'
             printf "Make sure you have the correct permissions to create the directory.\n" && sleep 1
             INSTALL_DIRECTORY=$HOME/.config/zsh
             continue
@@ -153,44 +155,44 @@ while true; do
 done
 
 # Oh-My-ZSH INSTALL
-printf "\nInstalling oh-my-zsh into $INSTALL_DIRECTORY\n" && sleep 1
+printf "\n%s\n" "Installing oh-my-zsh into $INSTALL_DIRECTORY" && sleep 1
 export ZSH=$INSTALL_DIRECTORY/.oh-my-zsh
-if [ -d $HOME/.oh-my-zsh ]; then # OMZ already installed, but located in user's home dir
-    printf "oh-my-zsh is already installed in home directory, moving to new $INSTALL_DIRECTORY directory...\n"
-    mv $HOME/.oh-my-zsh $INSTALL_DIRECTORY
-    cd $INSTALL_DIRECTORY/.oh-my-zsh && git pull
+if [ -d "$HOME/.oh-my-zsh" ]; then # OMZ already installed, but located in user's home dir
+    printf "%s\n" "oh-my-zsh is already installed in home directory, moving to new $INSTALL_DIRECTORY directory..."
+    mv "$HOME/.oh-my-zsh" "$INSTALL_DIRECTORY"
+    cd "$INSTALL_DIRECTORY/.oh-my-zsh" && git pull
 else
-    if [ -d $INSTALL_DIRECTORY/.oh-my-zsh ]; then # OMZ installed in install dir
-        printf "oh-my-zsh is already installed in $INSTALL_DIRECTORY.\n"
-        cd $INSTALL_DIRECTORY/.oh-my-zsh && git pull
+    if [ -d "$INSTALL_DIRECTORY/.oh-my-zsh" ]; then # OMZ installed in install dir
+        printf "%s\n" "oh-my-zsh is already installed in $INSTALL_DIRECTORY."
+        cd "$INSTALL_DIRECTORY/.oh-my-zsh" && git pull
     else
         printf "oh-my-zsh is not installed. Installing...\n" # OMZ not installed
         sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)" "" --unattended
     fi
 fi
 
-printf "\nREADY TO INSTALL OhMyZSH PLUGINS\n\n" && sleep 1
+printf "\n%+50s\n\n" "READY TO INSTALL OhMyZSH PLUGINS" && sleep 1
 
-if [ ! -d $INSTALL_DIRECTORY/.oh-my-zsh ]; then
-    printf "Something's wrong, oh-my-zsh isn't in $INSTALL_DIRECTORY...\n"
+if [ ! -d "$INSTALL_DIRECTORY/.oh-my-zsh" ]; then
+    printf "%s\n" "Something's wrong, oh-my-zsh isn't in $INSTALL_DIRECTORY..."
     printf "Checking if oh-my-zsh is in home directory...\n" && sleep 1
     if [ -d ~/.oh-my-zsh ]; then
-        printf "oh-my-zsh is in home directory, will move it to $INSTALL_DIRECTORY...\n"
-        mv ~/.oh-my-zsh $INSTALL_DIRECTORY && printf "oh-my-zsh directory moved to $INSTALL_DIRECTORY, can proceed now\n" && sleep 1
+        printf "%s\n" "oh-my-zsh is in home directory, will move it to $INSTALL_DIRECTORY..."
+        mv "$HOME/.oh-my-zsh" "$INSTALL_DIRECTORY" && printf "%s\n" "oh-my-zsh directory moved to $INSTALL_DIRECTORY, can proceed now" && sleep 1
     else
-        printf "oh-my-zsh is NOT in home directory, something is wrong\n"
+        printf "oh-my-zsh is NOT in correct directory, something is wrong\n"
         printf "Exitting before attempting anything further\n" && sleep 1
         exit
     fi
 else # INSTALL (or update) OMZ PLUGINS
-    clone_omz_plugin https://github.com/doctormemes/p10k-promptconfig.git plugins
-    clone_omz_plugin https://github.com/zsh-users/zsh-autosuggestions.git plugins
-    clone_omz_plugin https://github.com/esc/conda-zsh-completion.git plugins
-    clone_omz_plugin https://github.com/zsh-users/zsh-syntax-highlighting.git plugins
-    clone_omz_plugin https://github.com/marlonrichert/zsh-autocomplete.git plugins
-    clone_omz_plugin https://github.com/zsh-users/zsh-history-substring-search.git plugins
-    # POWERLEVEL10K THEME
-    clone_omz_plugin https://github.com/romkatv/powerlevel10k.git themes
+    clone_to_omz plugins https://github.com/doctormemes/add-to-omz.git
+    clone_to_omz plugins https://github.com/doctormemes/p10k-promptconfig.git
+    clone_to_omz plugins https://github.com/zsh-users/zsh-autosuggestions.git
+    clone_to_omz plugins https://github.com/esc/conda-zsh-completion.git
+    clone_to_omz plugins https://github.com/zsh-users/zsh-syntax-highlighting.git
+    clone_to_omz plugins https://github.com/marlonrichert/zsh-autocomplete.git
+    clone_to_omz plugins https://github.com/zsh-users/zsh-history-substring-search.git
+    clone_to_omz themes https://github.com/romkatv/powerlevel10k.git
 fi
 
 # INSTALL EMOJI FONTS IF NONE FOUND
@@ -208,47 +210,26 @@ fi
 # INSTALL NERD FONTS
 while true; do
     printf "\nWould you like to install nerd fonts?\n"
-    read -p "Install nerd fonts? [Y/n]: " yn
+    read -rp "Install nerd fonts? [Y/n]: " yn
     case $yn in
         [Yy]* )
-            printf "\nInstalling various Nerd Fonts...\n"
             # Meslo LG S Regular Nerd Font
-            if [ -f $HOME/.fonts/Meslo\ LG\ S\ Regular\ Nerd\ Font\ Complete.ttf ]; then
-                printf "Meslo LG S Regular Nerd Font already installed.\n"
-            else
-                printf "Installing Meslo LG S Regular Nerd Font Complete...\n"
-                wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Meslo/S/Regular/complete/Meslo%20LG%20S%20Regular%20Nerd%20Font%20Complete.ttf -P $HOME/.fonts/
-            fi
+            font_install "Meslo LG S Regular Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Meslo/S/Regular/complete/Meslo%20LG%20S%20Regular%20Nerd%20Font%20Complete.ttf
+
             # DejaVu Sans Mono Nerd Font
-            if [ -f $HOME/.fonts/DejaVu\ Sans\ Mono\ Nerd\ Font\ Complete.ttf ]; then
-                printf "DejaVu Sans Mono Nerd Font already installed.\n"
-            else
-                printf "Installing DejaVu Sans Mono Nerd Font Complete...\n"
-                wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete.ttf -P $HOME/.fonts/
-            fi
+            font_install "DejaVu Sans Mono Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete.ttf
+
             # Roboto Mono Nerd Font
-            if [ -f $HOME/.fonts/Roboto\ Mono\ Nerd\ Font\ Complete.ttf ]; then
-                printf "Roboto Mono Nerd Font already installed.\n"
-            else
-                printf "Installing Roboto Mono Nerd Font Complete...\n"
-                wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/complete/Roboto%20Mono%20Nerd%20Font%20Complete.ttf -P $HOME/.fonts/
-            fi
+            font_install "Roboto Mono Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/complete/Roboto%20Mono%20Nerd%20Font%20Complete.ttf
+
             # Hack Regular Nerd Font
-            if [ -f $HOME/.fonts/Hack\ Regular\ Nerd\ Font\ Complete.ttf ]; then
-                printf "Hack Nerd Font already installed.\n"
-            else
-                printf "Installing Hack Regular Nerd Font Complete...\n"
-                wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete.ttf -P $HOME/.fonts/
-            fi
+            font_install "Hack Regular Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete.ttf
+
             # Sauce Code Pro Nerd Font
-            if [ -f $HOME/.fonts/Sauce\ Code\ Pro\ Nerd\ Font\ Complete.ttf ]; then
-                printf "Sauce Code Pro Nerd Font already installed.\n"
-            else
-                printf "Installing Sauce Code Pro Nerd Font Complete...\n"
-                wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete.ttf -P $HOME/.fonts/
-            fi
+            font_install "Sauce Code Pro Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete.ttf
+
             # Scan new fonts and build font information cache files
-            fc-cache -fv $HOME/.fonts
+            fc-cache -fv "$HOME/.fonts"
             break ;;
         [Nn]* )
             printf "\nWill not install Nerd Fonts. Continuing...\n";
@@ -260,66 +241,75 @@ done
 
 # START TO COPY FILES FROM REPO
 # First copy omz-files directory to $INSTALL_DIRECTORY
-cp -r $CLONED_REPO/omz-files $INSTALL_DIRECTORY
+cp -r "$CLONED_REPO/omz-files" "$INSTALL_DIRECTORY"
+
+# create completions directory in .oh-my-zsh if needed
+[ ! -d "$INSTALL_DIRECTORY/.oh-my-zsh/completions" ] && mkdir -p "$ZSH/completions"
 
 # Start operations within omz-files directory
-cd $INSTALL_DIRECTORY/omz-files
-for i in *; do
-    # create completions directory in .oh-my-zsh if needed
-    [ ! -d $INSTALL_DIRECTORY/.oh-my-zsh/completions ] && mkdir $INSTALL_DIRECTORY/.oh-my-zsh/completions
-    # copy completion files to oh-my-zsh
-    [[ "$i" = "_"* ]] && cp -uv $i $INSTALL_DIRECTORY/.oh-my-zsh/completions
-    # if miniconda is installed, need to copy conda_setup.zsh as well
-    [[ "$i" = "conda_setup.zsh" && -f $HOME/miniconda3/condabin/conda ]] && cp -uv $i $INSTALL_DIRECTORY/.oh-my-zsh/custom
-    # symlink alias and function files (they both begin with "custom_") so they can easily be modified from omz-files directory
-    [[ "$i" = "custom_"* ]] && ln -sv $(pwd)/$i $INSTALL_DIRECTORY/.oh-my-zsh/custom
+for i in "$INSTALL_DIRECTORY/omz-files/"*; do
+    # copy completion file to oh-my-zsh
+    [[ "$i" = *"_better-help" ]] && cp -uv "$i" "$ZSH/completions"
+    # if miniconda is installed, need to copy conda_setup.zsh
+    [[ "$i" = *"conda_init.zsh" && -f "$HOME/miniconda3/condabin/conda" ]] && cp -uv "$i" "$ZSH/custom"
     # copy nordvpn plugin to custom plugins directory (nordvpn plugin is yet to be included in oh-my-zsh outside of it's testing branch)
-    [ -d $i ] && cp -ruv $i $INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins
+    [ -d "$i" ] && cp -ruv "$i" "$INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins"
 done && sleep 1
 
-# recursively copy all dotfiles in the cloned repo directory (except .gitignore)
-cd $CLONED_REPO
-for i in .* ; do
-    if [[ -f $i && "$i" != ".gitignore" ]]; then
-        printf "\nCopying $i to $INSTALL_DIRECTORY\n"
-        cp -fv $i $INSTALL_DIRECTORY
+# copy regular files
+for i in "$CLONED_REPO"/* ; do
+    if [[ -f "$i" && ("$i" != *"LICENSE" && "$i" != *"install.sh") ]]; then
+        printf "\n%s\n" "Copying $i to $INSTALL_DIRECTORY"
+        cp -fv "$i" "$INSTALL_DIRECTORY"
     fi
 done
 
-printf "Finished setting up repo files in new $INSTALL_DIRECTORY directory.\n" && sleep 1
+# copy hidden files
+for i in "$CLONED_REPO"/.* ; do
+    if [[ -f "$i" && "$i" != *".gitignore" ]]; then
+        printf "\n%s\n" "Copying $i to $INSTALL_DIRECTORY"
+        cp -fv "$i" "$INSTALL_DIRECTORY"
+    fi
+done
+
+printf "%s\n" "Finished setting up repo files in new $INSTALL_DIRECTORY directory." && sleep 1
 # Remove remaining zsh files in $HOME directory (if the install directory isn't $HOME)
-if [ $INSTALL_DIRECTORY != $HOME ]; then
-    printf "Removing remaining zsh dotfiles in user's home directory...\n"
-    [ -f $HOME/.zprofile ] && rm -fv $HOME/.zprofile
-    rm -fv $HOME/.zsh*
+if [ "$INSTALL_DIRECTORY" != "$HOME" ]; then
+    printf "Removing remaining .zsh* dotfiles in user's home directory...\n"
+    rm -fv "$HOME/.zsh"*
     printf "Done\n" && sleep 1
 fi
 
-cd $HOME
+cd "$HOME" || exit
+
+PARTIAL_DIRECTORY="${INSTALL_DIRECTORY#$HOME/}"
 
 while true; do
-    printf "\nTo set the ZDOTDIR variable required to let Zsh know where to look for the .zsh files, we can either symlink the .zshenv file\nwith the export ZDOTDIR line in it from your install directory, or we can export the variable in /etc/zsh/zshenv.\n"
-    printf "\nIf you'd prefer to set it some other way, press enter.\n"
-    printf "\n%-50sOPTIONS:\n"
-    printf "\t[1] \t\tCreate symbolic link to $INSTALL_DIRECTORY/.zshenv in $HOME directory and append lines exporting ZDOTDIR to it\n"
-    printf "\t[2] \t\tUse /etc/zsh/zshenv file to set ZDOTDIR to $INSTALL_DIRECTORY (may require sudo priviledges)\n"
+    printf "\n%s\n\v%s\n" "Zsh, by default, looks for zshrc, zshenv, etc.. in the user's home directory, so we set the ZDOTDIR variable required to let Zsh know where to look for these files." "We can symlink the zshenv file with the export ZDOTDIR line in it to your home directory from your $INSTALL_DIRECTORY directory, or we can export the variable in /etc/zsh/zshenv (this is my preferred method)."
+    printf "\nIf you'd prefer not to set it, or to set it yourself some other way, press enter.\n"
+    printf "\n%+50s\n" "OPTIONS:"
+    printf "\t%s\t%s\n" "[1]" "Create symbolic link to $INSTALL_DIRECTORY/.zshenv in $HOME directory and append line exporting ZDOTDIR in it"
+    printf "\t%s\t%s\n" "[2]" "Use /etc/zsh/zshenv file to set ZDOTDIR to $INSTALL_DIRECTORY (may require sudo priviledges)"
     printf "\t[Enter] \tDo nothing; ZDOTDIR is already set, or I am going to set the ZDOTDIR variable myself.\n"
     printf "\t>>> "
     read -r choice
+    INSERT_TEXT="[[ -z \"\$ZDOTDIR\" && -f ~/$PARTIAL_DIRECTORY/.zshrc ]] && export ZDOTDIR=~/$PARTIAL_DIRECTORY"
     case $choice in
         [1] )
-            INSERT_TEXT="\n[[ ! -n \"\$ZDOTDIR\" && -d $INSTALL_DIRECTORY ]] && export ZDOTDIR=$INSTALL_DIRECTORY"
+            INSERT_TEXT="[[ -z \"\$ZDOTDIR\" && -f ~/$PARTIAL_DIRECTORY/.zshrc ]] && export ZDOTDIR=~/$PARTIAL_DIRECTORY"
             printf "\nCreated symbolic link in home directory:\n"
-            ln -sv $INSTALL_DIRECTORY/.zshenv $HOME/.zshenv
+            ln -sv "$INSTALL_DIRECTORY/.zshenv" "$HOME/.zshenv"
             printf "Inserting lines to export ZDOTDIR into .zshenv file...\n"
-            echo -e "$INSERT_TEXT" | tee -a $HOME/.zshenv > /dev/null
-            printf "Operation complete: zsh will look for .zshenv in user's home directory and ZDOTDIR will be set by it" && sleep 1
+            printf "\n%s\n" "$INSERT_TEXT" | tee -a "$HOME/.zshenv" > /dev/null
+            printf "%s\n" "$HOME/.zshenv will set and export ZDOTDIR"
+            printf "%s\n" '!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!' && sleep 2
             break ;;
         [2] )
-            INSERT_TEXT="\n[[ -d $INSTALL_DIRECTORY && -f $INSTALL_DIRECTORY/.zshrc ]] && export ZDOTDIR=$INSTALL_DIRECTORY"
+            INSERT_TEXT="[[ -z \"\$ZDOTDIR\" && -f ~/$PARTIAL_DIRECTORY/.zshrc ]] && export ZDOTDIR=~/$PARTIAL_DIRECTORY"
+            printf "\n%s\n" "$INSERT_TEXT" | sudo tee -a /etc/zsh/zshenv > /dev/null
             echo -e "$INSERT_TEXT" | sudo tee -a /etc/zsh/zshenv > /dev/null
-            printf "/etc/zsh/zshenv will now set and export the ZDOTDIR variable.\n"
-            printf "!!!IMPORTANT: YOU NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!\n" && sleep 1
+            printf "/etc/zsh/zshenv will set and export ZDOTDIR\n"
+            printf "%s\n" '!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!' && sleep 2
             break ;;
         "" )
             printf "Nothing will be done. Continuing on to final steps...\n" && sleep 1
@@ -329,19 +319,19 @@ while true; do
     esac
 done
 
-[ -z "$ZDOTDIR" ] && export ZDOTDIR=$INSTALL_DIRECTORY
+[[ "$INSTALL_DIRECTORY" != "$HOME" && -z "$ZDOTDIR" ]] && export ZDOTDIR="$INSTALL_DIRECTORY"
 
 # Check if default shell is zsh
 if [[ "$SHELL" != *"/zsh" ]]; then
     # Change default shell to zsh & run omz update
     printf "Sudo access is needed to change default shell\n"
-    if chsh -s $(which zsh) && $(which zsh) -i -c 'omz update'; then
+    if chsh -s "$(which zsh)" && $(which zsh) -i -c 'omz update'; then
         printf "Installation Successful, exit terminal and enter a new session\n"
     else
         printf "Something went wrong\n"
     fi
 else
-    printf "Default shell is already $(which zsh)\n"
+    printf "%s\n" "Default shell is already $(which zsh)"
     printf "Updating oh-my-zsh\n" && sleep 1
     if $(which zsh) -i -c 'omz update'; then
         printf "Installation Successful, exit terminal and enter a new session\n"

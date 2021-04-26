@@ -6,6 +6,14 @@ if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; th
 	source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# if there's a $ZDOTDIR directory, oh-my-zsh is probably in it
+if [[ -n $ZDOTDIR ]]; then
+	export ZSH=$ZDOTDIR/.oh-my-zsh
+else # oh-my-zsh is probably in home directory
+	export ZDOTDIR=~
+	export ZSH=~/.oh-my-zsh
+fi
+
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
    export EDITOR='vim'
@@ -13,37 +21,26 @@ else
    export EDITOR='gedit'
 fi
 
-# if there's a $ZDOTDIR directory, oh-my-zsh is probably in it
-if [[ -n $ZDOTDIR ]]; then
-	export ZSH=$ZDOTDIR/.oh-my-zsh
-else # oh-my-zsh is probably in home directory, can probably set ZDOTDIR to $HOME to avoid anything breaking :)
-	export ZDOTDIR=~
-	export ZSH=~/.oh-my-zsh
-fi
-
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
+# Hyphen-insensitive completion
 HYPHEN_INSENSITIVE="true"
-# Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS="true"
+# Case-insensitive completion
+CASE_SENSITIVE="false"
 # Set command history file location and name with below variable.
 HISTFILE=$ZDOTDIR/.zsh_history
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# You can set one of the optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # see 'man strftime' for details.
 HIST_STAMPS="mm/dd/yyyy"
 # disable auto-setting terminal title.
 DISABLE_AUTO_TITLE="true"
 # display red dots whilst waiting for completion.
 COMPLETION_WAITING_DOTS="false"
-ENABLE_CORRECTION="false"
-CASE_SENSITIVE="false"
+ENABLE_CORRECTION="true"
 # change this to false to turn off the help message and neofetch on terminal startup
-STARTUP_CONTENT="true"
+STARTUP_CONTENT="false"
 
 # Oh-my-zsh enabled plugins
 plugins=(
-alias-finder autojump brew
+add-to-omz alias-finder autojump
 colored-man-pages colorize
 common-aliases conda-zsh-completion
 cp docker extract fzf
@@ -55,6 +52,9 @@ zsh-autosuggestions
 zsh-syntax-highlighting
 zsh_reload)
 
+# make less more friendly for non-text input files, see lesspipe(1)
+[[ -x /usr/bin/lesspipe ]] && eval "$(SHELL=/bin/sh lesspipe)"
+
 # P10K is only theme
 ZSH_THEME="powerlevel10k/powerlevel10k"
 # To customize prompt, run `p10k configure`, edit $ZDOTDIR/.p10k.zsh or set P10K_PROMPT below to a prompt file name in P10K-themes directory.
@@ -63,21 +63,21 @@ P10K_PROMPT="docstheme"
 
 source $ZSH/oh-my-zsh.sh
 
-if type brew &>/dev/null; then
-	FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
-	autoload -Uz compinit
-	rm -f $ZDOTDIR/.zcompdump; compinit
-fi
+[[ -f $ZDOTDIR/.conda_init.zsh ]] && source $ZDOTDIR/.conda_init.zsh
+
+# custom aliases
+[[ -f $ZDOTDIR/aliases ]] && . $ZDOTDIR/aliases
+
+# custom functions
+[[ -f $ZDOTDIR/functions ]] && . $ZDOTDIR/functions
 
 # Deduplicates path & fpath
-[[ -e "$ZSH/custom/custom_functions.zsh" ]] && {
+[[ -f $ZDOTDIR/.zshenv ]] && {
 	dedup_pathvar PATH
 	dedup_pathvar FPATH
 }
 
 # Terminal startup output (won't run unless $STARTUP_CONTENT is true)
-if [[ -o interactive && "$STARTUP_CONTENT" = "true" ]]; then
-        if [ -e "$ZSH/custom/custom_functions.zsh" ]; then
-		sinfo
-	fi
-fi
+[[ -o interactive && -f $ZDOTDIR/functions ]] && {
+    [[ "$STARTUP_CONTENT" = "true" ]] && sinfo || neofetch
+}
