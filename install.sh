@@ -128,7 +128,7 @@ while true; do
                 printf "ERROR: Cannot install into directories with spaces\n" >&2
                 continue ;;
             *)
-                eval INSTALL_DIRECTORY="$user_prefix" ;;
+                eval INSTALL_DIRECTORY=$(echo "${user_prefix%/}") ;;
         esac
     fi
     # check if user entry contained spaces
