@@ -319,7 +319,33 @@ while true; do
     esac
 done
 
-[[ "$INSTALL_DIRECTORY" != "$HOME" && -z "$ZDOTDIR" ]] && export ZDOTDIR="$INSTALL_DIRECTORY"
+if [[ "$INSTALL_DIRECTORY" != "$HOME" && -z "$ZDOTDIR" ]]; then
+export ZDOTDIR="$INSTALL_DIRECTORY"
+elif [[ "$INSTALL_DIRECTORY" == "$HOME" && -z "$ZDOTDIR" ]]; then
+export ZDOTDIR=${ZDOTDIR:-$HOME}
+fi
+
+while true; do
+    printf "\tWould you like to use my personal docstheme powerlevel10k shell prompt file, personalized for Parrot OS?\n\n"
+    printf "\tIf not, your installation will use a standard p10k powerlevel10k shell prompt file that you can always change and reconfigure.\n"
+    printf "\t(You can configure the prompt by running the \`p10k configure\` command.)\n"
+    printf "\t(Go back to using docstheme by simply changing the P10K_PROMPT environment variable in your .zshrc file)\n\n"
+    printf "\tDo you want to use the docstheme powerlevel10k prompt config file?\n"
+    printf "\t(Y/N)>>> "
+    read -r yn
+    case $yn in
+        [Yy]* )
+            printf "\nOkay, will use docstheme.zsh file.\n" 
+            break ;;
+        [Nn]* )
+            sed -i 's/\(^P10K_PROMPT=\).*/\1"p10k"/' "$ZDOTDIR/.zshrc"
+            printf "\nOkay, will use p10k.zsh file.\nRemember to run p10k configure to configure it to your liking.\n"
+            break ;;
+        * )
+            printf "\nPlease provide a valid answer (Y or N)\n" ;;
+    esac
+done
+
 
 # Check if default shell is zsh
 if [[ "$SHELL" != *"/zsh" ]]; then
