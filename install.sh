@@ -6,8 +6,7 @@ CLONED_REPO=$(cd "$CLONED_REPO" && pwd)
 INSTALL_DIRECTORY="$HOME/.config/zsh"
 
 # functions
-function clone_to_omz()
-{
+function clone_to_omz(){
     type=$1 # repo type, either plugins or themes
     repo=$2
     name=$(echo "${repo##*/}" | cut -f 1 -d '.')
@@ -32,7 +31,7 @@ function font_install(){
 
 # ============BEGIN============
 # check if necessary packages are installed
-req_pkgs=(zsh git wget neofetch)
+req_pkgs=(zsh git wget neofetch fzf thefuck)
 
 for i in "${req_pkgs[@]}"; do
     if command -v "$i" > /dev/null 2>&1; then
@@ -339,7 +338,7 @@ while true; do
     read -r yn
     case $yn in
         [Yy]* )
-            printf "\nOkay, will use docstheme.zsh file.\n" 
+            printf "\nOkay, will use docstheme.zsh file.\n"
             break ;;
         [Nn]* )
             sed -i 's/\(^P10K_PROMPT=\).*/\1"p10k"/' "$ZDOTDIR/.zshrc"
