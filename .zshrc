@@ -64,8 +64,7 @@ gitignore jump man nordvpn p10k-promptconfig
 pip postgres python
 sudo thefuck vscode
 zsh-autosuggestions
-zsh-syntax-highlighting
-zsh_reload)
+zsh-syntax-highlighting)
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [[ -x /usr/bin/lesspipe ]] && eval "$(SHELL=/bin/sh lesspipe)"
