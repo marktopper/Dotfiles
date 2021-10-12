@@ -208,14 +208,11 @@ while true; do
 done
 
 # START TO COPY FILES FROM REPO
-# First copy omz-files directory to $INSTALL_DIRECTORY
-cp -r "$CLONED_REPO/omz-files" "$INSTALL_DIRECTORY"
-
 # create completions directory in .oh-my-zsh if needed
 [ ! -d "$INSTALL_DIRECTORY/.oh-my-zsh/completions" ] && mkdir -p "$ZSH/completions"
 
 # Start operations within omz-files directory
-for i in "$INSTALL_DIRECTORY/omz-files/"*; do
+for i in "$CLONED_REPO/omz-files/"*; do
     # copy completion files to oh-my-zsh
     [[ -f "$i" && "$i" = "_"* ]] && cp -uv "$i" "$ZSH/completions"
     # copy plugins to custom plugins directory (nordvpn plugin is yet to be included in oh-my-zsh outside of it's testing branch)
@@ -241,11 +238,11 @@ done
 printf "%s\n" "Finished setting up repo files in new $INSTALL_DIRECTORY directory." && sleep 1
 # Remove remaining zsh files in $HOME directory (if the install directory isn't $HOME)
 if [ "$INSTALL_DIRECTORY" != "$HOME" ]; then
-    printf "Removing remaining .zsh* dotfiles in user's home directory...\n"
+    printf "Removing remaining .zsh* and .bash* dotfiles in user's home directory...\n"
     if [[ -d "$HOME/.zsh" || -d "$HOME/zsh" ]]; then
-        rm -f .zshrc* .zshenv .zsh_history
+        cd "$HOME" && rm -f .zshrc .zshenv .zsh_history .bashrc .bash_profile .bash_history
     else
-        rm -f .zsh*
+        cd "$HOME" && rm -f .zsh* .bash*
     fi
 fi
 
@@ -294,9 +291,9 @@ while true; do
 done
 
 if [[ "$INSTALL_DIRECTORY" != "$HOME" && -z "$ZDOTDIR" ]]; then
-export ZDOTDIR="$INSTALL_DIRECTORY"
+    export ZDOTDIR="$INSTALL_DIRECTORY"
 elif [[ "$INSTALL_DIRECTORY" == "$HOME" && -z "$ZDOTDIR" ]]; then
-export ZDOTDIR=${ZDOTDIR:-$HOME}
+    export ZDOTDIR=${ZDOTDIR:-$HOME}
 fi
 
 while true; do
