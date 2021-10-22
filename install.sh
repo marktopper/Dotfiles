@@ -286,8 +286,8 @@ while true; do
             continue
             elif [ -n "$ZDOTDIR" ]; then
             printf "Variable already set. Nothing will be done. Continuing on to final steps...\n" && sleep 5
-            break ;;
-            fi
+            break
+            fi ;;
         * )
             printf "\nPlease enter a valid choice.\n" ;;
     esac
