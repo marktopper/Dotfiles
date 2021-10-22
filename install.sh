@@ -4,6 +4,7 @@
 CLONED_REPO=$(dirname "$0")
 CLONED_REPO=$(cd "$CLONED_REPO" && pwd)
 INSTALL_DIRECTORY="$HOME/.config/zsh"
+SHELL="$SHELL"
 
 # functions
 function clone_to_omz(){
@@ -251,11 +252,11 @@ cp -r "$CLONED_REPO/omz-files" "$INSTALL_DIRECTORY"
 
 # Start operations within omz-files directory
 for i in "$INSTALL_DIRECTORY/omz-files/"*; do
-    # copy completion file to oh-my-zsh
-    [[ "$i" = *"_better-help" ]] && cp -uv "$i" "$ZSH/completions"
+    # copy completion files to oh-my-zsh
+    [[ -f "$i" && "$i" = "_"* ]] && cp -uv "$i" "$ZSH/completions"
     # if miniconda is installed, need to copy conda_setup.zsh
     [[ "$i" = *"conda_init.zsh" && -f "$HOME/miniconda3/condabin/conda" ]] && cp -uv "$i" "$ZSH/custom"
-    # copy nordvpn plugin to custom plugins directory (nordvpn plugin is yet to be included in oh-my-zsh outside of it's testing branch)
+    # copy plugins to custom plugins directory (nordvpn plugin is yet to be included in oh-my-zsh outside of it's testing branch)
     [ -d "$i" ] && cp -ruv "$i" "$INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins"
 done && sleep 1
 
@@ -279,8 +280,11 @@ printf "%s\n" "Finished setting up repo files in new $INSTALL_DIRECTORY director
 # Remove remaining zsh files in $HOME directory (if the install directory isn't $HOME)
 if [ "$INSTALL_DIRECTORY" != "$HOME" ]; then
     printf "Removing remaining .zsh* dotfiles in user's home directory...\n"
-    rm -fv "$HOME/.zsh"*
-    printf "Done\n" && sleep 1
+    if [[ -d "$HOME/.zsh" || -d "$HOME/zsh" ]]; then
+        rm -f .zshrc* .zshenv .zsh_history
+    else
+        rm -f .zsh*
+    fi
 fi
 
 cd "$HOME" || exit
@@ -353,7 +357,8 @@ done
 # Check if default shell is zsh
 if [[ "$SHELL" != *"/zsh" ]]; then
     # Change default shell to zsh & run omz update
-    printf "Sudo access is needed to change default shell\n"
+    printf "Default shell is NOT zsh\n"
+    printf "Sudo access may be needed to change default shell\n"
     if chsh -s "$(which zsh)" && $(which zsh) -i -c 'omz update'; then
         printf "Installation Successful, exit terminal and enter a new session\n"
     else

@@ -51,17 +51,17 @@ DISABLE_AUTO_TITLE="true"
 COMPLETION_WAITING_DOTS="false"
 ENABLE_CORRECTION="true"
 # change this to false to turn off the help message and neofetch on terminal startup
-STARTUP_CONTENT="false"
+STARTUP_CONTENT="true"
 
 # Oh-my-zsh enabled plugins
 plugins=(
-add-to-omz alias-finder
-colored-man-pages colorize
-common-aliases conda-zsh-completion
-cp docker extract fzf
-git git-escape-magic
-gitignore jump man nordvpn p10k-promptconfig
-pip postgres python
+add-to-omz colorize
+common-aliases
+copydir copyfile
+cp extract fzf
+git gitignore jump
+node npm p10k-promptconfig
+pip python
 sudo thefuck vscode
 zsh-autosuggestions
 zsh-syntax-highlighting)
@@ -77,8 +77,6 @@ P10K_PROMPT="docstheme"
 
 source $ZSH/oh-my-zsh.sh
 
-[[ -f $ZDOTDIR/.conda_init.zsh ]] && source $ZDOTDIR/.conda_init.zsh
-
 # custom aliases
 [[ -f $ZDOTDIR/aliases ]] && . $ZDOTDIR/aliases
 
@@ -93,6 +91,6 @@ source $ZSH/oh-my-zsh.sh
 
 # Terminal startup output (won't run unless $STARTUP_CONTENT is true)
 [[ -o interactive && -f $ZDOTDIR/functions ]] && {
-   [[ "$STARTUP_CONTENT" = "true" ]] && sinfo || neofetch
+   [[ "$STARTUP_CONTENT" = "true" ]] && neofetch
 }
 
