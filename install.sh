@@ -283,7 +283,7 @@ while true; do
         "" )
             if [ -z "$ZDOTDIR" ]; then
             printf "You don't have the ZDOTDIR variable set! You need to choose one of the above options. Read through them carefully.\n"
-            continue ;;
+            continue
             elif [ -n "$ZDOTDIR" ]; then
             printf "Variable already set. Nothing will be done. Continuing on to final steps...\n" && sleep 5
             break ;;
