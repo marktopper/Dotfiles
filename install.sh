@@ -50,41 +50,6 @@ for i in "${req_pkgs[@]}"; do
     fi
 done
 
-# MINICONDA INSTALL
-if [ -f "$HOME/miniconda3/condabin/conda" ]; then
-    printf "Miniconda3 is already installed.\n"
-else
-    printf "Miniconda3 is not installed.\n"
-    while true; do
-        read -rp "Do you want to install Miniconda? [Y/n]: " yn
-        case $yn in
-            [Yy]* )
-                printf "Be sure to install Miniconda3 within your user's home directory.\n"
-                if [ -f "$HOME/Miniconda3-latest-Linux-x86_64.sh" ]; then # to prevent downloading Miniconda3 setup file multiple times
-                    printf "Miniconda3 is already downloaded\n"
-                else
-                    printf "%+57s\n" "Downloading Miniconda3..."
-                    wget -q --show-progress https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -P ~
-                    printf "%+50s\n" "Download finished."
-                fi
-                printf "Starting Miniconda3 setup...\n"
-                bash ~/Miniconda3-latest-Linux-x86_64.sh
-                break ;;
-            [Nn]* )
-                printf "Answer: No.\n"
-                printf "Continuing...\n" && sleep 1
-                break ;;
-            * )
-                printf "Please provide a valid answer.\n" ;;
-        esac
-    done
-fi
-
-# MINICONDA INSTALL FILE CLEANUP
-if [[ -f "$HOME/miniconda3/condabin/conda" && -f "$HOME/Miniconda3-latest-Linux-x86_64.sh" ]]; then
-    rm -f "$HOME/Miniconda3-latest-Linux"*
-fi
-
 # ASK TO BACKUP FILES --- ZSH CONFIG INSTALLS BEGIN AFTER THIS
 while true; do
     printf "During this install, any zsh related dotfiles (such as .zshrc, .zshenv) in user's home directory will be deleted.\n"
@@ -192,7 +157,6 @@ else # INSTALL (or update) OMZ PLUGINS
     clone_to_omz plugins https://github.com/doctormemes/add-to-omz.git
     clone_to_omz plugins https://github.com/doctormemes/p10k-promptconfig.git
     clone_to_omz plugins https://github.com/zsh-users/zsh-autosuggestions.git
-    clone_to_omz plugins https://github.com/esc/conda-zsh-completion.git
     clone_to_omz plugins https://github.com/zsh-users/zsh-syntax-highlighting.git
     clone_to_omz plugins https://github.com/marlonrichert/zsh-autocomplete.git
     clone_to_omz plugins https://github.com/zsh-users/zsh-history-substring-search.git
@@ -254,8 +218,6 @@ cp -r "$CLONED_REPO/omz-files" "$INSTALL_DIRECTORY"
 for i in "$INSTALL_DIRECTORY/omz-files/"*; do
     # copy completion files to oh-my-zsh
     [[ -f "$i" && "$i" = "_"* ]] && cp -uv "$i" "$ZSH/completions"
-    # if miniconda is installed, need to copy conda_setup.zsh
-    [[ "$i" = *"conda_init.zsh" && -f "$HOME/miniconda3/condabin/conda" ]] && cp -uv "$i" "$ZSH/custom"
     # copy plugins to custom plugins directory (nordvpn plugin is yet to be included in oh-my-zsh outside of it's testing branch)
     [ -d "$i" ] && cp -ruv "$i" "$INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins"
 done && sleep 1
