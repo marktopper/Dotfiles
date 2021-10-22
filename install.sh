@@ -116,7 +116,7 @@ while true; do
             break
         else # let user know we couldn't create directory
             printf "%s\n%s\n%s\n" '!-------------------------!' "Couldn't create directory: $INSTALL_DIRECTORY" '!-------------------------!'
-            printf "Make sure you have the correct permissions to create the directory.\n" && sleep 1
+            printf "Make sure you have the correct permissions to create the directory.\n" && sleep 3
             INSTALL_DIRECTORY=$HOME/.config/zsh
             continue
         fi
@@ -144,13 +144,13 @@ printf "\n%+50s\n\n" "READY TO INSTALL OhMyZSH PLUGINS" && sleep 1
 
 if [ ! -d "$INSTALL_DIRECTORY/.oh-my-zsh" ]; then
     printf "%s\n" "Something's wrong, oh-my-zsh isn't in $INSTALL_DIRECTORY..."
-    printf "Checking if oh-my-zsh is in home directory...\n" && sleep 1
+    printf "Checking if oh-my-zsh is in home directory...\n" && sleep 3
     if [ -d ~/.oh-my-zsh ]; then
         printf "%s\n" "oh-my-zsh is in home directory, will move it to $INSTALL_DIRECTORY..."
-        mv "$HOME/.oh-my-zsh" "$INSTALL_DIRECTORY" && printf "%s\n" "oh-my-zsh directory moved to $INSTALL_DIRECTORY, can proceed now" && sleep 1
+        mv "$HOME/.oh-my-zsh" "$INSTALL_DIRECTORY" && printf "%s\n" "oh-my-zsh directory moved to $INSTALL_DIRECTORY, can proceed now" && sleep 3
     else
         printf "oh-my-zsh is NOT in correct directory, something is wrong\n"
-        printf "Exitting before attempting anything further\n" && sleep 1
+        printf "Exitting before attempting anything further\n" && sleep 3
         exit
     fi
 else # INSTALL (or update) OMZ PLUGINS
@@ -253,36 +253,41 @@ cd "$HOME" || exit
 
 PARTIAL_DIRECTORY="${INSTALL_DIRECTORY#$HOME/}"
 
+INSERT_TEXT="[[ -z \"\$ZDOTDIR\" && -f ~/$PARTIAL_DIRECTORY/.zshrc ]] && export ZDOTDIR=~/$PARTIAL_DIRECTORY"
+
 while true; do
     printf "\n%s\n\v%s\n" "Zsh, by default, looks for zshrc, zshenv, etc.. in the user's home directory, so we set the ZDOTDIR variable required to let Zsh know where to look for these files." "We can symlink the zshenv file with the export ZDOTDIR line in it to your home directory from your $INSTALL_DIRECTORY directory, or we can export the variable in /etc/zsh/zshenv (this is my preferred method)."
     printf "\nIf you'd prefer not to set it, or to set it yourself some other way, press enter.\n"
     printf "\n%+50s\n" "OPTIONS:"
     printf "\t%s\t%s\n" "[1]" "Create symbolic link to $INSTALL_DIRECTORY/.zshenv in $HOME directory and append line exporting ZDOTDIR in it"
     printf "\t%s\t%s\n" "[2]" "Use /etc/zsh/zshenv file to set ZDOTDIR to $INSTALL_DIRECTORY (may require sudo priviledges)"
-    printf "\t[Enter] \tDo nothing; ZDOTDIR is already set, or I am going to set the ZDOTDIR variable myself.\n"
+    printf "\t[Enter] \tDo nothing; ZDOTDIR is already set.\n"
     printf "\t>>> "
     read -r choice
-    INSERT_TEXT="[[ -z \"\$ZDOTDIR\" && -f ~/$PARTIAL_DIRECTORY/.zshrc ]] && export ZDOTDIR=~/$PARTIAL_DIRECTORY"
+
     case $choice in
         [1] )
-            INSERT_TEXT="[[ -z \"\$ZDOTDIR\" && -f ~/$PARTIAL_DIRECTORY/.zshrc ]] && export ZDOTDIR=~/$PARTIAL_DIRECTORY"
             printf "\nCreated symbolic link in home directory:\n"
             ln -sv "$INSTALL_DIRECTORY/.zshenv" "$HOME/.zshenv"
             printf "Inserting lines to export ZDOTDIR into .zshenv file...\n"
             printf "\n%s\n" "$INSERT_TEXT" | tee -a "$HOME/.zshenv" > /dev/null
             printf "%s\n" "$HOME/.zshenv will set and export ZDOTDIR"
-            printf "%s\n" '!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!' && sleep 2
+            printf "%s\n" '!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!' && sleep 5
             break ;;
         [2] )
-            INSERT_TEXT="[[ -z \"\$ZDOTDIR\" && -f ~/$PARTIAL_DIRECTORY/.zshrc ]] && export ZDOTDIR=~/$PARTIAL_DIRECTORY"
             printf "\n%s\n" "$INSERT_TEXT" | sudo tee -a /etc/zsh/zshenv > /dev/null
             echo -e "$INSERT_TEXT" | sudo tee -a /etc/zsh/zshenv > /dev/null
             printf "/etc/zsh/zshenv will set and export ZDOTDIR\n"
-            printf "%s\n" '!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!' && sleep 2
+            printf "%s\n" '!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!' && sleep 5
             break ;;
         "" )
-            printf "Nothing will be done. Continuing on to final steps...\n" && sleep 1
+            if [ -z "$ZDOTDIR" ]; then
+            printf "You don't have the ZDOTDIR variable set! You need to choose one of the above options. Read through them carefully.\n"
+            continue ;;
+            elif [ -n "$ZDOTDIR" ]; then
+            printf "Variable already set. Nothing will be done. Continuing on to final steps...\n" && sleep 5
             break ;;
+            fi
         * )
             printf "\nPlease enter a valid choice.\n" ;;
     esac
@@ -321,7 +326,7 @@ if [[ "$SHELL" != *"/zsh" ]]; then
     # Change default shell to zsh & run omz update
     printf "Default shell is NOT zsh\n"
     printf "Sudo access may be needed to change default shell\n"
-    if chsh -s "$(which zsh)" && $(which zsh) -i -c 'omz update'; then
+    if chsh -s "$(which zsh)" && "$(which zsh)" "$INSTALL_DIRECTORY/.oh-my-zsh/tools/upgrade.sh"; then
         printf "Installation Successful, exit terminal and enter a new session\n"
     else
         printf "Something went wrong\n"
@@ -329,7 +334,7 @@ if [[ "$SHELL" != *"/zsh" ]]; then
 else
     printf "%s\n" "Default shell is already $(which zsh)"
     printf "Updating oh-my-zsh\n" && sleep 1
-    if $(which zsh) -i -c 'omz update'; then
+    if $(which zsh) "$INSTALL_DIRECTORY/.oh-my-zsh/tools/upgrade.sh"; then
         printf "Installation Successful, exit terminal and enter a new session\n"
     else
         printf "Something went wrong\n"
