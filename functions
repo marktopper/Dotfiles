@@ -86,3 +86,16 @@ echo_colormap() {
     print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}
   done
 }
+
+update-plugins() {
+  for i in $ZSH/custom/plugins/*; do
+    if [ -d "$i" ]; then
+      echo "Checking $i for updates..."
+      cd "$i"
+      git pull
+      cd ..
+      echo "Done."
+    fi
+  done
+  cd ~
+}
