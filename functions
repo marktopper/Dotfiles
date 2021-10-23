@@ -96,6 +96,5 @@ update-plugins() {
       cd ..
       echo "Done."
     fi
-  done
-  cd ~
+  done && cd $HOME
 }
