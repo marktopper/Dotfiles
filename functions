@@ -98,3 +98,24 @@ update-plugins() {
     fi
   done && cd $HOME
 }
+
+ssh-copy-server-key() {
+  if [ $# -eq 0 ]; then
+    echo "Please specify the server connection details and the public key to install.\n"
+    echo "Ex: $0 $HOME/.ssh/id_rsa.pub user@192.168.1.1\n"
+  elif [ $# -eq 2 ]; then
+    if [[ "$1" == *".pub" ]] && [[ "$2" == *"@"* ]]; then
+      echo "Installing public ssh key $1 to remote server $2 ...\n"
+      ssh-copy-id -i "$1" "$2"
+      ssh -T "$1"
+      [ $? -eq 0 ] && echo "Operation completed successfully.\n" || echo "Error $?: Something went wrong.\n"
+    else
+      echo "Error. Invalid parameters.\n"
+    fi
+  else
+    echo "Please specify the server connection details and the public key to install.\n"
+    echo "Ex: $0 user@192.168.1.1 $HOME/.ssh/id_rsa.pub\n"
+  fi
+}
+
+lso() { ls -alG "$@" | awk '{k=0;for(i=0;i<=8;i++)k+=((substr($1,i+2,1)~/[rwx]/)*2^(8-i));if(k)printf(" %0o ",k);print}'; }
