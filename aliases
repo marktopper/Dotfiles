@@ -19,6 +19,8 @@ alias rma-ffs-'sudo rm -drf'
 alias j='jump'
 # clean zcomp and zwc zsh files
 alias cleanzsh='rm -f ${ZDOTDIR:-$HOME}/.zcompdump* ${ZDOTDIR:-$HOME}/.zshrc.zwc'
+# list octal file permissions
+alias lso="ls -alG | awk '{k=0;for(i=0;i<=8;i++)k+=((substr(\$1,i+2,1)~/[rwx]/)*2^(8-i));if(k)printf(\" %0o \",k);print}'"
 
 if (( $+commands[psql] )); then
         alias psql-admin='sudo -u postgres psql'

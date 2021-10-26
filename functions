@@ -117,5 +117,3 @@ ssh-copy-server-key() {
     echo "Ex: $0 user@192.168.1.1 $HOME/.ssh/id_rsa.pub\n"
   fi
 }
-
-lso() { ls -alG "$@" | awk '{k=0;for(i=0;i<=8;i++)k+=((substr($1,i+2,1)~/[rwx]/)*2^(8-i));if(k)printf(" %0o ",k);print}'; }
