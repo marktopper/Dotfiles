@@ -30,6 +30,17 @@ function font_install(){
     fi
 }
 
+function backup(){
+	file=$1
+	file_loc=$HOME/$file
+	backup_loc="$HOME"/Backup_Dotfiles/"$file"_$(date +"%Y-%m-%d")
+	if [ -f $file_loc ]; then
+		printf "%s\n" "Found $file, backing up $file to $HOME/Backup_Dotfiles..."
+		mv "$file_loc" "$backup_loc"
+		printf "%s\n" "Backed up current $file to $backup_loc"
+	fi
+}
+
 # ============BEGIN============
 # check if necessary packages are installed
 req_pkgs=(zsh git wget neofetch fzf thefuck)
@@ -38,14 +49,10 @@ for i in "${req_pkgs[@]}"; do
     if command -v "$i" > /dev/null 2>&1; then
         printf "%s\n" "$i already installed"
     else
-        if sudo apt install -y "$i" || sudo pacman -S "$i" || sudo dnf install -y "$i" || sudo yum install -y "$i" || pkg install "$i" || apt-cyg install "$i"; then
+        if sudo apt install -y "$i" || sudo pacman -S "$i" || sudo dnf install -y "$i" || sudo yum install -y "$i"; then
             printf "%s\n" "$i installed."
         else
-	    if (( $+commands[apt-cyg] )); then
-		printf "%s\n" "apt-cyg package manager detected, since it does not have a neofetch package we will skip it."
-	    else
-                printf "%s %s\n" "Please install the following packages first, then try again:" "${req_pkgs[*]}" && exit
-	    fi
+	    printf "%s\n" "Error installing $i, you may want to install them manually after installation is finished."
         fi
     fi
 done
@@ -59,21 +66,13 @@ while true; do
         [Yy]* )
             printf "Starting backup...\n"
             mkdir -p "$HOME/Backup_Dotfiles" # Create file backup directory
-            if [ -f "$HOME/.zprofile" ]; then
-                printf "%s\n" "Found .zprofile, backing up file to $HOME/Backup_Dotfiles..."
-                cp "$HOME/.zprofile" "$HOME/Backup_Dotfiles/.zprofile-backup-$(date +"%Y-%m-%d")"
-                printf "%s\n" "Backed up current .zprofile to .zprofile-backup-$(date +"%Y-%m-%d")"
-            fi
-            if [ -f "$HOME/.zshenv" ]; then
-                printf "%s\n" "Found .zshenv, backing up file to $HOME/Backup_Dotfiles..."
-                cp "$HOME/.zshenv" "$HOME/Backup_Dotfiles/.zshenv-backup-$(date +"%Y-%m-%d")"
-                printf "%s\n" "Backed up current .zshenv to .zshenv-backup-$(date +"%Y-%m-%d")"
-            fi
-            if [ -f "$HOME/.zshrc" ]; then # backup .zshrc
-                printf "%s\n" "Found .zshrc, backing up file to $HOME/Backup_Dotfiles..."
-                cp "$HOME/.zshrc" "$HOME/Backup_Dotfiles/.zshrc-backup-$(date +"%Y-%m-%d")"
-                printf "%s\n" "Backed up current .zshrc to .zshrc-backup-$(date +"%Y-%m-%d")"
-            fi
+            backup .zshrc
+            backup .zprofile
+            backup .zshenv
+            backup .bashrc
+            backup .bash_profile
+            backup .bash_logout
+            backup .profile
             printf "Finished backing up any existing zsh files. Continuing...\n" && sleep 1
             break ;;
         [Nn]* )
@@ -167,12 +166,14 @@ fi
 if fc-list | grep -i emoji >/dev/null; then
     printf "Emoji fonts found, won't install any more. If emojis are missing try downloading fonts-noto-color-emoji and fonts-recommended packages\n" && sleep 1
 else
-    if sudo apt install -y fonts-noto-color-emoji fonts-recommended || sudo pacman -S fonts-noto-color-emoji fonts-recommended || sudo dnf install -y fonts-noto-color-emoji fonts-recommended || sudo yum install -y fonts-noto-color-emoji fonts-recommended || pkg install fonts-noto-color-emoji fonts-recommended;
-    then
-        printf "Fonts to show latest emojis are installed\n"
-    else
-        printf "Couldn't install fonts, latest emojis may not show correctly\n"
-    fi
+	if command -v apt > /dev/null 2>&1; then
+		if sudo apt install -y fonts-noto-color-emoji fonts-recommended || sudo pacman -S fonts-noto-color-emoji fonts-recommended || sudo dnf install -y fonts-noto-color-emoji fonts-recommended || sudo yum install -y fonts-noto-color-emoji fonts-recommended || pkg install fonts-noto-color-emoji fonts-recommended;
+		then
+		    printf "Fonts to show latest emojis are installed\n"
+		else
+		    printf "Couldn't install fonts, latest emojis may not show correctly\n"
+		fi
+	fi
 fi
 
 # INSTALL NERD FONTS

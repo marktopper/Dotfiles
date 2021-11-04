@@ -64,6 +64,14 @@ if (( $+commands[apt] && $+commands[apt-get] )); then
 	alias apc='sudo apt-get --purge autoremove -y && sudo apt-get autoclean -y'
 fi
 
+# pacman
+if (( $+commands[pacman] )); then
+	alias pac='sudo pacman'
+	alias paci='sudo pacman -S'
+	alias pacupdate='sudo pacman -Syu'
+	alias pacsearch='sudo pacman -Ss'
+fi
+
 alias reconf='sudo dpkg-reconfigure'
 alias add-arch='sudo dpkg --add-architecture'
 
