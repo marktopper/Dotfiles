@@ -250,11 +250,17 @@ cd "$HOME" || exit
 
 PARTIAL_DIRECTORY="${INSTALL_DIRECTORY#$HOME/}"
 
-INSERT_TEXT="[[ -z \"\$ZDOTDIR\" && -f ~/$PARTIAL_DIRECTORY/.zshrc ]] && export ZDOTDIR=~/$PARTIAL_DIRECTORY"
+if [ "$HOME" != "$INSTALL_DIRECTORY" ]; then
+    INSERT_TEXT="[[ -z \"\$ZDOTDIR\" && -f \$HOME/$PARTIAL_DIRECTORY/.zshrc ]] && export ZDOTDIR=\$HOME/$PARTIAL_DIRECTORY"
+else
+    INSERT_TEXT="if [ -n '\$(find \$HOME -prune -user \"\$(id -u)\")' ]; then
+    [[ -z \"\$ZDOTDIR\" && -f \$HOME/.zshrc ]] && export ZDOTDIR=\$HOME/
+fi"
+fi
 
 while true; do
     printf "\n%s\n\v%s\n" "Zsh, by default, looks for zshrc, zshenv, etc.. in the user's home directory, so we set the ZDOTDIR variable required to let Zsh know where to look for these files." "We can symlink the zshenv file with the export ZDOTDIR line in it to your home directory from your $INSTALL_DIRECTORY directory, or we can export the variable in /etc/zsh/zshenv (this is my preferred method)."
-    printf "\nIf you'd prefer not to set it, or to set it yourself some other way, press enter.\n"
+    printf "\nIf already set, you can press enter to continue.\n"
     printf "\n%+50s\n" "OPTIONS:"
     printf "\t%s\t%s\n" "[1]" "Create symbolic link to $INSTALL_DIRECTORY/.zshenv in $HOME directory and append line exporting ZDOTDIR in it"
     printf "\t%s\t%s\n" "[2]" "Use /etc/zsh/zshenv file to set ZDOTDIR to $INSTALL_DIRECTORY (may require sudo priviledges)"
@@ -267,15 +273,15 @@ while true; do
             printf "\nCreated symbolic link in home directory:\n"
             ln -sv "$INSTALL_DIRECTORY/.zshenv" "$HOME/.zshenv"
             printf "Inserting lines to export ZDOTDIR into .zshenv file...\n"
-            printf "\n%s\n" "$INSERT_TEXT" | tee -a "$HOME/.zshenv" > /dev/null
+            echo -e "$INSERT_TEXT" >> $HOME/.zshenv
             printf "%s\n" "$HOME/.zshenv will set and export ZDOTDIR"
-            printf "%s\n" '!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!' && sleep 5
+            printf "%s\n" '!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!' && sleep 5
             break ;;
         [2] )
             printf "\n%s\n" "$INSERT_TEXT" | sudo tee -a /etc/zsh/zshenv > /dev/null
             echo -e "$INSERT_TEXT" | sudo tee -a /etc/zsh/zshenv > /dev/null
             printf "/etc/zsh/zshenv will set and export ZDOTDIR\n"
-            printf "%s\n" '!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!!!' && sleep 5
+            printf "%s\n" '!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!' && sleep 5
             break ;;
         "" )
             if [ -z "$ZDOTDIR" ]; then

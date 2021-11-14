@@ -3,39 +3,48 @@
 # P10K instant prompt. Keep close to top of .zshrc. Code that may require console input
 # password prompts, etc. must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-   source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+    source "${XDG_CACHE_HOME:-~/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 # this is so ZDOTDIR can be used for any ZSH
 # file path validation (even if ZDOTDIR is not set)
 ZDOTDIR=${ZDOTDIR:-$HOME}
 
+# Use this to override the editor variable
+EDITOR_OVERRIDE="true"
+
 # use best command line text editor available
-if
-(( $+commands[nvim] )); then EDITOR_NO_DM='nvim'; elif (( $+commands[vim] )); then EDITOR_NO_DM='vim';
+if (( $+commands[nvim] )); then
+    EDITOR_NO_DM='nvim';
+elif (( $+commands[vim] )); then
+    EDITOR_NO_DM='vim';
 fi
 
 # use best graphical text editor available
-if
-(( $+commands[subl] )); then EDITOR_DM='subl'
-elif (( $+commands[gedit] )); then EDITOR_DM='gedit'
-else EDITOR_DM='mousepad'
+if (( $+commands[subl] )); then
+    EDITOR_DM='subl'
+elif (( $+commands[gedit] )); then
+    EDITOR_DM='gedit'
+else
+    EDITOR_DM='nano'
 fi
+
+# Preferred editor for session (depends on if the session has a display manager running and if EDITOR_OVERRIDE is set)
+if [[ -n $DESKTOP_SESSION ]] && [[ -z $EDITOR_OVERRIDE || $EDITOR_OVERRIDE == 'false' ]]; then
+    EDITOR=$EDITOR_DM;
+elif [[ -n $SSH_CONNECTION ]] || [[ -z $SESSION_MANAGER ]]; then
+    EDITOR=$EDITOR_NO_DM;
+elif [[ $EDITOR_OVERRIDE == 'true' ]]; then
+    EDITOR='nvim'   # Specify override for EDITOR here
+else
+    EDITOR='nano';  # Fallback EDITOR if all other checks fail
+fi
+
+# Default EDITOR assignment behavior. Example: export EDITOR='kate'
+export EDITOR
 
 export ZSH=$ZDOTDIR/.oh-my-zsh
 
-# Preferred editor for session (depends on if the session has a display manager running)
-# Feel free to change these if you'd like, I just set them using variables so they would have
-# multiple text editors covered, to make sure EDITOR gets set based on the linux environment in use
-if
-[[ -n $DESKTOP_SESSION ]]; then EDITOR=$EDITOR_DM;
-elif [[ -n $SSH_CONNECTION ]] || [[ -z $SESSION_MANAGER ]]; then EDITOR=$EDITOR_NO_DM;
-else printf "Error With Editor variable being set..?\n" && EDITOR='nano';
-fi
-
-# Set the variable below to anything you'd like to override the
-# default EDITOR assignment behavior. Example: export EDITOR='kate'
-export EDITOR
 # Hyphen-insensitive completion
 HYPHEN_INSENSITIVE="true"
 # Case-insensitive completion
@@ -93,4 +102,3 @@ source $ZSH/oh-my-zsh.sh
 [[ -o interactive && -f $ZDOTDIR/functions ]] && {
    [[ "$STARTUP_CONTENT" = "true" ]] && neofetch
 }
-
