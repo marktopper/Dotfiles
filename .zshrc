@@ -82,7 +82,7 @@ zsh-syntax-highlighting)
 ZSH_THEME="powerlevel10k/powerlevel10k"
 # To customize prompt, run `p10k configure`, edit $ZDOTDIR/.p10k.zsh or set P10K_PROMPT below to a prompt file name in P10K-themes directory.
 # For example, below I've set my prompt as "docstheme". The actual file name is .docstheme.zsh. Ensure you follow the same format.
-P10K_PROMPT="docstheme"
+P10K_PROMPT="p10k"
 
 source $ZSH/oh-my-zsh.sh
 

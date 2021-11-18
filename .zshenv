@@ -23,3 +23,7 @@ dedup_pathvar () {
     deduped_path="$(perl -e 'print join(":",grep { not $seen{$_}++ } split(/:/, $ARGV[0]))' "$pathvar_value")"
     set_var "$pathvar_name" "$deduped_path"
 }
+[[ -z "$ZDOTDIR" && -f $HOME/.zsh/.zshrc ]] && export ZDOTDIR=$HOME/.zsh
+
+# Because snapd doesn't yet have a way for snap programs to get added to XDG_DATA_DIRS (meaning the app launchers don't show)
+source /etc/profile.d/apps-bin-path.sh
