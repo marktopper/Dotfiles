@@ -21,7 +21,7 @@ elif (( $+commands[vim] )); then
 fi
 
 # use best graphical text editor available
-if (( $+commands[subl] )); then
+if (( $+commands[atom] )); then
     EDITOR_DM='subl'
 elif (( $+commands[gedit] )); then
     EDITOR_DM='gedit'
@@ -37,7 +37,7 @@ elif [[ -n $SSH_CONNECTION ]] || [[ -z $SESSION_MANAGER ]]; then
 elif [[ $EDITOR_OVERRIDE == 'true' ]]; then
     EDITOR='nvim'   # Specify override for EDITOR here
 else
-    EDITOR='nvim';  # Fallback EDITOR if all other checks fail
+    EDITOR='atom';  # Fallback EDITOR if all other checks fail
 fi
 
 # Default EDITOR assignment behavior. Example: export EDITOR='kate'

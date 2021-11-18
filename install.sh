@@ -213,7 +213,7 @@ done
 [ ! -d "$INSTALL_DIRECTORY/.oh-my-zsh/completions" ] && mkdir -p "$ZSH/completions"
 
 # Start operations within omz-files directory
-for i in $CLONED_REPO/omz-files/*; do
+for i in "$CLONED_REPO/omz-files"/*; do
     # copy completion files to oh-my-zsh
     [[ -f "$i" ]] && cp -uv "$i" "$ZSH/completions/"
 done && sleep 1
