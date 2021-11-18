@@ -37,7 +37,7 @@ elif [[ -n $SSH_CONNECTION ]] || [[ -z $SESSION_MANAGER ]]; then
 elif [[ $EDITOR_OVERRIDE == 'true' ]]; then
     EDITOR='nvim'   # Specify override for EDITOR here
 else
-    EDITOR='nano';  # Fallback EDITOR if all other checks fail
+    EDITOR='nvim';  # Fallback EDITOR if all other checks fail
 fi
 
 # Default EDITOR assignment behavior. Example: export EDITOR='kate'
@@ -100,5 +100,5 @@ source $ZSH/oh-my-zsh.sh
 
 # Terminal startup output (won't run unless $STARTUP_CONTENT is true)
 [[ -o interactive && -f $ZDOTDIR/functions ]] && {
-   [[ "$STARTUP_CONTENT" = "true" ]] && neofetch
+   [[ "$STARTUP_CONTENT" = "true" ]] && printf '\n%.0s' {1..100} && neofetch
 }

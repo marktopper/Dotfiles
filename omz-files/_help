@@ -1,4 +1,4 @@
-#compdef better-help
+#compdef help
 local d expl
 local HELPDIR=${HELPDIR:-/usr/share/zsh/5.8/help}
 [[ -d $HELPDIR ]] && {

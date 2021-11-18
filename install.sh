@@ -213,11 +213,9 @@ done
 [ ! -d "$INSTALL_DIRECTORY/.oh-my-zsh/completions" ] && mkdir -p "$ZSH/completions"
 
 # Start operations within omz-files directory
-for i in "$CLONED_REPO/omz-files/"*; do
+for i in $CLONED_REPO/omz-files/*; do
     # copy completion files to oh-my-zsh
-    [[ -f "$i" && "$i" = "_"* ]] && cp -uv "$i" "$ZSH/completions"
-    # copy plugins to custom plugins directory (nordvpn plugin is yet to be included in oh-my-zsh outside of it's testing branch)
-    [ -d "$i" ] && cp -ruv "$i" "$INSTALL_DIRECTORY/.oh-my-zsh/custom/plugins"
+    [[ -f "$i" ]] && cp -uv "$i" "$ZSH/completions/"
 done && sleep 1
 
 # copy regular files

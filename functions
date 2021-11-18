@@ -34,8 +34,9 @@ info-message() {
   echo -e '"prcreate" gh pr create --fill | "prmerge" gh pr merge'
 }
 
+unalias help
 # Because getting told "there is no list of special help topoics available at this time." is just not helpful enough
-better-help() {
+help() {
   if [ $# -eq 0 ]
   then
     info-message
@@ -44,7 +45,13 @@ better-help() {
     run-help "$1"
   fi
 }
-alias help='better-help'
+
+cleanzsh() {
+  rm -f ${ZDOTDIR:-$HOME}/.zcompdump* ${ZDOTDIR:-$HOME}/.zshrc.zwc
+  clear 
+  omz reload
+}
+
 
 # this will show all Powerlevel10K prompt elements
 powerlevel-elements() {
