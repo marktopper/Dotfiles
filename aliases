@@ -59,6 +59,7 @@ if (( $+commands[apt] && $+commands[apt-get] )); then
 	alias mark-a='sudo apt-mark auto'
 	alias mark-m='sudo apt-mark manual'
 	alias afix='sudo apt-get install -f'
+	alias aup='sudo apt-get update && sudo apt-get upgrade'
 	alias apc='sudo apt-get --purge autoremove -y && sudo apt-get autoclean -y'
 fi
 
