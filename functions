@@ -32,6 +32,11 @@ info-message() {
   echo -e '"reconf"  dpkg-reconfigure | "add-arch" dpkg --add-architecture\n'
   echo -e 'GIT related commands:\n"gcedit" edit git commit msg | "gst" status | "gsw" switch branch | "gl" pull | "gp" push | "gca" commit all'
   echo -e '"prcreate" gh pr create --fill | "prmerge" gh pr merge'
+  echo -e '"gcb" git checkout -b | "gcd" git checkout $(git_develop_branch)'
+  echo -e '"gcf" git config --list | "gcl" git clone --recurse-submodules'
+  echo -e '"gclean" git clean -id | "gcm" git checkout $(git_main_branch)'
+  echo -e '"gcmsg" git commit -m | "gcn" git commit -v --no-edit --amend' 
+  echo -e '"gco"  git checkout | "gcor" git checkout --recurse-submodules'
 }
 
 unalias help
