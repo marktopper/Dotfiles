@@ -25,6 +25,7 @@ dedup_pathvar () {
 }
 [[ -z "$ZDOTDIR" && -f $HOME/.zsh/.zshrc ]] && export ZDOTDIR=$HOME/.zsh
 
-# Because snapd doesn't yet have a way for snap programs to get added to XDG_DATA_DIRS (meaning the app launchers don't show)
-source /etc/profile.d/apps-bin-path.sh
+# Because snapd doesn't yet have a way for snap programs to get added to XDG_DATA_DIRS (meaning the app launchers don't show) in Kali Linux XFCE
+[[ -f "/etc/profile.d/apps-bin-path.sh" ]] && source /etc/profile.d/apps-bin-path.sh
+
 [[ -z "$ZDOTDIR" && -f $HOME/.zsh/.zshrc ]] && export ZDOTDIR=$HOME/.zsh
