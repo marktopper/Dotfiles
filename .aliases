@@ -1,9 +1,12 @@
 # ALIASES
 
+[[ -f $ZDOTDIR/.npm-helpers ]] && . $ZDOTDIR/.npm-helpers
+
 # Useful stuff
 alias s='sudo'
 alias rt='sudo -i'
 alias e='echo'
+alias m='mark'
 alias update-db="sudo updatedb --prunepaths='/timeshift/snapshots /media /run/timeshift /run/user'"
 alias own='sudo chown -v $USER:$USER'
 alias owndir='sudo chown -R $USER:$USER'
@@ -59,6 +62,7 @@ if (( $+commands[apt] && $+commands[apt-get] )); then
 	alias mark-a='sudo apt-mark auto'
 	alias mark-m='sudo apt-mark manual'
 	alias afix='sudo apt-get install -f'
+	alias aup='sudo apt-get update && sudo apt-get upgrade'
 	alias apc='sudo apt-get --purge autoremove -y && sudo apt-get autoclean -y'
 fi
 

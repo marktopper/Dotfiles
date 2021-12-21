@@ -41,23 +41,63 @@ function backup(){
 	fi
 }
 
+function pkg_manager_install(){
+	pkg_manager=$1
+	pkg_manager_cmd=$2
+	if [ $# -eq 2 ]; then # if 2 params package manager is meant to update
+		sudo $pkg_manager $pkg_manager_cmd
+	elif [ $# -eq 3 ]; then # if 3 params package manager is meant to install
+		package=$3
+		sudo $pkg_manager $pkg_manager_cmd $package
+	fi
+}
+
+# Example = update_then_install `pkg manager` `update command` `install command` `package to install`
+function update_then_install(){
+	pkg_manager=$1
+	pkg_update=$2
+	pkg_install=$3
+	package=$4
+        sudo $pkg_manager $pkg_update
+	if command -v "$package" > /dev/null 2>&1; then
+		printf "%s\n" "$package already installed"
+	else
+		sudo $pkg_manager $pkg_install $package --yes
+		printf "\n%s\n" "$package has been installed successfully"
+	fi
+}
+
 # ============BEGIN============
 # check if necessary packages are installed
 req_pkgs=(zsh git wget neofetch fzf thefuck)
 
-for i in "${req_pkgs[@]}"; do
-    if command -v "$i" > /dev/null 2>&1; then
-        printf "%s\n" "$i already installed"
-    else
-        if sudo apt install -y "$i" || sudo pacman -S "$i" || sudo dnf install -y "$i" || sudo yum install -y "$i"; then
-            printf "%s\n" "$i installed."
-        else
-	    printf "%s\n" "Error installing $i, you may want to install them manually after installation is finished."
-        fi
-    fi
-done
+if command -v apt-get > /dev/null 2>&1; then
+	sudo apt-get update
+	for package in "${req_pkgs[@]}"; do
+		sudo apt-get install $package
+	done
+else
+	if command -v pacman > /dev/null 2>&1; then
+		for package in "${req_pkgs[a]}"; do
+			update_then_install pacman -Syu -S $package
+		done
+	elif command -v dnf > /dev/null 2>&1; then
+		for package in "${req_pkgs[a]}"; do
+			update_then_install dnf update install $package
+		done
+	elif command -v yum > /dev/null 2>&1; then
+		for package in "${req_pkgs[a]}"; do
+			update_then_install yum check-update install $package
+		done
+	else
+		printf "%s\n" "An error occurred, this may be due to a compatibility issue with your linux distribution."
+		printf "\n%s\n%s\n" "If the error continues please consider creating an issue here:" "https://github.com/DocMemes/Dotfiles"
+		sleep 5 && exit
+	fi
+fi
 
 # ASK TO BACKUP FILES --- ZSH CONFIG INSTALLS BEGIN AFTER THIS
+backup_files=(.zshrc .zprofile .zshenv .zlogin .zlogout .bashrc .bash_profile .bash_logout .profile)
 while true; do
     printf "During this install, any zsh related dotfiles (such as .zshrc, .zshenv) in user's home directory will be deleted.\n"
     printf "Are there dotfiles in your home directory that you want to backup?\n"
@@ -66,14 +106,11 @@ while true; do
         [Yy]* )
             printf "Starting backup...\n"
             mkdir -p "$HOME/Backup_Dotfiles" # Create file backup directory
-            backup .zshrc
-            backup .zprofile
-            backup .zshenv
-            backup .bashrc
-            backup .bash_profile
-            backup .bash_logout
-            backup .profile
-            printf "Finished backing up any existing zsh files. Continuing...\n" && sleep 1
+            # Backup files
+	    for file in $backup_files; do
+		    backup $file
+		done
+	    printf "Finished backing up any existing zsh files. Continuing...\n" && sleep 1
             break ;;
         [Nn]* )
             printf "Continuing without backing up existing zsh files...\n" && sleep 1
@@ -213,7 +250,7 @@ done
 [ ! -d "$INSTALL_DIRECTORY/.oh-my-zsh/completions" ] && mkdir -p "$ZSH/completions"
 
 # Start operations within omz-files directory
-for i in $CLONED_REPO/omz-files/*; do
+for i in "$CLONED_REPO/omz-files"/*; do
     # copy completion files to oh-my-zsh
     [[ -f "$i" ]] && cp -uv "$i" "$ZSH/completions/"
 done && sleep 1

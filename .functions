@@ -1,3 +1,4 @@
+#!/bin/zsh
 # FUNCTIONS
 
 # COLORS (to make help message look pretty)
@@ -32,6 +33,11 @@ info-message() {
   echo -e '"reconf"  dpkg-reconfigure | "add-arch" dpkg --add-architecture\n'
   echo -e 'GIT related commands:\n"gcedit" edit git commit msg | "gst" status | "gsw" switch branch | "gl" pull | "gp" push | "gca" commit all'
   echo -e '"prcreate" gh pr create --fill | "prmerge" gh pr merge'
+  echo -e '"gcb" git checkout -b | "gcd" git checkout $(git_develop_branch)'
+  echo -e '"gcf" git config --list | "gcl" git clone --recurse-submodules'
+  echo -e '"gclean" git clean -id | "gcm" git checkout $(git_main_branch)'
+  echo -e '"gcmsg" git commit -m | "gcn" git commit -v --no-edit --amend' 
+  echo -e '"gco"  git checkout | "gcor" git checkout --recurse-submodules'
 }
 
 unalias help
@@ -48,7 +54,7 @@ help() {
 
 cleanzsh() {
   rm -f ${ZDOTDIR:-$HOME}/.zcompdump* ${ZDOTDIR:-$HOME}/.zshrc.zwc
-  clear 
+  clear
   omz reload
 }
 
@@ -108,19 +114,21 @@ update-plugins() {
 
 ssh-copy-server-key() {
   if [ $# -eq 0 ]; then
-    echo "Please specify the server connection details and the public key to install.\n"
+    echo "Specify the server connection details and the public key to install.\n"
     echo "Ex: $0 $HOME/.ssh/id_rsa.pub user@192.168.1.1\n"
   elif [ $# -eq 2 ]; then
     if [[ "$1" == *".pub" ]] && [[ "$2" == *"@"* ]]; then
-      echo "Installing public ssh key $1 to remote server $2 ...\n"
+      echo "Copying public key file $1 to $2 ...\n"
       ssh-copy-id -i "$1" "$2"
-      ssh -T "$1"
-      [ $? -eq 0 ] && echo "Operation completed successfully.\n" || echo "Error $?: Something went wrong.\n"
+      ssh -T "$2"
+      [ $? -eq 0 ] && echo "Operation completed successfully.\n" || echo "Error: Something went wrong.\n"
     else
-      echo "Error. Invalid parameters.\n"
+      echo "Error: Invalid parameters specified.\n"
     fi
   else
-    echo "Please specify the server connection details and the public key to install.\n"
-    echo "Ex: $0 user@192.168.1.1 $HOME/.ssh/id_rsa.pub\n"
+    echo "Error: Invalid number of parameters specified.\n"
+    echo "Specify the server connection details and the public key to install.\n"
+    echo "Ex: $0 $HOME/.ssh/id_rsa.pub user@192.168.1.1\n"
   fi
 }
+

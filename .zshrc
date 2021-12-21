@@ -21,7 +21,7 @@ elif (( $+commands[vim] )); then
 fi
 
 # use best graphical text editor available
-if (( $+commands[subl] )); then
+if (( $+commands[atom] )); then
     EDITOR_DM='subl'
 elif (( $+commands[gedit] )); then
     EDITOR_DM='gedit'
@@ -37,7 +37,7 @@ elif [[ -n $SSH_CONNECTION ]] || [[ -z $SESSION_MANAGER ]]; then
 elif [[ $EDITOR_OVERRIDE == 'true' ]]; then
     EDITOR='nvim'   # Specify override for EDITOR here
 else
-    EDITOR='nvim';  # Fallback EDITOR if all other checks fail
+    EDITOR='atom';  # Fallback EDITOR if all other checks fail
 fi
 
 # Default EDITOR assignment behavior. Example: export EDITOR='kate'
@@ -70,7 +70,7 @@ copydir copyfile
 cp extract fzf
 git gitignore jump
 node npm p10k-promptconfig
-pip python
+pip python ssh-agent
 sudo thefuck vscode
 zsh-autosuggestions
 zsh-syntax-highlighting)
@@ -87,10 +87,10 @@ P10K_PROMPT="p10k"
 source $ZSH/oh-my-zsh.sh
 
 # custom aliases
-[[ -f $ZDOTDIR/aliases ]] && . $ZDOTDIR/aliases
+[[ -f $ZDOTDIR/.aliases ]] && . $ZDOTDIR/.aliases
 
 # custom functions
-[[ -f $ZDOTDIR/functions ]] && . $ZDOTDIR/functions
+[[ -f $ZDOTDIR/.functions ]] && . $ZDOTDIR/.functions
 
 # Deduplicates path & fpath
 [[ -f $ZDOTDIR/.zshenv ]] && {
@@ -99,6 +99,6 @@ source $ZSH/oh-my-zsh.sh
 }
 
 # Terminal startup output (won't run unless $STARTUP_CONTENT is true)
-[[ -o interactive && -f $ZDOTDIR/functions ]] && {
+[[ -o interactive && -f $ZDOTDIR/.functions ]] && {
    [[ "$STARTUP_CONTENT" = "true" ]] && printf '\n%.0s' {1..100} && neofetch
 }
