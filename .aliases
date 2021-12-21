@@ -1,9 +1,12 @@
 # ALIASES
 
+[[ -f $ZDOTDIR/.npm-helpers ]] && . $ZDOTDIR/.npm-helpers
+
 # Useful stuff
 alias s='sudo'
 alias rt='sudo -i'
 alias e='echo'
+alias m='mark'
 alias update-db="sudo updatedb --prunepaths='/timeshift/snapshots /media /run/timeshift /run/user'"
 alias own='sudo chown -v $USER:$USER'
 alias owndir='sudo chown -R $USER:$USER'
