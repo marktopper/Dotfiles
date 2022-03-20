@@ -291,6 +291,7 @@ if [ "$HOME" != "$INSTALL_DIRECTORY" ]; then
 else
     INSERT_TEXT="if [ -n '\$(find \$HOME -prune -user \"\$(id -u)\")' ]; then
     [[ -z \"\$ZDOTDIR\" && -f \$HOME/.zshrc ]] && export ZDOTDIR=\$HOME/
+fi"
 fi
 
 while true; do
