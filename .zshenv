@@ -10,8 +10,6 @@
 
 export PATH=/snap/bin:/usr/sandbox/:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/share/games:/usr/local/sbin:/usr/sbin:/sbin:$PATH
 
-export BROWSER="wslview"
-
 # For dedepuplicating path variables
 get_var () {
     eval 'printf "%s\n" "${'"$1"'}"'

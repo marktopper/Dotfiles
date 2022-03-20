@@ -64,11 +64,11 @@ STARTUP_CONTENT="true"
 
 # Oh-my-zsh enabled plugins
 plugins=(
-add-to-omz colorize
+add-to-omz artisan
+colorize composer
 common-aliases
-copydir copyfile
 cp extract fzf
-git gitignore jump laravel
+git gitignore jump
 node npm p10k-promptconfig
 ssh-agent
 sudo thefuck vscode

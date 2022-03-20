@@ -196,6 +196,7 @@ else # INSTALL (or update) OMZ PLUGINS
     clone_to_omz plugins https://github.com/zsh-users/zsh-syntax-highlighting.git
     clone_to_omz plugins https://github.com/marlonrichert/zsh-autocomplete.git
     clone_to_omz plugins https://github.com/zsh-users/zsh-history-substring-search.git
+    clone_to_omz plugins https://github.com/ItsDoctorDoc/artisan.git
     clone_to_omz themes https://github.com/romkatv/powerlevel10k.git
 fi
 
