@@ -1,0 +1,6 @@
+#!/bin/zsh
+
+alias pg-start="sudo pg_ctlcluster 12 main start"
+alias pg-stop="sudo pg_ctlcluster 12 main stop"
+alias pg-status="sudo pg_ctlcluster 12 main status"
+alias pg-login="sudo -u postgres psql"

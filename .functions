@@ -36,7 +36,7 @@ info-message() {
   echo -e '"gcb" git checkout -b | "gcd" git checkout $(git_develop_branch)'
   echo -e '"gcf" git config --list | "gcl" git clone --recurse-submodules'
   echo -e '"gclean" git clean -id | "gcm" git checkout $(git_main_branch)'
-  echo -e '"gcmsg" git commit -m | "gcn" git commit -v --no-edit --amend' 
+  echo -e '"gcmsg" git commit -m | "gcn" git commit -v --no-edit --amend'
   echo -e '"gco"  git checkout | "gcor" git checkout --recurse-submodules'
 }
 
@@ -132,3 +132,26 @@ ssh-copy-server-key() {
   fi
 }
 
+exec-in-bg() {
+  if [ $# -eq 0 ]; then
+    echo "Specify the command to execute in the background.\n"
+    echo "Ex: $0 nohup ./vendor/bin/sail up\n"
+  elif [ $# -eq 1 ]; then
+    echo "Executing $1 in the background...\n"
+    nohup $1 &
+  elif [ $# -gt 1 ]; then
+    command=$1
+    params=$2
+    for i in "$@"; do
+      if [[ "$i" != "$0" ]] && [[ "$i" != "$1" ]] && [[ "$i" != "$2" ]]; then
+        params+=" $i"
+      fi
+    done
+    echo "Executing $command in the background...\n"
+    nohup $command $params &
+  else
+    echo "Unknown error.\n"
+    echo "Specify the command to execute in the background.\n"
+    echo "Ex: $0 nohup ./vendor/bin/sail up\n"
+  fi
+}

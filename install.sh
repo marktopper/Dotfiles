@@ -297,8 +297,8 @@ while true; do
     printf "\n%s\n\v%s\n" "Zsh, by default, looks for zshrc, zshenv, etc.. in the user's home directory, so we set the ZDOTDIR variable required to let Zsh know where to look for these files." "We can symlink the zshenv file with the export ZDOTDIR line in it to your home directory from your $INSTALL_DIRECTORY directory, or we can export the variable in /etc/zsh/zshenv (this is my preferred method)."
     printf "\nIf already set, you can press enter to continue.\n"
     printf "\n%+50s\n" "OPTIONS:"
-    printf "\t%s\t%s\n" "[1]" "Create symbolic link to $INSTALL_DIRECTORY/.zshenv in $HOME directory and append line exporting ZDOTDIR in it"
-    printf "\t%s\t%s\n" "[2]" "Use /etc/zsh/zshenv file to set ZDOTDIR to $INSTALL_DIRECTORY (may require sudo priviledges)"
+    printf "\t%s\t%s\n" "[1]" "Create symbolic link to $INSTALL_DIRECTORY/.zshenv in $HOME directory to point to your ZSH install directory."
+    printf "\t%s\t%s\n" "[2]" "Configure global ZSH file /etc/zsh/zshenv to set ZSH install directory to $INSTALL_DIRECTORY (may require sudo priviledges)"
     printf "\t[Enter] \tDo nothing; ZDOTDIR is already set.\n"
     printf "\t>>> "
     read -r choice
@@ -307,12 +307,20 @@ while true; do
         [1] )
             printf "\nCreated symbolic link in home directory:\n"
             ln -sv "$INSTALL_DIRECTORY/.zshenv" "$HOME/.zshenv"
-            printf "Inserting lines to export ZDOTDIR into .zshenv file...\n"
-            echo -e "$INSERT_TEXT" >> $HOME/.zshenv
-            printf "%s\n" "$HOME/.zshenv will set and export ZDOTDIR"
-            printf "%s\n" '!!!IMPORTANT: YOU WILL NEED TO MODIFY THIS FILE IF YOU CHANGE YOUR ZDOTDIR DIRECTORY LOCATION!' && sleep 5
+            if ! grep -Fxq $INSERT_TEXT "$HOME/.zshenv"; then
+                printf "Inserting lines to export ZDOTDIR into $HOME/.zshenv file...\n"
+                echo -e "$INSERT_TEXT" >> $HOME/.zshenv
+            fi
+            printf "Success.\n"
+            printf "%s\n" 'YOU WILL NEED TO MODIFY $HOME/.zshenv IF YOU CHANGE YOUR ZSH DIRECTORY LOCATION!' && sleep 5
             break ;;
         [2] )
+            if ! grep -Fxq $INSERT_TEXT "/etc/zsh/zshenv"; then
+                printf "\nInserting lines to export ZDOTDIR into /etc/zsh/zshenv file...\n"
+                echo -e "$INSERT_TEXT" >> /etc/zsh/zshenv
+            fi
+                printf "Success.\n"
+                printf "%s\n" 'YOU WILL NEED TO MODIFY /etc/zsh/zshenv IF YOU CHANGE YOUR ZSH DIRECTORY LOCATION!' && sleep 5
             printf "\n%s\n" "$INSERT_TEXT" | sudo tee -a /etc/zsh/zshenv > /dev/null
             echo -e "$INSERT_TEXT" | sudo tee -a /etc/zsh/zshenv > /dev/null
             printf "/etc/zsh/zshenv will set and export ZDOTDIR\n"

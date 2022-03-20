@@ -68,9 +68,9 @@ add-to-omz colorize
 common-aliases
 copydir copyfile
 cp extract fzf
-git gitignore jump
+git gitignore jump laravel
 node npm p10k-promptconfig
-pip python ssh-agent
+ssh-agent
 sudo thefuck vscode
 zsh-autosuggestions
 zsh-syntax-highlighting)
@@ -91,6 +91,8 @@ source $ZSH/oh-my-zsh.sh
 
 # custom functions
 [[ -f $ZDOTDIR/.functions ]] && . $ZDOTDIR/.functions
+
+[[ -f $ZDOTDIR/.postgres ]] && . $ZDOTDIR/.postgres
 
 # Deduplicates path & fpath
 [[ -f $ZDOTDIR/.zshenv ]] && {

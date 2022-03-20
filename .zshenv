@@ -10,6 +10,8 @@
 
 export PATH=/snap/bin:/usr/sandbox/:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/share/games:/usr/local/sbin:/usr/sbin:/sbin:$PATH
 
+export BROWSER="wslview"
+
 # For dedepuplicating path variables
 get_var () {
     eval 'printf "%s\n" "${'"$1"'}"'
@@ -23,9 +25,6 @@ dedup_pathvar () {
     deduped_path="$(perl -e 'print join(":",grep { not $seen{$_}++ } split(/:/, $ARGV[0]))' "$pathvar_value")"
     set_var "$pathvar_name" "$deduped_path"
 }
-[[ -z "$ZDOTDIR" && -f $HOME/.zsh/.zshrc ]] && export ZDOTDIR=$HOME/.zsh
 
 # Because snapd doesn't yet have a way for snap programs to get added to XDG_DATA_DIRS (meaning the app launchers don't show) in Kali Linux XFCE
 [[ -f "/etc/profile.d/apps-bin-path.sh" ]] && source /etc/profile.d/apps-bin-path.sh
-
-[[ -z "$ZDOTDIR" && -f $HOME/.zsh/.zshrc ]] && export ZDOTDIR=$HOME/.zsh
