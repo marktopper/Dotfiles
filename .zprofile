@@ -7,3 +7,4 @@ if [[ -n "${WSL_DISTRO_NAME}" ]]; then
         wsl.exe -d ${WSL_DISTRO_NAME} -u root mount --bind / "/mnt/wsl/${WSL_DISTRO_NAME}/"
     fi
 fi
+

@@ -62,7 +62,7 @@ if (( $+commands[apt] && $+commands[apt-get] )); then
 	alias mark-a='sudo apt-mark auto'
 	alias mark-m='sudo apt-mark manual'
 	alias afix='sudo apt-get install -f'
-	alias aup='sudo apt-get update && sudo apt-get upgrade'
+	alias aup='sudo apt-get update && sudo apt-get upgrade -y'
 	alias apc='sudo apt-get --purge autoremove -y && sudo apt-get autoclean -y'
 fi
 
@@ -100,3 +100,5 @@ alias intip='hostname -I; echo'
 alias shutdown='sudo shutdown now'
 alias sctl='sudo systemctl'
 alias sd='sudo systemd'
+alias art='artisan'
+alias prisma='npx prisma'

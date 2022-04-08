@@ -54,7 +54,6 @@ help() {
 
 cleanzsh() {
   rm -f ${ZDOTDIR:-$HOME}/.zcompdump* ${ZDOTDIR:-$HOME}/.zshrc.zwc
-  clear
   omz reload
 }
 
@@ -120,7 +119,6 @@ ssh-copy-server-key() {
     if [[ "$1" == *".pub" ]] && [[ "$2" == *"@"* ]]; then
       echo "Copying public key file $1 to $2 ...\n"
       ssh-copy-id -i "$1" "$2"
-      ssh -T "$2"
       [ $? -eq 0 ] && echo "Operation completed successfully.\n" || echo "Error: Something went wrong.\n"
     else
       echo "Error: Invalid parameters specified.\n"
@@ -153,5 +151,29 @@ exec-in-bg() {
     echo "Unknown error.\n"
     echo "Specify the command to execute in the background.\n"
     echo "Ex: $0 nohup ./vendor/bin/sail up\n"
+  fi
+}
+
+new-Jetstream() {
+  if [ $# -eq 0 ]; then
+    echo "Specify a name for the project.\n"
+    echo "Ex: new-Jetstream project\n"
+  elif [ $# -eq 1 ]; then
+    echo "Creating new laravel jetstream project...\n"
+    laravel new $1 && cd "./$1" && composer require laravel/jetstream
+  else
+    echo "Invalid parameters specified\n"
+  fi
+}
+
+# Github
+
+gp-branch() {
+  if [ $# -eq 0 ]; then
+    echo "Please specify the upstream branch name to push to\n"
+  elif [ $# -eq 1 ]; then
+    git push --set-upstream origin $1
+  else
+    echo "Invalid number of parameters specified. Please specify the upstream branch name to push to\n"
   fi
 }

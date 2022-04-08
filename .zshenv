@@ -8,7 +8,7 @@
 # custom environment in such cases.  Note also that .zshenv should not contain
 # commands that produce output or assume the shell is attached to a tty.
 
-export PATH=/snap/bin:/usr/sandbox/:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/share/games:/usr/local/sbin:/usr/sbin:/sbin:$PATH
+export PATH=/snap/bin:/usr/sandbox/:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/share/games:/usr/local/sbin:/usr/sbin:/sbin:~/.config/composer/vendor/bin:$PATH
 
 # For dedepuplicating path variables
 get_var () {
@@ -26,3 +26,9 @@ dedup_pathvar () {
 
 # Because snapd doesn't yet have a way for snap programs to get added to XDG_DATA_DIRS (meaning the app launchers don't show) in Kali Linux XFCE
 [[ -f "/etc/profile.d/apps-bin-path.sh" ]] && source /etc/profile.d/apps-bin-path.sh
+
+[[ -z "$ZDOTDIR" && -f $HOME/.zsh/.zshrc ]] && export ZDOTDIR=$HOME/.zsh
+
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

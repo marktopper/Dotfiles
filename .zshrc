@@ -1,3 +1,4 @@
+#!/bin/zsh
 # $ZDOTDIR/.zshrc
 
 # P10K instant prompt. Keep close to top of .zshrc. Code that may require console input
@@ -78,11 +79,17 @@ zsh-syntax-highlighting)
 # make less more friendly for non-text input files, see lesspipe(1)
 [[ -x /usr/bin/lesspipe ]] && eval "$(SHELL=/bin/sh lesspipe)"
 
+export LESSOPEN="|/usr/share/source-highlight/src-hilite-lesspipe.sh %s"
+export LESS=R
+
 # P10K is only theme
 ZSH_THEME="powerlevel10k/powerlevel10k"
 # To customize prompt, run `p10k configure`, edit $ZDOTDIR/.p10k.zsh or set P10K_PROMPT below to a prompt file name in P10K-themes directory.
 # For example, below I've set my prompt as "docstheme". The actual file name is .docstheme.zsh. Ensure you follow the same format.
 P10K_PROMPT="p10k"
+
+# For completions
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 
 source $ZSH/oh-my-zsh.sh
 
@@ -99,6 +106,8 @@ source $ZSH/oh-my-zsh.sh
    dedup_pathvar PATH
    dedup_pathvar FPATH
 }
+
+[[ -f $ZDOTDIR/.crypto-dev.zsh ]] && source $ZDOTDIR/.crypto-dev.zsh
 
 # Terminal startup output (won't run unless $STARTUP_CONTENT is true)
 [[ -o interactive && -f $ZDOTDIR/.functions ]] && {

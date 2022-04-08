@@ -10,7 +10,9 @@ SHELL="$SHELL"
 function clone_to_omz(){
     type=$1 # repo type, either plugins or themes
     repo=$2
-    name=$(echo "${repo##*/}" | cut -f 1 -d '.')
+    name=$3
+    # grab the repo name from the url if it's not provided
+    [ -z "${name}" ] && name=$(echo "${repo##*/}" | cut -f 1 -d '.')
     if [ -d "$ZSH/custom/$type/$name" ]; then
         cd "$ZSH/custom/$type/$name" && git pull
     else
@@ -67,14 +69,27 @@ function update_then_install(){
 	fi
 }
 
+function install_omz_plugins_and_themes(){
+    printf "%s\n" "Installing omz plugins and themes..."
+    clone_to_omz plugins https://github.com/jessarcher/zsh-artisan.git artisan
+    clone_to_omz plugins https://github.com/doctormemes/add-to-omz.git
+    clone_to_omz plugins https://github.com/doctormemes/p10k-promptconfig.git
+    clone_to_omz plugins https://github.com/marlonrichert/zsh-autocomplete.git
+    clone_to_omz plugins https://github.com/zsh-users/zsh-autosuggestions.git
+    clone_to_omz plugins https://github.com/zsh-users/zsh-completions.git
+    clone_to_omz plugins https://github.com/zsh-users/zsh-history-substring-search.git
+    clone_to_omz plugins https://github.com/zsh-users/zsh-syntax-highlighting.git
+    clone_to_omz themes https://github.com/romkatv/powerlevel10k.git
+}
+
 # ============BEGIN============
 # check if necessary packages are installed
 req_pkgs=(zsh git wget neofetch fzf thefuck)
 
 if command -v apt-get > /dev/null 2>&1; then
-	sudo apt-get update
+	sudo apt-get update -y
 	for package in "${req_pkgs[@]}"; do
-		sudo apt-get install $package
+		sudo apt-get install $package -y
 	done
 else
 	if command -v pacman > /dev/null 2>&1; then
@@ -97,7 +112,7 @@ else
 fi
 
 # ASK TO BACKUP FILES --- ZSH CONFIG INSTALLS BEGIN AFTER THIS
-backup_files=(.zshrc .zprofile .zshenv .zlogin .zlogout .bashrc .bash_profile .bash_logout .profile)
+backup_files=(.zshrc .zprofile .zshenv .zlogin .zlogout .bashrc .bash_profile .bash_logout)
 while true; do
     printf "During this install, any zsh related dotfiles (such as .zshrc, .zshenv) in user's home directory will be deleted.\n"
     printf "Are there dotfiles in your home directory that you want to backup?\n"
@@ -107,10 +122,10 @@ while true; do
             printf "Starting backup...\n"
             mkdir -p "$HOME/Backup_Dotfiles" # Create file backup directory
             # Backup files
-	    for file in $backup_files; do
-		    backup $file
+        for file in $backup_files; do
+            backup $file
 		done
-	    printf "Finished backing up any existing zsh files. Continuing...\n" && sleep 1
+        printf "Finished backing up any existing zsh files. Continuing...\n" && sleep 1
             break ;;
         [Nn]* )
             printf "Continuing without backing up existing zsh files...\n" && sleep 1
@@ -184,20 +199,14 @@ if [ ! -d "$INSTALL_DIRECTORY/.oh-my-zsh" ]; then
     if [ -d ~/.oh-my-zsh ]; then
         printf "%s\n" "oh-my-zsh is in home directory, will move it to $INSTALL_DIRECTORY..."
         mv "$HOME/.oh-my-zsh" "$INSTALL_DIRECTORY" && printf "%s\n" "oh-my-zsh directory moved to $INSTALL_DIRECTORY, can proceed now" && sleep 3
+        install_omz_plugins_and_themes
     else
         printf "oh-my-zsh is NOT in correct directory, something is wrong\n"
         printf "Exitting before attempting anything further\n" && sleep 3
         exit
     fi
 else # INSTALL (or update) OMZ PLUGINS
-    clone_to_omz plugins https://github.com/doctormemes/add-to-omz.git
-    clone_to_omz plugins https://github.com/doctormemes/p10k-promptconfig.git
-    clone_to_omz plugins https://github.com/zsh-users/zsh-autosuggestions.git
-    clone_to_omz plugins https://github.com/zsh-users/zsh-syntax-highlighting.git
-    clone_to_omz plugins https://github.com/marlonrichert/zsh-autocomplete.git
-    clone_to_omz plugins https://github.com/zsh-users/zsh-history-substring-search.git
-    clone_to_omz plugins https://github.com/ItsDoctorDoc/artisan.git
-    clone_to_omz themes https://github.com/romkatv/powerlevel10k.git
+    install_omz_plugins_and_themes
 fi
 
 # INSTALL EMOJI FONTS IF NONE FOUND
@@ -205,11 +214,10 @@ if fc-list | grep -i emoji >/dev/null; then
     printf "Emoji fonts found, won't install any more. If emojis are missing try downloading fonts-noto-color-emoji and fonts-recommended packages\n" && sleep 1
 else
 	if command -v apt > /dev/null 2>&1; then
-		if sudo apt install -y fonts-noto-color-emoji fonts-recommended || sudo pacman -S fonts-noto-color-emoji fonts-recommended || sudo dnf install -y fonts-noto-color-emoji fonts-recommended || sudo yum install -y fonts-noto-color-emoji fonts-recommended || pkg install fonts-noto-color-emoji fonts-recommended;
-		then
-		    printf "Fonts to show latest emojis are installed\n"
+		if sudo apt install -y fonts-noto-color-emoji fonts-recommended || sudo pacman -S fonts-noto-color-emoji fonts-recommended || sudo dnf install -y fonts-noto-color-emoji fonts-recommended || sudo yum install -y fonts-noto-color-emoji fonts-recommended || pkg install fonts-noto-color-emoji fonts-recommended; then
+            printf "Fonts to show latest emojis are installed\n"
 		else
-		    printf "Couldn't install fonts, latest emojis may not show correctly\n"
+            printf "Couldn't install fonts, latest emojis may not show correctly\n"
 		fi
 	fi
 fi
@@ -247,14 +255,6 @@ while true; do
 done
 
 # START TO COPY FILES FROM REPO
-# create completions directory in .oh-my-zsh if needed
-[ ! -d "$INSTALL_DIRECTORY/.oh-my-zsh/completions" ] && mkdir -p "$ZSH/completions"
-
-# Start operations within omz-files directory
-for i in "$CLONED_REPO/omz-files"/*; do
-    # copy completion files to oh-my-zsh
-    [[ -f "$i" ]] && cp -uv "$i" "$ZSH/completions/"
-done && sleep 1
 
 # copy regular files
 for i in "$CLONED_REPO"/* ; do
@@ -277,7 +277,7 @@ printf "%s\n" "Finished setting up repo files in new $INSTALL_DIRECTORY director
 if [ "$INSTALL_DIRECTORY" != "$HOME" ]; then
     printf "Removing remaining .zsh* and .bash* dotfiles in user's home directory...\n"
     if [[ -d "$HOME/.zsh" || -d "$HOME/zsh" ]]; then
-        cd "$HOME" && rm -f .zshrc .zshenv .zsh_history .bashrc .bash_profile .bash_history
+        cd "$HOME" && rm -f .zshrc .zprofile .zshenv .zlogin .zlogout .bashrc .bash_profile .bash_logout
     else
         cd "$HOME" && rm -f .zsh* .bash*
     fi

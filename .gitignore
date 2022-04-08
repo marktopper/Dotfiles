@@ -3,4 +3,4 @@ ignored/
 .zsh_history
 .zcompdump*
 *.zwc
-
+.fortdoc
