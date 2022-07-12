@@ -24,11 +24,18 @@ function font_install(){
     font=$1
     link=$2
     fontname=$(echo "${font//\\}" | cut -f 1 -d '.')
-    if [[ -f "$HOME/.fonts/$font" ]]; then
+
+    fontdir="$HOME/.fonts/"
+    # Set fontdir for MacOS
+    if [ "$(uname)" == "Darwin" ]; then
+        fontdir="$HOME/Library/Fonts/"
+    fi
+
+    if [[ -f "$fontdir$font" ]]; then
         printf "%s\n" "$fontname already installed"
     else
         printf "%s\n" "Installing $fontname..."
-        wget -q --show-progress -N "$link" -P "$HOME/.fonts/"
+        wget -q --show-progress -N "$link" -P "$fontdir"
     fi
 }
 
@@ -56,17 +63,17 @@ function pkg_manager_install(){
 
 # Example = update_then_install `pkg manager` `update command` `install command` `package to install`
 function update_then_install(){
-	pkg_manager=$1
-	pkg_update=$2
-	pkg_install=$3
-	package=$4
+    pkg_manager=$1
+    pkg_update=$2
+    pkg_install=$3
+    package=$4
         sudo $pkg_manager $pkg_update
-	if command -v "$package" > /dev/null 2>&1; then
-		printf "%s\n" "$package already installed"
-	else
-		sudo $pkg_manager $pkg_install $package --yes
-		printf "\n%s\n" "$package has been installed successfully"
-	fi
+    if command -v "$package" > /dev/null 2>&1; then
+        printf "%s\n" "$package already installed"
+    else
+        sudo $pkg_manager $pkg_install $package --yes
+        printf "\n%s\n" "$package has been installed successfully"
+    fi
 }
 
 function install_omz_plugins_and_themes(){
@@ -83,6 +90,16 @@ function install_omz_plugins_and_themes(){
 }
 
 # ============BEGIN============
+# if this is MacOS, install Homebrew
+if [ "$(uname)" == "Darwin" ]; then
+    if command -v "homebrew" > /dev/null 2>&1; then
+        printf "%s\n" "homebrew already installed"
+    else
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        printf "\n%s\n" "homebrew has been installed successfully"
+    fi
+fi
+
 # check if necessary packages are installed
 req_pkgs=(zsh git wget neofetch fzf thefuck)
 
@@ -91,8 +108,28 @@ if command -v apt-get > /dev/null 2>&1; then
 	for package in "${req_pkgs[@]}"; do
 		sudo apt-get install $package -y
 	done
+elif command -v brew > /dev/null 2>&1; then # Support for MacOS requires that Homebrew is installed!
+    brew update
+    for package in "${req_pkgs[@]}"; do
+        if command -v "$package" > /dev/null 2>&1; then
+            printf "%s\n" "$package already installed"
+        else
+            brew install $package
+            printf "\n%s\n" "$package has been installed successfully"
+        fi
+    done
 else
-	if command -v pacman > /dev/null 2>&1; then
+	if command -v brew > /dev/null 2>&1; then # Support for MacOS requires that Homebrew is installed!
+        brew update
+        for package in "${req_pkgs[@]}"; do
+            if command -v "$package" > /dev/null 2>&1; then
+                printf "%s\n" "$package already installed"
+            else
+                brew install $package
+                printf "\n%s\n" "$package has been installed successfully"
+            fi
+        done
+    elif command -v pacman > /dev/null 2>&1; then
 		for package in "${req_pkgs[a]}"; do
 			update_then_install pacman -Syu -S $package
 		done
@@ -100,12 +137,12 @@ else
 		for package in "${req_pkgs[a]}"; do
 			update_then_install dnf update install $package
 		done
-	elif command -v yum > /dev/null 2>&1; then
-		for package in "${req_pkgs[a]}"; do
-			update_then_install yum check-update install $package
-		done
-	else
-		printf "%s\n" "An error occurred, this may be due to a compatibility issue with your linux distribution."
+    elif command -v yum > /dev/null 2>&1; then
+        for package in "${req_pkgs[a]}"; do
+            update_then_install yum check-update install $package
+        done
+    else
+		printf "%s\n" "An error occurred, this may be due to a compatibility issue with your OS distribution."
 		printf "\n%s\n%s\n" "If the error continues please consider creating an issue here:" "https://github.com/DocMemes/Dotfiles"
 		sleep 5 && exit
 	fi
@@ -209,50 +246,67 @@ else # INSTALL (or update) OMZ PLUGINS
     install_omz_plugins_and_themes
 fi
 
-# INSTALL EMOJI FONTS IF NONE FOUND
-if fc-list | grep -i emoji >/dev/null; then
-    printf "Emoji fonts found, won't install any more. If emojis are missing try downloading fonts-noto-color-emoji and fonts-recommended packages\n" && sleep 1
+if [ "$(uname)" == "Darwin" ]; then
+    # Specific task for MacOS
+    brew tap homebrew/cask-fonts
+    brew tap corgibytes/cask-fonts
+
+    brew install --cask font-hack
+    brew install --cask font-noto-color-emoji
+    brew install --cask font-fontawesome
+    brew install --cask font-cascadia-mono-pl
+    brew install --cask font-jetbrains-mono
+    brew install --cask font-meslo-lg-nerd-font
+    brew install --cask font-dejavu-sans-mono-nerd-font
+    brew install --cask font-roboto-mono-nerd-font
+    brew install --cask font-hack-nerd-font
+    brew install --cask font-sauce-code-pro-nerd-font
 else
-	if command -v apt > /dev/null 2>&1; then
-		if sudo apt install -y fonts-noto-color-emoji fonts-recommended || sudo pacman -S fonts-noto-color-emoji fonts-recommended || sudo dnf install -y fonts-noto-color-emoji fonts-recommended || sudo yum install -y fonts-noto-color-emoji fonts-recommended || pkg install fonts-noto-color-emoji fonts-recommended; then
-            printf "Fonts to show latest emojis are installed\n"
-		else
-            printf "Couldn't install fonts, latest emojis may not show correctly\n"
-		fi
-	fi
+    # INSTALL EMOJI FONTS IF NONE FOUND
+    if fc-list | grep -i emoji >/dev/null; then
+        printf "Emoji fonts found, won't install any more. If emojis are missing try downloading fonts-noto-color-emoji and fonts-recommended packages\n" && sleep 1
+    else
+    	if command -v apt > /dev/null 2>&1; then
+    		if sudo apt install -y fonts-noto-color-emoji fonts-recommended || sudo pacman -S fonts-noto-color-emoji fonts-recommended || sudo dnf install -y fonts-noto-color-emoji fonts-recommended || sudo yum install -y fonts-noto-color-emoji fonts-recommended || pkg install fonts-noto-color-emoji fonts-recommended; then
+                printf "Fonts to show latest emojis are installed\n"
+    		else
+                printf "Couldn't install fonts, latest emojis may not show correctly\n"
+    		fi
+    	fi
+    fi
+
+    # INSTALL NERD FONTS
+    while true; do
+        printf "\nWould you like to install nerd fonts?\n"
+        read -rp "Install nerd fonts? [Y/n]: " yn
+        case $yn in
+            [Yy]* )
+                # Meslo LG S Regular Nerd Font
+                font_install "Meslo LG S Regular Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Meslo/S/Regular/complete/Meslo%20LG%20S%20Regular%20Nerd%20Font%20Complete.ttf
+
+                # DejaVu Sans Mono Nerd Font
+                font_install "DejaVu Sans Mono Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete.ttf
+
+                # Roboto Mono Nerd Font
+                font_install "Roboto Mono Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/complete/Roboto%20Mono%20Nerd%20Font%20Complete.ttf
+
+                # Hack Regular Nerd Font
+                font_install "Hack Regular Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete.ttf
+
+                # Sauce Code Pro Nerd Font
+                font_install "Sauce Code Pro Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete.ttf
+
+                # Scan new fonts and build font information cache files
+                fc-cache -fv "$HOME/.fonts"
+                break ;;
+            [Nn]* )
+                printf "\nWill not install Nerd Fonts. Continuing...\n";
+                break ;;
+            * )
+                printf "\nPlease provide a valid answer.\n" ;;
+        esac
+    done
 fi
-
-# INSTALL NERD FONTS
-while true; do
-    printf "\nWould you like to install nerd fonts?\n"
-    read -rp "Install nerd fonts? [Y/n]: " yn
-    case $yn in
-        [Yy]* )
-            # Meslo LG S Regular Nerd Font
-            font_install "Meslo LG S Regular Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Meslo/S/Regular/complete/Meslo%20LG%20S%20Regular%20Nerd%20Font%20Complete.ttf
-
-            # DejaVu Sans Mono Nerd Font
-            font_install "DejaVu Sans Mono Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete.ttf
-
-            # Roboto Mono Nerd Font
-            font_install "Roboto Mono Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/complete/Roboto%20Mono%20Nerd%20Font%20Complete.ttf
-
-            # Hack Regular Nerd Font
-            font_install "Hack Regular Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete.ttf
-
-            # Sauce Code Pro Nerd Font
-            font_install "Sauce Code Pro Nerd Font Complete.ttf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete.ttf
-
-            # Scan new fonts and build font information cache files
-            fc-cache -fv "$HOME/.fonts"
-            break ;;
-        [Nn]* )
-            printf "\nWill not install Nerd Fonts. Continuing...\n";
-            break ;;
-        * )
-            printf "\nPlease provide a valid answer.\n" ;;
-    esac
-done
 
 # START TO COPY FILES FROM REPO
 
@@ -277,9 +331,9 @@ printf "%s\n" "Finished setting up repo files in new $INSTALL_DIRECTORY director
 if [ "$INSTALL_DIRECTORY" != "$HOME" ]; then
     printf "Removing remaining .zsh* and .bash* dotfiles in user's home directory...\n"
     if [[ -d "$HOME/.zsh" || -d "$HOME/zsh" ]]; then
-        cd "$HOME" && rm -f .zshrc .zprofile .zshenv .zlogin .zlogout .bashrc .bash_profile .bash_logout
+        cd "$HOME" && rm -rf .zshrc .zprofile .zshenv .zlogin .zlogout .bashrc .bash_profile .bash_logout
     else
-        cd "$HOME" && rm -f .zsh* .bash*
+        cd "$HOME" && rm -rf .zsh* .bash*
     fi
 fi
 
@@ -293,6 +347,11 @@ else
     INSERT_TEXT="if [ -n '\$(find \$HOME -prune -user \"\$(id -u)\")' ]; then
     [[ -z \"\$ZDOTDIR\" && -f \$HOME/.zshrc ]] && export ZDOTDIR=\$HOME/
 fi"
+fi
+
+# if this is MacOS, change insert text
+if [ "$(uname)" == "Darwin" ]; then
+    INSERT_TEXT="export PATH=/opt/homebrew/bin:\$PATH && export ZDOTDIR=\$HOME/$PARTIAL_DIRECTORY"
 fi
 
 while true; do
@@ -311,7 +370,11 @@ while true; do
             ln -sv "$INSTALL_DIRECTORY/.zshenv" "$HOME/.zshenv"
             if ! grep -Fxq $INSERT_TEXT "$HOME/.zshenv"; then
                 printf "Inserting lines to export ZDOTDIR into $HOME/.zshenv file...\n"
-                echo -e "$INSERT_TEXT" >> $HOME/.zshenv
+                if [ "$(uname)" == "Darwin" ]; then
+                    echo "$INSERT_TEXT" >> $HOME/.zshenv
+                else
+                    echo -e "$INSERT_TEXT" >> $HOME/.zshenv
+                fi
             fi
             printf "Success.\n"
             printf "%s\n" 'YOU WILL NEED TO MODIFY $HOME/.zshenv IF YOU CHANGE YOUR ZSH DIRECTORY LOCATION!' && sleep 5
@@ -319,7 +382,11 @@ while true; do
         [2] )
             if ! grep -Fxq $INSERT_TEXT "/etc/zsh/zshenv"; then
                 printf "\nInserting lines to export ZDOTDIR into /etc/zsh/zshenv file...\n"
-                echo -e "$INSERT_TEXT" >> /etc/zsh/zshenv
+                if [ "$(uname)" == "Darwin" ]; then
+                    echo "$INSERT_TEXT" >> /etc/zsh/zshenv
+                else
+                    echo -e "$INSERT_TEXT" >> /etc/zsh/zshenv
+                fi
             fi
                 printf "Success.\n"
                 printf "%s\n" 'YOU WILL NEED TO MODIFY /etc/zsh/zshenv IF YOU CHANGE YOUR ZSH DIRECTORY LOCATION!' && sleep 5
